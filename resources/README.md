@@ -7,3 +7,6 @@ Resources for Research Group - Production
  
 **Voice recording and playback**
  * [Libraries for recording voice from microphone](Libraries-for-recording-voice-from-microphone-input.ipynb)
+ 
+**Audio effects**
+ * [Pitch shifting and pysndfx](Pitch-shifting-and-pysndfx.ipynb)
