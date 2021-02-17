@@ -8,11 +8,8 @@ input audio wav file
 
 
 '''NOTES FROM LEO:
-   function was acting weirdly and didn't work as expected so I changed it 
    (shifts should be the total number of notes requested, not half of it)
-   Also execution with %%timeit makes performance worse by about 500% (on my machine with timeit takes 2 to 6 sec, without 1 to 2)
-   and introduces some unexpected behavior (identified from the multiple "loading file" statements which should be just one)
-   TLDR: WE CAN'T RELY ON %%TIMEIT TO BE ACCURATE AND IT'S ACTUALLY COMPROMISING OUR CODE FUNCTIONALITY!!'''
+'''
 
 def pitchshift(file,shifts=24):
     print('loading audio')
