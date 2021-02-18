@@ -13,3 +13,6 @@ Resources for Research Group - Production
 
  **Csound minisampler**
   * [Starting point for developing a sampler in Csound](ctcsound_minisampler.ipynb)
+
+**input output devices**
+ * [Audio devices](input_output_devices.ipynb)
