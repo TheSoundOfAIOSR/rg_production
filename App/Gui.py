@@ -1,16 +1,20 @@
 import kivy
 kivy.require('2.0.0')
+from Modules.Recording import VoiceRecorder
 
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
+from kivy.clock import Clock
 
 
 class SamplerGUI(App):
 
     recording = False
+    voice = VoiceRecorder()
+    recordTrigger = None
 
     def build(self):
 
@@ -41,10 +45,10 @@ class SamplerGUI(App):
         topRow.add_widget(soundGenBox)
         topRow.add_widget(ioBox)
 
-        sampler = Button(text="Sampler")
-        looper = Button(text="Looper")
-        middleRow.add_widget(sampler)
-        bottomRow.add_widget(looper)
+        # sampler = Button(text="Sampler")
+        # looper = Button(text="Looper")
+        # middleRow.add_widget(sampler)
+        # bottomRow.add_widget(looper)
 
         layout.add_widget(topRow)
         layout.add_widget(middleRow)
@@ -52,9 +56,17 @@ class SamplerGUI(App):
 
         return layout
 
+
     def toggleRecording(self, event):
+
+        if not self.recording:
+            Clock.schedule_once(self.voice.startRecord, -1)
+            self.recordTrigger = Clock.schedule_interval(self.voice.recordStep, 1.0 / 120.0)
+        else:
+            self.recordTrigger.cancel()
+            Clock.schedule_once(self.voice.stopRecord, -1)
+
         self.recording = not self.recording
-        print(f"Recording is {self.recording}")
 
     def generateSample(self, event):
         print("Generating New Sample")
