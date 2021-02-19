@@ -1,6 +1,8 @@
 import kivy
+
 kivy.require('2.0.0')
 from Modules.Recording import VoiceRecorder
+from Modules.Audio import Audio, VoiceRecorder_V2
 
 from kivy.app import App
 from kivy.uix.widget import Widget
@@ -8,12 +10,14 @@ from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.clock import Clock
-
+import json
 
 class SamplerGUI(App):
-
     recording = False
-    voice = VoiceRecorder()
+    # voice = VoiceRecorder()
+    audio = Audio()
+    voice = VoiceRecorder_V2(audio.audio)
+    print("Audio Devices: \n", json.dumps(audio.audio_devices, indent=4))
     recordTrigger = None
 
     def build(self):
@@ -24,18 +28,16 @@ class SamplerGUI(App):
         middleRow = GridLayout(cols=1)
         bottomRow = GridLayout(cols=1)
 
-
         # Sound Generation Box
         soundGenBox = GridLayout(cols=3, spacing=5)
         soundGenCol1 = GridLayout(rows=3, size_hint=(0.2, 0.2), pos_hint={'center_x': 0.5})
         # soundGenCol1.add_widget(Button())
         recordBtn = Button(text="Start/Stop Recording", pos_hint={'center_y': 0.5})
-        recordBtn.bind(on_release = self.toggleRecording)
+        recordBtn.bind(on_release=self.toggleRecording)
         soundGenCol1.add_widget(recordBtn)
         slidersCol = Button(text="Sliders")
         generateCol = Button(text="Generate", size_hint=(0.2, 0.2))
-        generateCol.bind(on_release = self.generateSample)
-
+        generateCol.bind(on_release=self.generateSample)
 
         soundGenBox.add_widget(soundGenCol1)
         soundGenBox.add_widget(slidersCol)
@@ -56,7 +58,6 @@ class SamplerGUI(App):
 
         return layout
 
-
     def toggleRecording(self, event):
 
         if not self.recording:
@@ -70,8 +71,6 @@ class SamplerGUI(App):
 
     def generateSample(self, event):
         print("Generating New Sample")
-
-
 
 
 root = SamplerGUI()
