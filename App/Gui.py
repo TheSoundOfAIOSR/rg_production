@@ -1,5 +1,4 @@
 import kivy
-
 kivy.require('2.0.0')
 from Modules.Recording import VoiceRecorder
 from Modules.Audio import Audio, VoiceRecorder_V2
