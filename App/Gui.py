@@ -1,7 +1,5 @@
 import kivy
 kivy.require('2.0.0')
-from Modules.Recording import VoiceRecorder
-from Modules.Audio import Audio, VoiceRecorder_V2
 
 from kivy.app import App
 from kivy.uix.widget import Widget
@@ -11,12 +9,15 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.clock import Clock
 import json
 
+from Modules.Audio import Audio
+from Modules.Recording import VoiceRecorder
+
+
 class SamplerGUI(App):
     recording = False
-    # voice = VoiceRecorder()
     audio = Audio()
-    voice = VoiceRecorder_V2(audio.audio)
-    print("Audio Devices: \n", json.dumps(audio.audio_devices, indent=4))
+    voice = VoiceRecorder(audio.audio)
+    print("Audio Devices: \n", json.dumps(audio.devices, indent=4))
     recordTrigger = None
 
     def build(self):

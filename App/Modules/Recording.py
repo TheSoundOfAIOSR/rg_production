@@ -1,13 +1,16 @@
 import sys
-sys.path.append('.')
 import pyaudio
 import wave
 
+sys.path.append('.')
+
+
 class VoiceRecorder:
 
-    def __init__(self):
-        print("Instantiating PyAudio")
-        self.audio = pyaudio.PyAudio()
+    def __init__(self, audio):
+        # print("Instantiating PyAudio")
+        # self.audio = pyaudio.PyAudio()
+        self.audio = audio
         self.stream = None
         self.RecordFrames = None
         self.FORMAT = pyaudio.paInt16
@@ -15,8 +18,7 @@ class VoiceRecorder:
         self.RATE = 44100
         self.CHUNK = 512
         self.WAVE_OUTPUT_FILENAME = "recordedFile.wav"
-        self.device_index=2
-
+        self.device_index = 2
 
     def stopRecord(self, _):
         print("stopped recording")
@@ -32,7 +34,6 @@ class VoiceRecorder:
         waveFile.close()
 
     def startRecord(self, _):
-
         ''' this piece of code lets you pick your device from the list of available ones.
         print("----------------------record device list---------------------")
         info = audio.get_host_api_info_by_index(0)
@@ -48,8 +49,8 @@ class VoiceRecorder:
         '''
         print("Recording started")
         self.stream = self.audio.open(format=self.FORMAT, channels=self.CHANNELS,
-                            rate=self.RATE, input=True, input_device_index=1,
-                            frames_per_buffer=self.CHUNK)
+                                      rate=self.RATE, input=True, input_device_index=1,
+                                      frames_per_buffer=self.CHUNK)
         self.RecordFrames = []
         # while True:
         #     data = self.stream.read(self.CHUNK)
@@ -60,4 +61,3 @@ class VoiceRecorder:
     def recordStep(self, _):
         data = self.stream.read(self.CHUNK)
         self.RecordFrames.append(data)
-
