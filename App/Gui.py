@@ -11,13 +11,14 @@ import json
 
 from Modules.Audio import Audio
 from Modules.Recording import VoiceRecorder
-
+from Modules.Playing import player
 
 class SamplerGUI(App):
     recording = False
     audio = Audio()
     voice = VoiceRecorder(audio.audio)
-    print("Audio Devices: \n", json.dumps(audio.devices, indent=4))
+    devices = audio.devices
+    print("Audio Devices: \n", json.dumps(devices, indent=4))
     recordTrigger = None
 
     def build(self):
@@ -47,6 +48,10 @@ class SamplerGUI(App):
         topRow.add_widget(soundGenBox)
         topRow.add_widget(ioBox)
 
+        play_btn = Button(text="Play", size_hint=(0.8, 0.2))
+        bottomRow.add_widget(play_btn)
+        play_btn.bind(on_release=self.playRecording)
+
         # sampler = Button(text="Sampler")
         # looper = Button(text="Looper")
         # middleRow.add_widget(sampler)
@@ -71,6 +76,11 @@ class SamplerGUI(App):
 
     def generateSample(self, event):
         print("Generating New Sample")
+
+    def playRecording(self, event):
+        print("Playing recording:", self.voice.WAVE_OUTPUT_FILENAME)
+        player(self.audio.audio, self.voice.WAVE_OUTPUT_FILENAME, self.devices)
+
 
 
 root = SamplerGUI()
