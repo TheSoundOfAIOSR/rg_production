@@ -30,7 +30,7 @@ def player(audio: pyaudio.PyAudio, audio_file: str, output_device: dict):
         channels=wf.getnchannels(),
         rate=wf.getframerate(),
         output=True,
-        output_device_index=output_device["out"]["index"],
+        output_device_index=output_device["index"],
         stream_callback=callback
     )
 

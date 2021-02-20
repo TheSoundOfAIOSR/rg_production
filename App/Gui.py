@@ -79,7 +79,8 @@ class SamplerGUI(App):
 
     def playRecording(self, event):
         print("Playing recording:", self.voice.WAVE_OUTPUT_FILENAME)
-        player(self.audio.audio, self.voice.WAVE_OUTPUT_FILENAME, self.devices)
+        player(self.audio.audio, self.voice.WAVE_OUTPUT_FILENAME, self.devices["out"])
+        print("Playing finished")
 
 
 
