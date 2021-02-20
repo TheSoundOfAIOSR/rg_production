@@ -134,3 +134,6 @@ dmypy.json
 # Audio files
 *.wav
 *.mp3
+
+# macOS
+.DS_Store

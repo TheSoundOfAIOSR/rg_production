@@ -16,3 +16,6 @@ Resources for Research Group - Production
 
 **input output devices**
  * [Audio devices](input_output_devices.ipynb)
+
+**MIDI related**
+ * [Print MIDI note/velocity on user input, inside of Python](midi.py)
