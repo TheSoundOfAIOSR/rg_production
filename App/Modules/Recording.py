@@ -51,13 +51,9 @@ class VoiceRecorder:
                             rate=self.RATE, input=True, input_device_index=1,
                             frames_per_buffer=self.CHUNK)
         self.RecordFrames = []
-        # while True:
-        #     data = self.stream.read(self.CHUNK)
-        #     self.RecordFrames.append(data)
-        # for i in range(0, int(self.RATE / self.CHUNK * 10)):
-        # print("recording stopped")
+
 
     def recordStep(self, _):
-        data = self.stream.read(self.CHUNK)
+        data = self.stream.read(self.CHUNK, exception_on_overflow = False)
         self.RecordFrames.append(data)
 
