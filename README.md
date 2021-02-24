@@ -10,6 +10,8 @@ In order to run the App run the following commands:
 
 The application was developed with **Python 3.7**, in order to run it make sure to have all dependencies installed.
 
+**Note**: To use `ctcsound` make sure to have [csound](https://csound.com/download.html) installed on your system.
+
 # Installation
 
 ## Simplified installation

@@ -39,3 +39,7 @@ dependencies:
   - xz=5.2.5=h62dcd97_1
   - zlib=1.2.11=h62dcd97_4
   - zstd=1.4.8=h4e2f164_1
+  - pip:
+    - ctcsound==6.14.2
+    - numpy==1.20.1
+    
