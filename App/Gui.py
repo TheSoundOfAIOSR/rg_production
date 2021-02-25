@@ -12,6 +12,7 @@ import json
 from Modules.Audio import Audio
 from Modules.Recording import VoiceRecorder
 from Modules.Playing import player
+from Modules.Sampler import play_sample
 
 class SamplerGUI(App):
     recording = False
@@ -76,6 +77,7 @@ class SamplerGUI(App):
 
     def generateSample(self, event):
         print("Generating New Sample")
+        play_sample()
 
     def playRecording(self, event):
         print("Playing recording:", self.voice.WAVE_OUTPUT_FILENAME)
