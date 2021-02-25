@@ -9,6 +9,8 @@ from kivy.clock import Clock
 import pyaudio
 import wave
 
+from Modules.AudioInterface import AudioInterface
+
 kv = '''
 BoxLayout:
     orientation: 'vertical'
@@ -19,6 +21,11 @@ BoxLayout:
             text: 'Recording'
             on_press: app.testCallback('ToggleRecord')
             on_state: if self.state == 'down': label.status = self.text
+        Button:
+            id: btn2
+            group: 'a'
+            text: 'Play'
+            on_press: app.testCallback('playSample')
     Label:
         id: label
         status: 'Not Recording'
@@ -31,39 +38,16 @@ class AsyncApp(App):
 
     other_task = None
     appStatus = None
+    audio = AudioInterface()
+    devices = audio.devices
 
     def build(self):
-        self.audio = pyaudio.PyAudio()
-        self.stream = None
-        self.RecordFrames = None
-        self.FORMAT = pyaudio.paInt16
-        self.CHANNELS = 1
-        self.RATE = 44100
-        self.CHUNK = 512
-        self.WAVE_OUTPUT_FILENAME = "recordedFile.wav"
-        self.device_index=2
-
         return Builder.load_string(kv)
 
     def testCallback(self, event):
 
         self.appStatus = event
         print("Set appStatus to ", self.appStatus)
-
-    async def saveVoice(self):
-
-        self.stream.stop_stream()
-        self.stream.close()
-        # self.audio.terminate()
-
-        waveFile = wave.open(self.WAVE_OUTPUT_FILENAME, 'wb')
-        waveFile.setnchannels(self.CHANNELS)
-        waveFile.setsampwidth(self.audio.get_sample_size(self.FORMAT))
-        waveFile.setframerate(self.RATE)
-        waveFile.writeframes(b''.join(self.RecordFrames))
-        waveFile.close()
-
-        print("Finished saving")
 
 
     def app_func(self):
@@ -82,20 +66,6 @@ class AsyncApp(App):
 
         return asyncio.gather(run_wrapper(), self.other_task)
 
-    async def recording(self):
-        self.stream = self.audio.open(format=self.FORMAT, channels=self.CHANNELS,
-                                      rate=self.RATE, input=True, input_device_index=1,
-                                      frames_per_buffer=self.CHUNK)
-        self.RecordFrames = []
-        while True:
-            data = self.stream.read(self.CHUNK, exception_on_overflow=False)
-            self.RecordFrames.append(data)
-            await asyncio.sleep(0.0001)
-
-            #
-            # print("Recording Voice")
-        # return
-
     async def waste_time_freely(self):
         recordingStatus = False
         record_task = None
@@ -110,15 +80,15 @@ class AsyncApp(App):
                     if self.appStatus == "ToggleRecord" and not recordingStatus:
                         recordingStatus = True
                         print("Launch record thread")
-                        record_task = asyncio.create_task(self.recording())
-                        # print(dir(record_task))
-                        # record_future = asyncio.ensure_future(self.recording())
+                        record_task = asyncio.create_task(self.audio.recording())
                     elif self.appStatus == "ToggleRecord" and recordingStatus:
                         record_task.cancel()
                         recordingStatus = not recordingStatus
                         print("cancelled recording")
-                        await asyncio.create_task(self.saveVoice())
+                        await asyncio.create_task(self.audio.saveVoice())
                         print("Continuing main loop")
+                    elif self.appStatus == "playSample":
+                        playback_task = asyncio.create_task(self.audio.player('recordedFile.wav', self.devices['out']))
 
                 self.appStatus = None
                 await asyncio.sleep(0.01)
