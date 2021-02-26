@@ -1,20 +1,17 @@
-import os
-import time
-
 import ctcsound
+import os
 
-def play_sample():
-
-  cs = ctcsound.Csound()
-
-  #work_dir = os.getcwd()
-  sample_dir = '../resources/audiodata'
-
-  sample = 'e2.wav'
-  sample_path = os.path.join(sample_dir, sample)
-  print(f"Sample file path: {sample_path}")
-
-  csd = '''
+class CsoundSampler:
+  
+    def __init__(self):
+        print("init Csound")
+        self.cs = ctcsound.Csound()
+        audio_dir =  "../resources/audiodata/"
+        sample = 'e2.wav'
+        self.sample_path = audio_dir + sample
+  
+    def compileAndStart(self):
+        csd = '''
   <CsoundSynthesizer>
 
   <CsOptions>
@@ -68,18 +65,16 @@ def play_sample():
 
 
   '''
-  cs.compileCsdText(csd)
-  cs.start()
+        self.cs.compileCsdText(csd)
+        self.cs.start()
+        self.pt = ctcsound.CsoundPerformanceThread(self.cs.csound())
+        self.pt.play()
 
-  pt = ctcsound.CsoundPerformanceThread(cs.csound())
-  pt.play()
+    def playSample(self):
+        sco = "i 1 0 1 1 " + '\"' + self.sample_path + '\"' 
+        self.cs.readScore(sco) 
 
-  sco = "i 1 0 1 1 " + '\"' + sample_path + '\"' 
-  print(f"sco: {sco}")
-  cs.readScore(sco) 
-  time.sleep(2)
-
-
-  pt.stop()
-  pt.join()
-  cs.reset()
+    def cleanup(self):
+        self.pt.stop()
+        self.pt.join()
+        self.cs.reset()

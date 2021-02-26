@@ -10,6 +10,7 @@ import pyaudio
 import wave
 
 from Modules.AudioInterface import AudioInterface
+from Modules.Sampler import CsoundSampler
 
 kv = '''
 BoxLayout:
@@ -40,6 +41,7 @@ class AsyncApp(App):
     appStatus = None
     audio = AudioInterface()
     devices = audio.devices
+    csound = CsoundSampler()
 
     def build(self):
         return Builder.load_string(kv)
@@ -69,6 +71,8 @@ class AsyncApp(App):
     async def waste_time_freely(self):
         recordingStatus = False
         record_task = None
+
+        self.csound.compileAndStart()
         '''This method is also run by the asyncio loop and periodically prints
         something.
         '''
@@ -88,7 +92,8 @@ class AsyncApp(App):
                         await asyncio.create_task(self.audio.saveVoice())
                         print("Continuing main loop")
                     elif self.appStatus == "playSample":
-                        playback_task = asyncio.create_task(self.audio.player('recordedFile.wav', self.devices['out']))
+                        self.csound.playSample()
+                        # playback_task = asyncio.create_task(self.audio.player('recordedFile.wav', self.devices['out']))
 
                 self.appStatus = None
                 await asyncio.sleep(0.01)
@@ -96,6 +101,7 @@ class AsyncApp(App):
             print('Wasting time was canceled', e)
         finally:
             # when canceled, print that it finished
+            self.csound.cleanup() # csound cleanup function / destructor not sure where I should put it but needs to happen when closing the app
             print('Done wasting time')
 
 
