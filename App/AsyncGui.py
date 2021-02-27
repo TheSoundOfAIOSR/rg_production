@@ -46,7 +46,7 @@ BoxLayout:
         size: 120, 44
         pos_hint: {'center': (.5, .5)}
         text: 'Audio Out'
-        values: [indev["name"] for indev in app.devices["devices"]["output_list"]]
+        values: [outdev["name"] for outdev in app.devices["devices"]["output_list"]]
         on_text:
             print("The spinner {} has text {}".format(self, self.text))
 '''
