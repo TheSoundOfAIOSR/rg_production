@@ -16,7 +16,7 @@ class CsoundSampler:
 
   <CsOptions>
     -d -M0 -o dac -m0
-    -+rtmidi=portmidi
+    -+rtmidi=NULL
     --midi-key-cps=6 --midi-velocity-amp=4
   </CsOptions>
 
@@ -29,23 +29,26 @@ class CsoundSampler:
   massign   0, 1
 
     instr 1 ; Sampler
+
+    ;gSName chnget "gSName"
+    gSName = "name"
     
-    Sname = "/Users/linyanting/Desktop/rg_production/resources/audiodata/e2.wav"
+    printf_i  "Audiofile '%s' does not exist!\n", 1, gSName
     ivol = p4
     ipb = 1
-    inchs = filenchnls(Sname)
+    inchs = filenchnls(gSName)
 
 
     if inchs == 1 then
 
-    aLeft diskin2 Sname, ipb
+    aLeft diskin2 gSName, ipb
     
     aL =  aLeft*p4
     aR = aLeft*p4
 
     else
 
-    aLeft, aRight diskin2 Sname, ipb
+    aLeft, aRight diskin2 gSName, ipb
 
     aL =  aLeft*p4
     aR = aRight*p4
@@ -71,11 +74,13 @@ class CsoundSampler:
   '''
         self.cs.compileCsdText(csd)
         self.cs.start()
+        self.cs.setStringChannel("gSName", self.sample_path)
         self.pt = ctcsound.CsoundPerformanceThread(self.cs.csound())
         self.pt.play()
+        print("path: ", self.sample_path)
 
     def playSample(self):
-        sco = "i 1 0 1 1 " + '\"' + self.sample_path + '\"' 
+        sco = "i 1 0 1 1 " # + '\"' + self.sample_path + '\"' 
         self.cs.readScore(sco) 
 
     def cleanup(self):
