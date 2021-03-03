@@ -6,7 +6,7 @@ class CsoundSampler:
     def __init__(self):
         print("init Csound")
         self.cs = ctcsound.Csound()
-        audio_dir =  "../resources/audiodata/"
+        audio_dir =  "../../resources/audiodata/"
         sample = 'e2.wav'
         self.sample_path = audio_dir + sample
   
@@ -15,7 +15,9 @@ class CsoundSampler:
   <CsoundSynthesizer>
 
   <CsOptions>
-    -d -o dac -m0
+    -d -M0 -o dac -m0
+    -+rtmidi=portmidi
+    --midi-key-cps=6 --midi-velocity-amp=4
   </CsOptions>
 
   <CsInstruments>
@@ -24,9 +26,11 @@ class CsoundSampler:
   nchnls = 2
   0dbfs = 1.0
 
+  massign   0, 1
+
     instr 1 ; Sampler
     
-    Sname = p5
+    Sname = "/Users/linyanting/Desktop/rg_production/resources/audiodata/e2.wav"
     ivol = p4
     ipb = 1
     inchs = filenchnls(Sname)

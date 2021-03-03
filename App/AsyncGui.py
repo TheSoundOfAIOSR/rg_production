@@ -31,6 +31,24 @@ BoxLayout:
         id: label
         status: 'Not Recording'
         text: 'status is "{}"'.format(self.status)
+
+    Spinner:
+        size_hint: None, None
+        size: 120, 44
+        pos_hint: {'center': (.5, .5)}
+        text: 'Audio In'
+        values: [indev["name"] for indev in app.devices["devices"]["input_list"]]
+        on_text:
+            print("The spinner {} has text {}".format(self, self.text))
+
+    Spinner:
+        size_hint: None, None
+        size: 120, 44
+        pos_hint: {'center': (.5, .5)}
+        text: 'Audio Out'
+        values: [outdev["name"] for outdev in app.devices["devices"]["output_list"]]
+        on_text:
+            print("The spinner {} has text {}".format(self, self.text))
 '''
 
 
