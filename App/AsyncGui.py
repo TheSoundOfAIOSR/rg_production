@@ -57,7 +57,7 @@ class AsyncApp(App):
         are finished
         '''
 
-        self.other_task = asyncio.ensure_future(self.waste_time_freely())
+        self.other_task = asyncio.ensure_future(self.main_loop())
 
         async def run_wrapper():
             # we don't actually need to set asyncio as the lib because it is
@@ -68,7 +68,7 @@ class AsyncApp(App):
 
         return asyncio.gather(run_wrapper(), self.other_task)
 
-    async def waste_time_freely(self):
+    async def main_loop(self):
         recordingStatus = False
         record_task = None
 
@@ -80,18 +80,20 @@ class AsyncApp(App):
             i = 0
             while True:
                 if self.root is not None:
-                    # appStatus = self.root.ids.label.status
+
+                    # Selection of actions that the application can dispatch
+                    #   Start or stop the recording depending on application state
                     if self.appStatus == "ToggleRecord" and not recordingStatus:
                         recordingStatus = True
-                        print("Launch record thread")
                         record_task = asyncio.create_task(self.audio.recording())
+
                     elif self.appStatus == "ToggleRecord" and recordingStatus:
                         record_task.cancel()
                         recordingStatus = not recordingStatus
-                        print("cancelled recording")
                         await asyncio.create_task(self.audio.saveVoice())
-                        print("Continuing main loop")
+
                     elif self.appStatus == "playSample":
+                        # f = asyncio.create_task(self.csound.playSample())
                         self.csound.playSample()
                         # playback_task = asyncio.create_task(self.audio.player('recordedFile.wav', self.devices['out']))
 
