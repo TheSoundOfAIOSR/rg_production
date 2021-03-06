@@ -21,7 +21,7 @@ class CsoundSampler:
   <CsOptions>
     -d -M0 -o dac -m0
     -+rtmidi=portmidi
-    --midi-key-cps=6 --midi-velocity-amp=4
+    --midi-key5 --midi-velocity-amp=4
   </CsOptions>
 
   <CsInstruments>
@@ -86,7 +86,7 @@ class CsoundSampler:
         self.pt.play()
 
     def playSample(self):
-        sco = "i 1 0 1 1 " + '\"' + self.sample_path + '\"' + " 40"
+        sco = "i 1 0 1 1 40" # the 40 will be substitued with the value from the Keyboard on screen from gui
 
         self.cs.readScore(sco) 
         print(self.stringPitch2File())
