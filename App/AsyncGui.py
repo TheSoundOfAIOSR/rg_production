@@ -11,6 +11,7 @@ import wave
 
 from Modules.AudioInterface import AudioInterface
 from Modules.Sampler import CsoundSampler
+from Modules.PreprocessingSample import pitchshift
 # from Modules.testSampler import CsoundSampler
 
 kv = '''
@@ -92,6 +93,10 @@ class AsyncApp(App):
         record_task = None
 
         self.csound.compileAndStart()
+
+        sample = self.csound.sample_path
+
+        pitchshift(sample, 24)
         '''This method is also run by the asyncio loop and periodically prints
         something.
         '''
@@ -122,11 +127,12 @@ class AsyncApp(App):
             print('Wasting time was canceled', e)
         finally:
             # when canceled, print that it finished
-            self.csound.cleanup() # csound cleanup function / destructor not sure where I should put it but needs to happen when closing the app
+            #self.csound.cleanup() # csound cleanup function / destructor not sure where I should put it but needs to happen when closing the app
             print('Done wasting time')
 
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     loop.run_until_complete(AsyncApp().app_func())
+    #self.csound.cleanup()
     loop.close()
