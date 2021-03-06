@@ -11,6 +11,7 @@ import wave
 
 from Modules.AudioInterface import AudioInterface
 from Modules.Sampler import CsoundSampler
+# from Modules.testSampler import CsoundSampler
 
 kv = '''
 BoxLayout:
