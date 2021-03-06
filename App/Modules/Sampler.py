@@ -13,14 +13,14 @@ class CsoundSampler:
   
     def compileAndStart(self):
         print("Starting Sampler")
-        csd = '''
+        csd = f'''
 
   <CsoundSynthesizer>
 
   <CsOptions>
     -d -M0 -o dac -m0
-    -+rtmidi=NULL
-    --midi-key-cps=5 --midi-velocity-amp=4
+    -+rtmidi=portmidi
+    --midi-key-cps=6 --midi-velocity-amp=4
   </CsOptions>
 
   <CsInstruments>
@@ -36,8 +36,8 @@ class CsoundSampler:
     SName chnget "gSName"
     ;Sname = "{self.sample_path}"
 
-    iNum = p5
-    ;{self.stringPitch2File()}
+    iNum notnum
+    {self.stringPitch2File()}
 
 
     ivol = p4
@@ -105,7 +105,7 @@ class CsoundSampler:
 
       for i in range(0, 24):
         root = 40 # e2 is 40
-        s += f'''
+        s = f'''
          if iNum == {i+root} then
           Sname = "{self.audio_dir}{i + root}.wav"
         '''
