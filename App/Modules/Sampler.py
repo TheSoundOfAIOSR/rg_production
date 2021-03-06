@@ -6,9 +6,9 @@ class CsoundSampler:
     def __init__(self):
         print("init Csound")
         self.cs = ctcsound.Csound()
-        # self.audio_dir =  "../resources/audiodata/"
-        self.audio_dir = "/Users/leofltt/Documents/Github/rg_production/resources/audiodata/"
-        sample = "42.wav"
+        self.audio_dir =  "../resources/audiodata/"
+        #self.audio_dir = "/Users/leofltt/Documents/Github/rg_production/resources/audiodata/"
+        sample = "40.wav"
         self.sample_path = self.audio_dir + sample
         
   
@@ -25,7 +25,7 @@ class CsoundSampler:
   </CsOptions>
 
   <CsInstruments>
-  sr = 22000
+  sr = 44100
   ksmps = 32
   nchnls = 2
   0dbfs = 1.0
