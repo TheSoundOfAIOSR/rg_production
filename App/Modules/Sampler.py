@@ -6,12 +6,15 @@ class CsoundSampler:
     def __init__(self):
         print("init Csound")
         self.cs = ctcsound.Csound()
-        audio_dir =  "../../resources/audiodata/"
-        sample = 'e2.wav'
+        audio_dir =  "../resources/audiodata/"
+        sample = "e2.wav"
         self.sample_path = audio_dir + sample
+        
   
     def compileAndStart(self):
+        print("Starting Sampler")
         csd = '''
+
   <CsoundSynthesizer>
 
   <CsOptions>
@@ -26,29 +29,29 @@ class CsoundSampler:
   nchnls = 2
   0dbfs = 1.0
 
-  massign   0, 1
+  massign 0, 1
 
     instr 1 ; Sampler
 
-    ;gSName chnget "gSName"
-    gSName = "name"
-    
-    printf_i  "Audiofile '%s' does not exist!\n", 1, gSName
+    SName chnget "gSName"
+
+    printf_i "Audiofile '%s' does not exist!", 1, SName
+
     ivol = p4
     ipb = 1
-    inchs = filenchnls(gSName)
+    inchs = filenchnls(SName)
 
 
     if inchs == 1 then
 
-    aLeft diskin2 gSName, ipb
+    aLeft diskin2 SName, ipb
     
-    aL =  aLeft*p4
+    aL = aLeft*p4
     aR = aLeft*p4
 
     else
 
-    aLeft, aRight diskin2 gSName, ipb
+    aLeft, aRight diskin2 SName, ipb
 
     aL =  aLeft*p4
     aR = aRight*p4
@@ -72,15 +75,16 @@ class CsoundSampler:
 
 
   '''
+        self.cs.setStringChannel("gSName", self.sample_path)
         self.cs.compileCsdText(csd)
         self.cs.start()
-        self.cs.setStringChannel("gSName", self.sample_path)
         self.pt = ctcsound.CsoundPerformanceThread(self.cs.csound())
         self.pt.play()
         print("path: ", self.sample_path)
 
     def playSample(self):
-        sco = "i 1 0 1 1 " # + '\"' + self.sample_path + '\"' 
+        sco = "i 1 0 1 1 " + '\"' + self.sample_path + '\"' 
+
         self.cs.readScore(sco) 
 
     def cleanup(self):
