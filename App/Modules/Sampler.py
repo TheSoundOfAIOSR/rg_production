@@ -6,8 +6,9 @@ class CsoundSampler:
     def __init__(self):
         print("init Csound")
         self.cs = ctcsound.Csound()
-        self.audio_dir =  "../resources/audiodata/"
-        sample = "e2.wav"
+        # self.audio_dir =  "../resources/audiodata/"
+        self.audio_dir = "/Users/linyanting/Desktop/rg_production/resources/audiodata/"
+        sample = "42.wav"
         self.sample_path = self.audio_dir + sample
         
   
@@ -33,8 +34,8 @@ class CsoundSampler:
 
     instr 1 ; Sampler
 
-    SName chnget "gSName"
-    ;Sname = "{self.sample_path}"
+    ;Sname chnget "gSname"
+    Sname = "{self.sample_path}"
 
     iNum notnum
     {self.stringPitch2File()}
@@ -42,19 +43,19 @@ class CsoundSampler:
 
     ivol = p4
     ipb = 1
-    inchs = filenchnls(SName)
+    inchs = filenchnls(Sname)
 
 
     if inchs == 1 then
 
-    aLeft diskin2 SName, ipb
+    aLeft diskin2 Sname, ipb
     
     aL = aLeft*p4
     aR = aLeft*p4
 
     else
 
-    aLeft, aRight diskin2 SName, ipb
+    aLeft, aRight diskin2 Sname, ipb
 
     aL =  aLeft*p4
     aR = aRight*p4
@@ -78,16 +79,17 @@ class CsoundSampler:
 
 
   '''
-        self.cs.setStringChannel("gSName", self.sample_path)
+        self.cs.setStringChannel("gSname", self.sample_path)
         self.cs.compileCsdText(csd)
         self.cs.start()
         self.pt = ctcsound.CsoundPerformanceThread(self.cs.csound())
         self.pt.play()
 
     def playSample(self):
-        sco = "i 1 0 1 1 " + '\"' + self.sample_path + '\"' 
+        sco = "i 1 0 1 1 " + '\"' + self.sample_path + '\"' + " 40"
 
         self.cs.readScore(sco) 
+        print(self.stringPitch2File())
 
     def cleanup(self):
         self.pt.stop()
@@ -98,16 +100,17 @@ class CsoundSampler:
 
     # 
     def stringPitch2File(self):
-      # s = f'''
-      # if iNum == 48 then
-      # Sname = "{self.sample_path}"
-      # '''
+      s = f'''
+      if iNum == 40 then
+      Sname = "{self.sample_path}"
+      '''
 
       for i in range(0, 24):
-        root = 40 # e2 is 40
-        s = f'''
-         if iNum == {i+root} then
-          Sname = "{self.audio_dir}{i + root}.wav"
+        root = 40-12 # e2 is 40
+        note = i + root
+        s += f'''
+         elseif iNum == {note} then
+          Sname = "{self.audio_dir}{note}.wav"
         '''
 
       s += "endif\n"

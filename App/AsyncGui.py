@@ -96,7 +96,7 @@ class AsyncApp(App):
 
         sample = self.csound.sample_path
 
-        pitchshift(sample, 24)
+        pitchshift(self.csound.audio_dir, sample, 24)
         '''This method is also run by the asyncio loop and periodically prints
         something.
         '''
