@@ -5,7 +5,7 @@ from scipy.io.wavfile import write
 def pitchshift(folder,file,shifts=24):
     print('loading audio')
     y,sr = librosa.load(file)  #y for audio and sr for samplerate
-    librosa.resample(y,22050,44100)
+    librosa.resample(y,sr,44100)
     print('shifting pitch')
     root = 40 # e2 is 40
     for i in range(0 - shifts//2,(shifts//2)+1):
