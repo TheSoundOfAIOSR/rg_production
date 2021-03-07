@@ -1,15 +1,23 @@
 import ctcsound
 import os
+# import pathlib
 
 class CsoundSampler:
   
     def __init__(self):
         print("init Csound")
         self.cs = ctcsound.Csound()
-        self.audio_dir =  "../resources/audiodata/"
+        self.audio_dir = os.path.realpath("../resources/audiodata")
+        # print("==============================")
+        # print(self.audio_dir)
+        # print("==============================")
+        # self.audio_dir = str(pathlib.Path("../resources/audiodata").absolute())
+        # self.audio_dir =  "../resources/audiodata/"
+        # self.audio_dir =  "/Users/linyanting/Desktop/rg_production/resources/audiodata/"
         #self.audio_dir = "/Users/leofltt/Documents/Github/rg_production/resources/audiodata/"
-        sample = "40.wav"
-        self.sample_path = self.audio_dir + sample
+        sample = "e2.wav"
+        self.sample_path = os.path.join(self.audio_dir, sample)
+        # self.sample_path = self.audio_dir + sample
         
   
     def compileAndStart(self):
@@ -89,7 +97,7 @@ class CsoundSampler:
         sco = "i 1 0 1 1 40" # the 40 will be substitued with the value from the Keyboard on screen from gui
 
         self.cs.readScore(sco) 
-        print(self.stringPitch2File())
+        # print(self.stringPitch2File())
 
     def cleanup(self):
         self.pt.stop()
@@ -110,7 +118,8 @@ class CsoundSampler:
         note = i + root
         s += f'''
          elseif iNum == {note} then
-          Sname = "{self.audio_dir}{note}.wav"
+          Sname = "{os.path.join(self.audio_dir, f"{note}.wav")}"
+          ;Sname = "{self.audio_dir}{note}.wav"
         '''
 
       s += "endif\n"

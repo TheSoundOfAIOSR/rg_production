@@ -1,4 +1,5 @@
 import librosa
+import os
 from scipy.io.wavfile import write
 
 
@@ -10,5 +11,6 @@ def pitchshift(folder,file,shifts=24):
     root = 40 # e2 is 40
     for i in range(0 - shifts//2,(shifts//2)+1):
         y_shift = librosa.effects.pitch_shift(y,sr,i,bins_per_octave=12)
+        write(os.path.join(folder, f"{root+i}.wav"), sr, y_shift) 
         #write("{}{}.wav".format(folder, i+root), y_shift, sr)
-        write(f'{root+i}.wav', sr, y_shift) 
+        # write(f'{folder}/{root+i}.wav', sr, y_shift) 
