@@ -42,8 +42,8 @@ class CsoundSampler:
 
     instr 1 ; Sampler
 
-    ;Sname chnget "gSname"
-    Sname = "{self.sample_path}"
+    Sname chnget "gSname"
+    ;Sname = "{self.sample_path}"
 
     iNum notnum
     {self.stringPitch2File()}

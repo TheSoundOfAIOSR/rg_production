@@ -29,6 +29,7 @@ BoxLayout:
             group: 'a'
             text: 'Play'
             on_press: app.testCallback('playSample')
+            on_state: if self.state == 'down': label.status = self.text
     Label:
         id: label
         status: 'Not Recording'
