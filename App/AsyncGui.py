@@ -73,7 +73,7 @@ class AsyncApp(App):
                     #   Start or stop the recording depending on application state
                     if self.appStatus == "ToggleRecord" and not recordingStatus:
                         recordingStatus = True
-                        record_task = asyncio.create_task(self.audio.capture_and_playback())
+                        record_task = asyncio.create_task(self.audio.capture_and_playback(buffersize=256))
 
                     elif self.appStatus == "ToggleRecord" and recordingStatus:
                         record_task.cancel()
