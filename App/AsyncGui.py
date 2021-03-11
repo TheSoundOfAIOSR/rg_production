@@ -56,11 +56,11 @@ class AsyncApp(App):
         recordingStatus = False
         record_task = None
 
-        self.csound.compileAndStart()
+        # self.csound.compileAndStart()
+        #
+        # sample = self.csound.sample_path
 
-        sample = self.csound.sample_path
-
-        pitchshift(self.csound.audio_dir, sample, 24)
+        # pitchshift(self.csound.audio_dir, sample, 24)
         '''This method is also run by the asyncio loop and periodically prints
         something.
         '''
@@ -73,16 +73,17 @@ class AsyncApp(App):
                     #   Start or stop the recording depending on application state
                     if self.appStatus == "ToggleRecord" and not recordingStatus:
                         recordingStatus = True
-                        record_task = asyncio.create_task(self.audio.recording())
+                        record_task = asyncio.create_task(self.audio.capture_and_playback())
 
                     elif self.appStatus == "ToggleRecord" and recordingStatus:
                         record_task.cancel()
                         recordingStatus = not recordingStatus
-                        await asyncio.create_task(self.audio.saveVoice())
+                        # await asyncio.create_task(self.audio.saveVoice())
 
                     elif self.appStatus == "playSample":
+                        pass
                         # f = asyncio.create_task(self.csound.playSample())
-                        self.csound.playSample()
+                        # self.csound.playSample()
                         # playback_task = asyncio.create_task(self.audio.player('recordedFile.wav', self.devices['out']))
 
                 self.appStatus = None
