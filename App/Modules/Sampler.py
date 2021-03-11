@@ -94,7 +94,7 @@ class CsoundSampler:
         self.pt = ctcsound.CsoundPerformanceThread(self.cs.csound())
         self.pt.play()
 
-    def playSample(self, pitch):
+    def playSample(self, pitch=48):
         # sco = "i 1 0 1 1 40" # the 40 will be substitued with the value from the Keyboard on screen from gui
         sco = f"i 1 0 1 1 {pitch}"
 
