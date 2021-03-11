@@ -10,7 +10,7 @@
         pos: 20, 480
         border: (0, 0, 0, 0)
         id: record
-        on_press: app.testCallback('ToggleRecord')
+        on_press: app.nextEvent('ToggleRecord')
         background_normal: 'assets\RECORD.png'
         background_down: 'assets\RECORD2.png'
 
@@ -126,7 +126,7 @@
         text: 'play'
         pos: 20,340
         size: 100, 50
-        on_press:app.testCallback('playSample')
+        on_press:app.nextEvent('playSample')
 
     ToggleButton:
         id: loop

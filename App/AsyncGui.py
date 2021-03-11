@@ -31,7 +31,7 @@ class AsyncApp(App):
     def build(self):
         return Graphics()
 
-    def testCallback(self, event):
+    def nextEvent(self, event):
 
         self.appStatus = event
         print("Set appStatus to ", self.appStatus)
