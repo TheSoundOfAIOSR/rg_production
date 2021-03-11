@@ -118,7 +118,9 @@ class AsyncApp(App):
 
                     elif self.appStatus == "playSample":
                         # f = asyncio.create_task(self.csound.playSample())
-                        self.csound.playSample()
+                        # self.csound.playSample()
+                        pitch = 30
+                        self.csound.playSample(pitch)
                         # playback_task = asyncio.create_task(self.audio.player('recordedFile.wav', self.devices['out']))
 
                 self.appStatus = None

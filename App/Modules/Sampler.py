@@ -46,6 +46,7 @@ class CsoundSampler:
     Sname = "{self.sample_path}"
 
     iNum notnum
+    iNum = p5
     {self.stringPitch2File()}
 
 
@@ -93,8 +94,9 @@ class CsoundSampler:
         self.pt = ctcsound.CsoundPerformanceThread(self.cs.csound())
         self.pt.play()
 
-    def playSample(self):
-        sco = "i 1 0 1 1 40" # the 40 will be substitued with the value from the Keyboard on screen from gui
+    def playSample(self, pitch):
+        # sco = "i 1 0 1 1 40" # the 40 will be substitued with the value from the Keyboard on screen from gui
+        sco = f"i 1 0 1 1 {pitch}"
 
         self.cs.readScore(sco) 
         # print(self.stringPitch2File())
