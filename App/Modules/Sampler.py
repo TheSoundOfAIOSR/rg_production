@@ -21,7 +21,7 @@ class CsoundSampler:
 
   <CsOptions>
     -d -M0 -o dac1 -m0
-    -+rtmidi=portmidi
+    -+rtmidi=NULL
     --midi-key=5 --midi-velocity-amp=4
   </CsOptions>
 
