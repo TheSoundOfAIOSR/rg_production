@@ -9,7 +9,7 @@ class CsoundSampler:
         self.cs = ctcsound.Csound()
         current_dir_path = pathlib.Path(pathlib.Path.cwd())
         sample = "e2.wav"
-        self.audio_dir = current_dir_path.joinpath("generated_sample/")
+        self.audio_dir = current_dir_path.joinpath("generated_sample")
         self.sample_path = self.audio_dir.joinpath(sample)
         print(f"Sample loaded: {self.sample_path}")
 
