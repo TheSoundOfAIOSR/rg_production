@@ -34,8 +34,8 @@ class CsoundSampler:
 
     instr 1 ; Sampler
 
-    Sname chnget "gSname"
-    ;Sname = "{self.sample_path}" 
+    ;Sname chnget "gSname"
+    Sname = "{self.sample_path}" 
 
     iNum notnum
     iNum = p5
@@ -80,7 +80,7 @@ class CsoundSampler:
 
 
   '''
-        self.cs.setStringChannel("gSname", self.sample_path)
+        # self.cs.setStringChannel("gSname", self.sample_path)
         self.cs.compileCsdText(csd)
         self.cs.start()
         self.pt = ctcsound.CsoundPerformanceThread(self.cs.csound())
@@ -102,13 +102,15 @@ class CsoundSampler:
 
     # 
     def stringPitch2File(self):
+
+      root = 40
       s = f'''
-      if iNum == 40 then
+      if iNum == {root} then
       Sname = "{self.sample_path}"
       '''
 
       for i in range(0, 24):
-        root = 40-12 # e2 is 40
+        root_minus_oneoctave = root -12 # e2 is 40
         note = i + root
         s += f'''
          elseif iNum == {note} then
