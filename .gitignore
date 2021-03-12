@@ -138,6 +138,7 @@ dmypy.json
 .pyre/
 
 # Audio files
+*.wav
 *.mp3
 
 # macOS
