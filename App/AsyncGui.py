@@ -56,11 +56,11 @@ class AsyncApp(App):
         recordingStatus = False
         record_task = None
 
-        # self.csound.compileAndStart()
-        #
-        # sample = self.csound.sample_path
+        self.csound.compileAndStart()
+        
+        sample = self.csound.sample_path
 
-        # pitchshift(self.csound.audio_dir, sample, 24)
+        pitchshift(self.csound.audio_dir,sample, 24)
         '''This method is also run by the asyncio loop and periodically prints
         something.
         '''
@@ -99,5 +99,4 @@ class AsyncApp(App):
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     loop.run_until_complete(AsyncApp().app_func())
-    # self.csound.cleanup()
     loop.close()

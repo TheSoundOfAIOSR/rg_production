@@ -9,7 +9,8 @@ class CsoundSampler:
         self.cs = ctcsound.Csound()
         current_dir_path = pathlib.Path(pathlib.Path.cwd())
         sample = "e2.wav"
-        self.sample_path = current_dir_path.joinpath("resources/audiodata", sample)
+        self.audio_dir = current_dir_path.joinpath("generated_sample/")
+        self.sample_path = self.audio_dir.joinpath(sample)
         print(f"Sample loaded: {self.sample_path}")
 
     def compileAndStart(self):
@@ -19,7 +20,7 @@ class CsoundSampler:
   <CsoundSynthesizer>
 
   <CsOptions>
-    -d -M0 -o dac -m0
+    -d -M0 -o dac1 -m0
     -+rtmidi=portmidi
     --midi-key=5 --midi-velocity-amp=4
   </CsOptions>
