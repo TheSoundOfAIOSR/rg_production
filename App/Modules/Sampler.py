@@ -1,13 +1,14 @@
 import ctcsound
 import os
 import pathlib
+from sys import platform 
 
 class CsoundSampler:
   
     def __init__(self):
         print("init Csound")
         self.cs = ctcsound.Csound()
-        current_dir_path = pathlib.Path(pathlib.Path.cwd())
+        current_dir_path = pathlib.PurePath(pathlib.Path.cwd())
         sample = "e2.wav"
         self.audio_dir = current_dir_path.joinpath("generated_sample")
         self.sample_path = self.audio_dir.joinpath(sample)
