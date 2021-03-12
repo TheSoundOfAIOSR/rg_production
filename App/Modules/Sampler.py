@@ -1,25 +1,17 @@
 import ctcsound
 import os
-# import pathlib
+import pathlib
 
 class CsoundSampler:
   
     def __init__(self):
         print("init Csound")
         self.cs = ctcsound.Csound()
-        self.audio_dir = os.path.realpath("../resources/audiodata")
-        # print("==============================")
-        # print(self.audio_dir)
-        # print("==============================")
-        # self.audio_dir = str(pathlib.Path("../resources/audiodata").absolute())
-        # self.audio_dir =  "../resources/audiodata/"
-        # self.audio_dir =  "/Users/linyanting/Desktop/rg_production/resources/audiodata/"
-        #self.audio_dir = "/Users/leofltt/Documents/Github/rg_production/resources/audiodata/"
+        current_dir_path = pathlib.Path(pathlib.Path.cwd())
         sample = "e2.wav"
-        self.sample_path = os.path.join(self.audio_dir, sample)
-        # self.sample_path = self.audio_dir + sample
-        
-  
+        self.sample_path = current_dir_path.joinpath("resources/audiodata", sample)
+        print(f"Sample loaded: {self.sample_path}")
+
     def compileAndStart(self):
         print("Starting Sampler")
         csd = f'''
@@ -42,8 +34,8 @@ class CsoundSampler:
 
     instr 1 ; Sampler
 
-    ;Sname chnget "gSname"
-    Sname = "{self.sample_path}"
+    Sname chnget "gSname"
+    ;Sname = "{self.sample_path}" 
 
     iNum notnum
     iNum = p5
@@ -127,3 +119,6 @@ class CsoundSampler:
       s += "endif\n"
 
       return s
+
+if __name__ == '__main__':
+  cs = CsoundSampler()
