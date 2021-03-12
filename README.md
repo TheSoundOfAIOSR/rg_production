@@ -14,7 +14,13 @@ The application was developed with **Python 3.7**, in order to run it make sure 
 
 # Installation
 
-## Simplified installation
+## CSound Installation
+
+The sampler runs using the CSound library which needs to be installed here:
+
+    https://csound.com/download.html
+
+## Simplified Python installation
 
 To set up the conda venv run the following commands:
 
@@ -22,7 +28,7 @@ To set up the conda venv run the following commands:
     conda activate osr
 
 
-## Manual installation
+## Manual Python installation
 ### Setting Up virtual environment
 
 #### Python venv module
