@@ -1,0 +1,213 @@
+<Graphics>
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'background.png'
+
+    ToggleButton:
+        size: 100, 100
+        pos: 20, 480
+        border: (0, 0, 0, 0)
+        id: record
+        on_press: app.nextEvent('ToggleRecord')
+        background_normal: 'assets\RECORD.png'
+        background_down: 'assets\RECORD2.png'
+
+    GridLayout:
+        cols: 8
+        pos: 150, 490
+        size: 200, 100
+        Slider:
+            id: s1
+            orientation: 'vertical'
+            min: 0
+            max: 1
+        Slider:
+            id: s2
+            orientation: 'vertical'
+            min: 0
+            max: 1
+        Slider:
+            id: s3
+            orientation: 'vertical'
+            min: 0
+            max: 1
+        Slider:
+            id: s4
+            orientation: 'vertical'
+            min: 0
+            max: 1
+        Slider:
+            id: s5
+            orientation: 'vertical'
+            min: 0
+            max: 1
+        Slider:
+            id: s6
+            orientation: 'vertical'
+            min: 0
+            max: 1
+        Slider:
+            id: s7
+            orientation: 'vertical'
+            min: 0
+            max: 1
+        Slider:
+            id: s8
+            orientation: 'vertical'
+            min: 0
+            max: 1
+
+    GridLayout:
+        cols: 8
+        pos: 150, 430
+        size: 200, 100
+        Label:
+            text: "a"
+        Label:
+            text: "b"
+        Label:
+            text: "c"
+        Label:
+            text: "d"
+        Label:
+            text: "e"
+        Label:
+            text: "f"
+        Label:
+            text: "g"
+        Label:
+            text: "h"
+
+    Button:
+        id: generate
+        text: 'Generate'
+        pos: 380,480
+        size: 100, 100
+        on_press: lab.text = "Generating with values {},{},{},{},{},{},{},{}".format(round(s1.value,1),round(s2.value,1),round(s3.value,1),round(s4.value,1),round(s5.value,1),round(s6.value,1),round(s7.value,1),round(s8.value,1))
+
+    Button:
+        id: export
+        text: 'Export'
+        pos: 500,480
+        size: 100, 100
+        on_press: lab.text = "Exporting"
+
+    GridLayout:
+        rows: 3
+        pos: 620, 480
+        size: 160, 100
+        Spinner:
+            text: 'Audio Input'
+            values: [indev["name"] for indev in app.devices["devices"]["input_list"]]
+            on_text:
+                print("The spinner {} has text {}".format(self, self.text))
+        Spinner:
+            text: 'Audio Output'
+            values: [outdev["name"] for outdev in app.devices["devices"]["output_list"]]
+            on_text:
+                print("The spinner {} has text {}".format(self, self.text))
+        Spinner:
+            text: 'Midi Input'
+            values: ['A','B','C']
+            on_text:
+                print("The spinner {} has text {}".format(self, self.text))
+
+    Label:
+        id: lab
+        pos: 350, 384
+        text: "Text goes here"
+        color: .8,.8,.8,1
+        font_size: 12
+
+    Button:
+        id: play
+        text: 'play'
+        pos: 20,340
+        size: 100, 50
+        on_press:app.nextEvent('playSample')
+
+    ToggleButton:
+        id: loop
+        text: 'loop'
+        pos: 20,290
+        size: 100, 50
+        on_press: print("Exporting")
+
+    Image:
+        source: ''
+        pos: 150, 280
+        size: self.texture_size
+
+    GridLayout:
+        rows: 3
+        pos:  20, 170
+        size: 160, 100
+        spacing: [0, 5]
+
+        Knob:
+            size: 80, 80
+            min: 0
+            max: 100
+            step: 1
+            value: 0
+            knobimg_source: "assets/knob_black.png"
+            show_label: True  # Show central label
+            show_marker: False  # Do not show surrounding marker
+
+        Knob:
+            size: 80, 80
+            min: 0
+            max: 100
+            step: 1
+            value: 0
+            knobimg_source: "assets/knob_black.png"
+            show_label: True  # Show central label
+            show_marker: False  # Do not show surrounding marker
+
+        Knob:
+            size: 80, 80
+            min: 0
+            max: 100
+            step: 1
+            value: 0
+            knobimg_source: "assets/knob_black.png"
+            show_label: True  # Show central label
+            show_marker: False  # Do not show surrounding marker
+
+    GridLayout:
+        rows: 3
+        pos:  700, 170
+        size: 160, 100
+        spacing: [0, 5]
+
+        Knob:
+            size: 80, 80
+            min: 0
+            max: 100
+            step: 1
+            value: 0
+            knobimg_source: "assets/knob_black.png"
+            show_label: True  # Show central label
+            show_marker: False  # Do not show surrounding marker
+
+        Knob:
+            size: 80, 80
+            min: 0
+            max: 100
+            step: 1
+            value: 0
+            knobimg_source: "assets/knob_black.png"
+            show_label: True  # Show central label
+            show_marker: False  # Do not show surrounding marker
+
+        Knob:
+            size: 80, 80
+            min: 0
+            max: 100
+            step: 1
+            value: 0
+            knobimg_source: "assets/knob_black.png"
+            show_label: True  # Show central label
+            show_marker: False  # Do not show surrounding marker
