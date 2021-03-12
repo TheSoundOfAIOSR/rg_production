@@ -1,4 +1,5 @@
 kivy==2.0.0
-PyAudio==0.2.11
+sounddevice==0.4.1
+Kivy-Garden==0.1.4
 ctcsound==6.14.2
 librosa
