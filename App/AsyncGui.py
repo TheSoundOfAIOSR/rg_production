@@ -52,7 +52,7 @@ class AsyncApp(App):
                 if dev in outdev.values():
                     self.devices["out"] = outdev
                     # self.csound.cleanup()
-                    # self.csound.setOutput(self.devices["out"]["id"])
+                    # self.csound.set_output(self.devices["out"]["id"])
                     # self.csound.compile_and_start()
                     print(self.devices["out"])
 
