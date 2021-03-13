@@ -14,7 +14,7 @@ Config.set('graphics', 'resizable', False)
 
 from Modules.AudioInterface import AudioInterface
 from Modules.Sampler import CsoundSampler
-from Modules.PreprocessingSample import pitchshift
+#from Modules.PreprocessingSample import pitchshift
 
 # from Modules.testSampler import CsoundSampler
 
@@ -49,9 +49,12 @@ class AsyncApp(App):
         if "-->>output_device" in selected_device:
             output_list = self.devices["devices"]["output_list"]
             for outdev in output_list:
-                if dev in outdev.values(): self.devices["out"] = outdev; print(self.devices["out"])
-
-
+                if dev in outdev.values():
+                    self.devices["out"] = outdev
+                    # self.csound.cleanup()
+                    # self.csound.setOutput(self.devices["out"]["id"])
+                    # self.csound.compile_and_start()
+                    print(self.devices["out"])
 
         print(selected_device)
 
@@ -75,13 +78,13 @@ class AsyncApp(App):
         recordingStatus = False
         record_task = None
 
-        self.csound.setOutput()
-        self.csound.setMidi()
-        self.csound.compileAndStart()
+        self.csound.set_output()
+        self.csound.set_midi()
+        self.csound.compile_and_start()
         
         sample = self.csound.sample_path
 
-        pitchshift(self.csound.audio_dir,sample, 24)
+        # pitchshift(self.csound.audio_dir,sample, 24)
         '''This method is also run by the asyncio loop and periodically prints
         something.
         '''

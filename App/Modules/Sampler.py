@@ -37,7 +37,7 @@ class CsoundSampler:
 
     iNum notnum
     iNum = p5
-    {self.stringPitch2File()}
+    {self.string_pitch_to_file()}
 
 
     ivol = p4
@@ -79,14 +79,14 @@ class CsoundSampler:
 
   '''
 
-    def setOutput(self,output=0):
+    def set_output(self,output=0):
         self.cs.setOption(f"-odac{output}")
 
-    def setMidi(self,midi='NULL'):
+    def set_midi(self,midi='NULL'):
         self.cs.setOption(f"-+rtmidi={midi}")
 
 
-    def compileAndStart(self):
+    def compile_and_start(self):
         print("Starting Sampler")
 
         # self.cs.setStringChannel("gSname", self.sample_path)
@@ -95,7 +95,7 @@ class CsoundSampler:
         self.pt = ctcsound.CsoundPerformanceThread(self.cs.csound())
         self.pt.play()
 
-    def playSample(self, pitch=48):
+    def play_sample(self, pitch=48):
         # sco = "i 1 0 1 1 40" # the 40 will be substitued with the value from the Keyboard on screen from gui
         sco = f"i 1 0 1 1 {pitch}"
 
@@ -111,7 +111,7 @@ class CsoundSampler:
 # ==============================
 
     # 
-    def stringPitch2File(self):
+    def string_pitch_to_file(self):
 
       root = 40
       s = f'''
