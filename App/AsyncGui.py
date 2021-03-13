@@ -44,8 +44,11 @@ class AsyncApp(App):
         if "-->>input_device" in selected_device:
             input_list = self.devices["devices"]["input_list"]
             for indev in input_list:
-                if dev in indev.values(): self.devices["in"] = indev; print(self.devices["in"])
+                if dev in indev.values(): 
+                    self.devices["in"] = indev
+                    print(self.devices["in"])
 
+        # handling output
         if "-->>output_device" in selected_device:
             output_list = self.devices["devices"]["output_list"]
             for outdev in output_list:
