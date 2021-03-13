@@ -3,3 +3,4 @@ sounddevice==0.4.1
 Kivy-Garden==0.1.4
 ctcsound==6.14.2
 librosa
+kivy-garden
