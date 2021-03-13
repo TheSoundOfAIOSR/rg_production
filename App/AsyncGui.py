@@ -88,6 +88,7 @@ class AsyncApp(App):
             # we don't actually need to set asyncio as the lib because it is
             # the default, but it doesn't hurt to be explicit
             await self.async_run(async_lib='asyncio')
+            self.csound.cleanup() # before terminating the app, do the cleanup for Csound 
             print('App done')
             self.other_task.cancel()
 
@@ -135,7 +136,6 @@ class AsyncApp(App):
             print('Wasting time was canceled', e)
         finally:
             # when canceled, print that it finished
-            # self.csound.cleanup() # csound cleanup function / destructor not sure where I should put it but needs to happen when closing the app
             print('Done wasting time')
 
 
