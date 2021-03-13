@@ -18,8 +18,9 @@ class CsoundSampler:
   <CsoundSynthesizer>
 
   <CsOptions>
-    -d -M0 -m0
-    --midi-key=5 --midi-velocity-amp=4
+    -d -m0
+   ; -M0
+   ; --midi-key=5 --midi-velocity-amp=4
   </CsOptions>
 
   <CsInstruments>
@@ -28,14 +29,14 @@ class CsoundSampler:
   nchnls = 2
   0dbfs = 1.0
 
-  massign 0, 1
+  ;massign 0, 1
 
     instr 1 ; Sampler
 
     ;Sname chnget "gSname"
     Sname = "{self.sample_path}" 
 
-    iNum notnum
+    ;iNum notnum
     iNum = p5
     {self.string_pitch_to_file()}
 
@@ -82,8 +83,11 @@ class CsoundSampler:
     def set_output(self,output=0):
         self.cs.setOption(f"-odac{output}")
 
-    def set_midi(self,midi='NULL'):
-        self.cs.setOption(f"-+rtmidi={midi}")
+    def set_midi(self):
+        self.cs.setOption(" -M0 ")
+        self.cs.setOption(" --midi-key=5 ")
+        self.cs.setOption("--midi-velocity-amp=4")
+        self.cs.setOption(f"-+rtmidi=NULL")
 
 
     def compile_and_start(self):

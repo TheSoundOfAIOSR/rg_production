@@ -99,7 +99,7 @@ class AsyncApp(App):
         record_task = None
 
         self.csound.set_output()
-        self.csound.set_midi()
+        # self.csound.set_midi()
         self.csound.compile_and_start()
         
         sample = self.csound.sample_path
