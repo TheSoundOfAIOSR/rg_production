@@ -13,10 +13,7 @@ class CsoundSampler:
         self.audio_dir = current_dir_path.joinpath("generated_sample")
         self.sample_path = self.audio_dir.joinpath(sample)
         print(f"Sample loaded: {self.sample_path}")
-
-    def compileAndStart(self):
-        print("Starting Sampler")
-        csd = f'''
+        self.csd = f'''
 
   <CsoundSynthesizer>
 
@@ -82,8 +79,19 @@ class CsoundSampler:
 
 
   '''
+
+    def setOutput(self,output=0):
+        self.cs.setOption(f"-odac{output}")
+
+    def setMidi(self,midi=0):
+        self.cs.setOption(f"-+rtmidi={midi}")
+
+
+    def compileAndStart(self):
+        print("Starting Sampler")
+
         # self.cs.setStringChannel("gSname", self.sample_path)
-        self.cs.compileCsdText(csd)
+        self.cs.compileCsdText(self.csd)
         self.cs.start()
         self.pt = ctcsound.CsoundPerformanceThread(self.cs.csound())
         self.pt.play()
@@ -98,6 +106,7 @@ class CsoundSampler:
     def cleanup(self):
         self.pt.stop()
         self.pt.join()
+        self.cs.cleanup()
         self.cs.reset()
     
 # ==============================
@@ -112,8 +121,8 @@ class CsoundSampler:
       '''
 
       for i in range(0, 24):
-        root_minus_oneoctave = root -12 # e2 is 40
-        note = i + root
+        root_minus_octave = root -12 # e2 is 40
+        note = i + root_minus_octave
         s += f'''
          elseif iNum == {note} then
           Sname = "{os.path.join(self.audio_dir, f"{note}.wav")}"
