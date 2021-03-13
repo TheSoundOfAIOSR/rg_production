@@ -69,9 +69,9 @@ class AsyncApp(App):
                 if dev in outdev.values():
                     output_idx = selected_idx
                     self.devices["out"] = outdev
-                    # self.csound.cleanup()
-                    # self.csound.set_output(self.devices["out"]["id"])
-                    # self.csound.compile_and_start()
+                    self.csound.cleanup()
+                    self.csound.set_output(output_idx)
+                    self.csound.compile_and_start()
                     print(self.devices["out"])
                     print(f"Csound index: {output_idx}, {type(output_idx)}")
 
@@ -126,7 +126,7 @@ class AsyncApp(App):
                     elif self.appStatus == "playSample":
                         pass
                         # f = asyncio.create_task(self.csound.playSample())
-                        # self.csound.playSample()
+                        self.csound.play_sample()
                         # playback_task = asyncio.create_task(self.audio.player('recordedFile.wav', self.devices['out']))
 
                 self.appStatus = None
