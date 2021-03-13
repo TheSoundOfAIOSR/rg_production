@@ -75,6 +75,8 @@ class AsyncApp(App):
         recordingStatus = False
         record_task = None
 
+        self.csound.setOutput()
+        self.csound.setMidi()
         self.csound.compileAndStart()
         
         sample = self.csound.sample_path

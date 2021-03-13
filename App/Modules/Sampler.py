@@ -18,8 +18,7 @@ class CsoundSampler:
   <CsoundSynthesizer>
 
   <CsOptions>
-    -d -M0 -o dac1 -m0
-    -+rtmidi=NULL
+    -d -M0 -m0
     --midi-key=5 --midi-velocity-amp=4
   </CsOptions>
 
@@ -83,7 +82,7 @@ class CsoundSampler:
     def setOutput(self,output=0):
         self.cs.setOption(f"-odac{output}")
 
-    def setMidi(self,midi=0):
+    def setMidi(self,midi='NULL'):
         self.cs.setOption(f"-+rtmidi={midi}")
 
 
