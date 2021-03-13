@@ -103,11 +103,13 @@
             values: [indev["name"] for indev in app.devices["devices"]["input_list"]]
             on_text:
                 print("The spinner {} has text {}".format(self, self.text))
+                app.select_audio_device(self.text + "-->>input_device")
         Spinner:
             text: 'Audio Output'
             values: [outdev["name"] for outdev in app.devices["devices"]["output_list"]]
             on_text:
                 print("The spinner {} has text {}".format(self, self.text))
+                app.select_audio_device(self.text + "-->>output_device")
         Spinner:
             text: 'Midi Input'
             values: ['A','B','C']

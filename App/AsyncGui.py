@@ -36,6 +36,25 @@ class AsyncApp(App):
         self.appStatus = event
         print("Set appStatus to ", self.appStatus)
 
+    def select_audio_device(self, event):
+        selected_device = event
+        dev = selected_device.split("-->>")[0] # just the device name
+        
+        # handling input
+        if "-->>input_device" in selected_device:
+            input_list = self.devices["devices"]["input_list"]
+            for indev in input_list:
+                if dev in indev.values(): self.devices["in"] = indev; print(self.devices["in"])
+
+        if "-->>output_device" in selected_device:
+            output_list = self.devices["devices"]["output_list"]
+            for outdev in output_list:
+                if dev in outdev.values(): self.devices["out"] = outdev; print(self.devices["out"])
+
+
+
+        print(selected_device)
+
     def app_func(self):
         '''This will run both methods asynchronously and then block until they
         are finished

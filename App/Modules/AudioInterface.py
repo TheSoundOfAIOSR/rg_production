@@ -115,6 +115,7 @@ class AudioInterface:
     #     # p.terminate()
 
     def get_audio_devices(self):
+        # TODO: change docstring
         """Function to list system audio devices.
         Returns a dictionary of the current audio devices available and currently used
 
@@ -147,10 +148,10 @@ class AudioInterface:
         output_list = []
 
         devices = sd.query_devices()
-        for id, device in enumerate(devices):
+        for _id, device in enumerate(devices):
             if device['hostapi'] != 0:
                 continue
-            device['id'] = id
+            device['id'] = _id
             input_list.append(device) if device['max_input_channels'] > device['max_output_channels'] else output_list.append(device)
 
 
