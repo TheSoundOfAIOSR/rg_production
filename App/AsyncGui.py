@@ -38,26 +38,42 @@ class AsyncApp(App):
 
     def select_audio_device(self, event):
         selected_device = event
-        dev = selected_device.split("-->>")[0] # just the device name
+
+        # will work for now but need to improve, soething more robust
+        # TODO: improve the implementation maybe with regex
+        selected_idx = int(selected_device.split("[")[1].split("]")[0])
+        
+        '''
+        Audio device in form: 
+        "[0]>Sound device name-->>in/out_device", 
+        to extract just "Sound device name"...
+        '''
+        dev = selected_device.split("]>")[1].split("-->>")[0] # just the device name
+        input_idx = None
+        output_idx = None
         
         # handling input
         if "-->>input_device" in selected_device:
             input_list = self.devices["devices"]["input_list"]
             for indev in input_list:
-                if dev in indev.values(): 
+                if dev in indev.values():
+                    input_idx = selected_idx
                     self.devices["in"] = indev
                     print(self.devices["in"])
+                    print(f"Csound index: {input_idx}, {type(input_idx)}")
 
         # handling output
         if "-->>output_device" in selected_device:
             output_list = self.devices["devices"]["output_list"]
             for outdev in output_list:
                 if dev in outdev.values():
+                    output_idx = selected_idx
                     self.devices["out"] = outdev
                     # self.csound.cleanup()
                     # self.csound.set_output(self.devices["out"]["id"])
                     # self.csound.compile_and_start()
                     print(self.devices["out"])
+                    print(f"Csound index: {output_idx}, {type(output_idx)}")
 
         print(selected_device)
 
