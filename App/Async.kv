@@ -7,7 +7,7 @@
 
     ToggleButton:
         size: 100, 100
-        pos: 20, 480
+        pos: dp(20), dp(480)
         border: (0, 0, 0, 0)
         id: record
         on_press: app.nextEvent('ToggleRecord')
@@ -16,7 +16,7 @@
 
     GridLayout:
         cols: 8
-        pos: 150, 490
+        pos: dp(150), dp(490)
         size: 200, 100
         Slider:
             id: s1
@@ -61,7 +61,7 @@
 
     GridLayout:
         cols: 8
-        pos: 150, 430
+        pos: dp(150), dp(430)
         size: 200, 100
         Label:
             text: "a"
@@ -83,20 +83,20 @@
     Button:
         id: generate
         text: 'Generate'
-        pos: 380,480
+        pos: dp(380),dp(480)
         size: 100, 100
         on_press: lab.text = "Generating with values {},{},{},{},{},{},{},{}".format(round(s1.value,1),round(s2.value,1),round(s3.value,1),round(s4.value,1),round(s5.value,1),round(s6.value,1),round(s7.value,1),round(s8.value,1))
 
     Button:
         id: export
         text: 'Export'
-        pos: 500,480
+        pos: dp(500),dp(480)
         size: 100, 100
         on_press: lab.text = "Exporting"
 
     GridLayout:
         rows: 3
-        pos: 620, 480
+        pos: dp(620), dp(480)
         size: 160, 100
         Spinner:
             text: 'Audio Input'
@@ -118,7 +118,7 @@
 
     Label:
         id: lab
-        pos: 350, 384
+        pos: dp(350), dp(384)
         text: "Text goes here"
         color: .8,.8,.8,1
         font_size: 12
@@ -126,25 +126,25 @@
     Button:
         id: play
         text: 'play'
-        pos: 20,340
+        pos: dp(20),dp(340)
         size: 100, 50
         on_press:app.nextEvent('playSample')
 
     ToggleButton:
         id: loop
         text: 'loop'
-        pos: 20,290
+        pos: dp(20),dp(290)
         size: 100, 50
         on_press: print("Exporting")
 
     Image:
         source: ''
-        pos: 150, 280
+        pos: dp(150), dp(280)
         size: self.texture_size
 
     GridLayout:
         rows: 3
-        pos:  20, 170
+        pos:  dp(20), dp(170)
         size: 160, 100
         spacing: [0, 5]
 
@@ -180,7 +180,7 @@
 
     GridLayout:
         rows: 3
-        pos:  700, 170
+        pos:  dp(700), dp(170)
         size: 160, 100
         spacing: [0, 5]
 
