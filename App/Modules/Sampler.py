@@ -19,7 +19,7 @@ class CsoundSampler:
 
   <CsOptions>
     -d -m0
-
+    -b 64 -B 128
    -+rtmidi=NULL
    --midi-key=5 --midi-velocity-amp=4
   </CsOptions>
