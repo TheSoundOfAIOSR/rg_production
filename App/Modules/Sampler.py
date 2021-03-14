@@ -89,6 +89,9 @@ class CsoundSampler:
         self.cs.setOption("--midi-velocity-amp=4")
         self.cs.setOption(f"-+rtmidi=NULL")
 
+    def read_midi_file(self,file):
+        self.cs.setOption(f"--midifile={file}")
+        self.cs.setOption(f"-+rtmidi=NULL")
 
     def compile_and_start(self):
         print("Starting Sampler")
