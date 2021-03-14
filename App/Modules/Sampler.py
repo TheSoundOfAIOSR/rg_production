@@ -19,8 +19,9 @@ class CsoundSampler:
 
   <CsOptions>
     -d -m0
-   ; -M0
-   ; --midi-key=5 --midi-velocity-amp=4
+
+   -+rtmidi=NULL
+   --midi-key=5 --midi-velocity-amp=4
   </CsOptions>
 
   <CsInstruments>
@@ -29,7 +30,7 @@ class CsoundSampler:
   nchnls = 2
   0dbfs = 1.0
 
-  ;massign 0, 1
+  massign 0, 1
 
     instr 1 ; Sampler
 
@@ -83,15 +84,12 @@ class CsoundSampler:
     def set_output(self,output=0):
         self.cs.setOption(f"-odac{output}")
 
-    def set_midi(self):
-        self.cs.setOption(" -M0 ")
-        self.cs.setOption(" --midi-key=5 ")
-        self.cs.setOption("--midi-velocity-amp=4")
-        self.cs.setOption(f"-+rtmidi=NULL")
+    def set_midi(self,device):
+        self.cs.setOption("-+rtmidi")
+        self.cs.setOption(f" -M{device} ")
 
     def read_midi_file(self,file):
         self.cs.setOption(f"--midifile={file}")
-        self.cs.setOption(f"-+rtmidi=NULL")
 
     def compile_and_start(self):
         print("Starting Sampler")
