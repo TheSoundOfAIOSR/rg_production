@@ -24,7 +24,7 @@ class CsoundSampler:
         <CsoundSynthesizer>
 
         <CsOptions>
-        -d -odac1
+        -d -odac0
         </CsOptions>
 
         <CsInstruments>

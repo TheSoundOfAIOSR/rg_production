@@ -8,7 +8,7 @@ class CsoundSampler:
     def __init__(self):
         print("init Csound")
         self.cs = ctcsound.Csound()
-        current_dir_path = pathlib.PurePath(pathlib.Path.cwd())
+        current_dir_path = pathlib.Path(pathlib.Path.cwd())
         sample = "e2.wav"
         self.audio_dir = current_dir_path.joinpath("generated_sample")
         self.sample_path = self.audio_dir.joinpath(sample)
@@ -18,7 +18,7 @@ class CsoundSampler:
   <CsoundSynthesizer>
 
   <CsOptions>
-    -d -m0
+    -d
     -b 64 -B 128
    -+rtmidi=NULL
    --midi-key=5 --midi-velocity-amp=4
@@ -100,7 +100,7 @@ class CsoundSampler:
         self.pt = ctcsound.CsoundPerformanceThread(self.cs.csound())
         self.pt.play()
 
-    def play_sample(self, pitch=48):
+    def play_sample(self, pitch=40):
         # sco = "i 1 0 1 1 40" # the 40 will be substitued with the value from the Keyboard on screen from gui
         sco = f"i 1 0 1 1 {pitch}"
 
@@ -137,5 +137,5 @@ class CsoundSampler:
 
       return s
 
-if __name__ == '__main__':
-  cs = CsoundSampler()
+# if __name__ == '__main__':
+  # cs = CsoundSampler()
