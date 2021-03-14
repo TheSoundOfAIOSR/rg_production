@@ -6,7 +6,7 @@
             source: 'background.png'
 
     ToggleButton:
-        size: 100, 100
+        size: dp(100), dp(100)
         pos: dp(20), dp(480)
         border: (0, 0, 0, 0)
         id: record
@@ -17,7 +17,7 @@
     GridLayout:
         cols: 8
         pos: dp(150), dp(490)
-        size: 200, 100
+        size: dp(200), dp(100)
         Slider:
             id: s1
             orientation: 'vertical'
@@ -62,7 +62,7 @@
     GridLayout:
         cols: 8
         pos: dp(150), dp(430)
-        size: 200, 100
+        size: dp(200), dp(100)
         Label:
             text: "a"
         Label:
@@ -84,20 +84,20 @@
         id: generate
         text: 'Generate'
         pos: dp(380),dp(480)
-        size: 100, 100
+        size: dp(100), dp(100)
         on_press: lab.text = "Generating with values {},{},{},{},{},{},{},{}".format(round(s1.value,1),round(s2.value,1),round(s3.value,1),round(s4.value,1),round(s5.value,1),round(s6.value,1),round(s7.value,1),round(s8.value,1))
 
     Button:
         id: export
         text: 'Export'
         pos: dp(500),dp(480)
-        size: 100, 100
+        size: dp(100), dp(100)
         on_press: lab.text = "Exporting"
 
     GridLayout:
         rows: 3
         pos: dp(620), dp(480)
-        size: 160, 100
+        size: dp(160), dp(100)
         Spinner:
             text: 'Audio Input'
             values: [f"[{idx}]>" + indev["name"] for idx, indev in enumerate(app.devices["devices"]["input_list"])]
@@ -127,14 +127,14 @@
         id: play
         text: 'play'
         pos: dp(20),dp(340)
-        size: 100, 50
+        size: dp(100), dp(50)
         on_press:app.nextEvent('playSample')
 
     ToggleButton:
         id: loop
         text: 'loop'
         pos: dp(20),dp(290)
-        size: 100, 50
+        size: dp(100), dp(50)
         on_press: print("Exporting")
 
     Image:
@@ -145,11 +145,11 @@
     GridLayout:
         rows: 3
         pos:  dp(20), dp(170)
-        size: 160, 100
+        size: dp(160), dp(100)
         spacing: [0, 5]
 
         Knob:
-            size: 80, 80
+            size: dp(80), dp(80)
             min: 0
             max: 100
             step: 1
@@ -159,7 +159,7 @@
             show_marker: False  # Do not show surrounding marker
 
         Knob:
-            size: 80, 80
+            size: dp(80), dp(80)
             min: 0
             max: 100
             step: 1
@@ -169,7 +169,7 @@
             show_marker: False  # Do not show surrounding marker
 
         Knob:
-            size: 80, 80
+            size: dp(80), dp(80)
             min: 0
             max: 100
             step: 1
@@ -181,11 +181,11 @@
     GridLayout:
         rows: 3
         pos:  dp(700), dp(170)
-        size: 160, 100
+        size: dp(160), dp(100)
         spacing: [0, 5]
 
         Knob:
-            size: 80, 80
+            size: dp(80), dp(80)
             min: 0
             max: 100
             step: 1
@@ -195,7 +195,7 @@
             show_marker: False  # Do not show surrounding marker
 
         Knob:
-            size: 80, 80
+            size: dp(80), dp(80)
             min: 0
             max: 100
             step: 1
@@ -205,7 +205,7 @@
             show_marker: False  # Do not show surrounding marker
 
         Knob:
-            size: 80, 80
+            size: dp(80), dp(80)
             min: 0
             max: 100
             step: 1
