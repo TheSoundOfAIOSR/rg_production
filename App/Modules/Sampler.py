@@ -8,10 +8,15 @@ class CsoundSampler:
     def __init__(self):
         print("init Csound")
         self.cs = ctcsound.Csound()
-        current_dir_path = pathlib.Path(pathlib.Path.cwd())
+        self.working_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # one level above
+        self.audio_dir = os.path.join(self.working_dir, 'generated_sample')
+
+        if "\\" in self.audio_dir:
+          self.audio_dir = self.audio_dir.replace("\\", "/")
+
         sample = "e2.wav"
-        self.audio_dir = current_dir_path.joinpath("generated_sample")
-        self.sample_path = self.audio_dir.joinpath(sample)
+
+        self.sample_path = self.audio_dir + '/' + sample
         print(f"Sample loaded: {self.sample_path}")
         self.csd = f'''
 
@@ -19,7 +24,7 @@ class CsoundSampler:
 
   <CsOptions>
     -d
-    -b 64 -B 128
+    -b 1024 -B 128
    -+rtmidi=NULL
    --midi-key=5 --midi-velocity-amp=4
   </CsOptions>
@@ -129,8 +134,9 @@ class CsoundSampler:
         note = i + root_minus_octave
         s += f'''
          elseif iNum == {note} then
-          Sname = "{os.path.join(self.audio_dir, f"{note}.wav")}"
+          ;Sname = "{os.path.join(self.audio_dir, f"{note}.wav")}"
           ;Sname = "{self.audio_dir}{note}.wav"
+          Sname = "{self.audio_dir + '/' + str(note)}.wav"
         '''
 
       s += "endif\n"
