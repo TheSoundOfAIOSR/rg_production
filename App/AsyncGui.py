@@ -9,6 +9,11 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.clock import Clock
 from kivy.garden.knob import Knob
+from kivy.core.audio import SoundLoader
+from kivy.properties import ObjectProperty, StringProperty
+from kivy.uix.tabbedpanel import TabbedPanel
+from kivy.lang import Builder
+from kivy.uix.popup import Popup
 from kivy.config import Config
 Config.set('graphics', 'resizable', False)
 
@@ -17,9 +22,6 @@ from Modules.Sampler import CsoundSampler
 #from Modules.PreprocessingSample import pitchshift
 
 # from Modules.testSampler import CsoundSampler
-
-class Graphics(Widget):
-    pass
 
 class AsyncApp(App):
     other_task = None
@@ -137,6 +139,24 @@ class AsyncApp(App):
         finally:
             # when canceled, print that it finished
             print('Done wasting time')
+
+class FileChoosePopup(Popup):
+    load = ObjectProperty()
+
+class Graphics(Widget):
+    file_path = StringProperty("No file chosen")
+    the_popup = ObjectProperty(None)
+
+    def open_popup(self):
+        self.the_popup = FileChoosePopup(load=self.load)
+        self.the_popup.open()
+
+    def load(self, selection):
+        self.file_path = str(selection[0])
+        self.the_popup.dismiss()
+        print(self.file_path)
+        self.sound = SoundLoader.load(self.file_path)
+        self.sound.play()
 
 
 if __name__ == '__main__':
