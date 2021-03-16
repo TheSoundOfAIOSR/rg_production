@@ -1,9 +1,9 @@
-<Graphics>
+<Graphics>:
     canvas.before:
         Rectangle:
             pos: self.pos
             size: self.size
-            source: 'background.png'
+            source: 'assets/background.png'
 
     ToggleButton:
         size: dp(100), dp(100)
@@ -119,7 +119,7 @@
     Label:
         id: lab
         pos: dp(350), dp(384)
-        text: "Text goes here"
+        text: ""
         color: .8,.8,.8,1
         font_size: 12
 
@@ -130,12 +130,12 @@
         size: dp(100), dp(50)
         on_press:app.nextEvent('playSample')
 
-    ToggleButton:
-        id: loop
-        text: 'loop'
+    Button:
+        id: playM
+        text: 'Play Midi'
         pos: dp(20),dp(290)
         size: dp(100), dp(50)
-        on_press: print("Exporting")
+        on_press:root.open_popup()
 
     Image:
         source: ''
@@ -213,3 +213,27 @@
             knobimg_source: "assets/knob_black.png"
             show_label: True  # Show central label
             show_marker: False  # Do not show surrounding marker
+
+<FileChoosePopup>:
+    title: "Choose a .WAV File"
+    size_hint: .9, .9
+    auto_dismiss: False
+
+    BoxLayout:
+        orientation: "vertical"
+        FileChooser:
+            id: filechooser
+            FileChooserIconLayout
+
+        BoxLayout:
+            size_hint: (1, 0.1)
+            pos_hint: {'center_x': .5, 'center_y': .5}
+            spacing: 20
+            Button:
+                text: "Cancel"
+                on_release: root.dismiss()
+            Button:
+                text: "Play"
+                on_release: root.load(filechooser.selection)
+                id: ldbtn
+                disabled: True if filechooser.selection==[] else False
