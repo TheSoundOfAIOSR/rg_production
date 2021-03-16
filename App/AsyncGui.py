@@ -28,6 +28,7 @@ class AsyncApp(App):
     appStatus = None
     audio = AudioInterface()
     devices = audio.devices
+    output_idx=0
     csound = CsoundSampler()
 
     def build(self):
@@ -69,10 +70,10 @@ class AsyncApp(App):
             output_list = self.devices["devices"]["output_list"]
             for outdev in output_list:
                 if dev in outdev.values():
-                    output_idx = selected_idx
+                    self.output_idx = selected_idx
                     self.devices["out"] = outdev
                     self.csound.cleanup()
-                    self.csound.set_output(output_idx)
+                    self.csound.set_output(self.output_idx)
                     self.csound.compile_and_start()
                     print(self.devices["out"])
                     print(f"Csound index: {output_idx}, {type(output_idx)}")
@@ -100,7 +101,7 @@ class AsyncApp(App):
         recordingStatus = False
         record_task = None
 
-        self.csound.set_output()
+        self.csound.set_output(self.output_idx)
         # self.csound.set_midi()
         self.csound.compile_and_start()
         
@@ -128,8 +129,16 @@ class AsyncApp(App):
 
                     elif self.appStatus == "playSample":
                         pass
-                        # f = asyncio.create_task(self.csound.playSample())
                         self.csound.play_sample()
+                        # playback_task = asyncio.create_task(self.audio.player('recordedFile.wav', self.devices['out']))
+
+                    elif self.appStatus == "playMidi":
+                        pass
+                        # self.csound.cleanup()
+                        # self.csound.set_output(self.output_idx)
+                        # self.csound.play_midi_file(midi_file)
+                        # self.csound.compile_and_start()
+
                         # playback_task = asyncio.create_task(self.audio.player('recordedFile.wav', self.devices['out']))
 
                 self.appStatus = None
@@ -140,11 +149,13 @@ class AsyncApp(App):
             # when canceled, print that it finished
             print('Done wasting time')
 
+
+
 class FileChoosePopup(Popup):
     load = ObjectProperty()
 
 class Graphics(Widget):
-    file_path = StringProperty("No file chosen")
+    midi_path = StringProperty("No file chosen")
     the_popup = ObjectProperty(None)
 
     def open_popup(self):
@@ -152,11 +163,12 @@ class Graphics(Widget):
         self.the_popup.open()
 
     def load(self, selection):
-        self.file_path = str(selection[0])
+        midi_file = str(selection[0])
         self.the_popup.dismiss()
-        print(self.file_path)
-        self.sound = SoundLoader.load(self.file_path)
-        self.sound.play()
+        print(self.midi_file)
+        #return midi_file somewhere outside into the main app
+
+
 
 
 if __name__ == '__main__':

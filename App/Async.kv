@@ -135,7 +135,7 @@
         text: 'Play Midi'
         pos: dp(20),dp(290)
         size: dp(100), dp(50)
-        on_press:root.open_popup()
+        on_press: root.open_popup() #app.nextEvent('playMidi')
 
     Image:
         source: ''
@@ -215,7 +215,7 @@
             show_marker: False  # Do not show surrounding marker
 
 <FileChoosePopup>:
-    title: "Choose a .WAV File"
+    title: "Choose a MIDI File"
     size_hint: .9, .9
     auto_dismiss: False
 
