@@ -1,6 +1,7 @@
 import os
 
 import librosa
+import pyrubberband as pyrb
 from scipy.io.wavfile import write
 
 target_sr = 44100
@@ -22,7 +23,8 @@ def pitchshift(folder, filename, shifts=24):
     root = 40 # e2 is 40
     
     for n_steps in range(0 - shifts//2,( shifts//2) +1):
-        audio_shifted = librosa.effects.pitch_shift(audio, target_sr, n_steps, bins_per_octave=12)
+        # audio_shifted = librosa.effects.pitch_shift(audio, target_sr, n_steps, bins_per_octave=12)
+        audio_shifted = pyrb.pitch_shift(audio, target_sr, n_steps)
         write(os.path.join(folder, f"{root+n_steps}.wav"), target_sr, audio_shifted) 
         
         #write("{}{}.wav".format(folder, i+root), y_shift, sr)
