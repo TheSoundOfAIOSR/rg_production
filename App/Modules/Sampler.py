@@ -93,6 +93,10 @@ class CsoundSampler:
         self.cs.setOption("-+rtmidi")
         self.cs.setOption(f" -M{device} ")
 
+    def play_midi_file(self,file):
+        self.cs.setOption("-+rtmidi")
+        self.cs.setOption(f"--midifile={file}")
+
     def read_midi_file(self,file):
         self.cs.setOption(f"--midifile={file}")
 

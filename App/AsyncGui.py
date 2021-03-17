@@ -9,6 +9,11 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.clock import Clock
 from kivy.garden.knob import Knob
+from kivy.core.audio import SoundLoader
+from kivy.properties import ObjectProperty, StringProperty
+from kivy.uix.tabbedpanel import TabbedPanel
+from kivy.lang import Builder
+from kivy.uix.popup import Popup
 from kivy.config import Config
 Config.set('graphics', 'resizable', False)
 
@@ -18,14 +23,12 @@ from Modules.Sampler import CsoundSampler
 
 # from Modules.testSampler import CsoundSampler
 
-class Graphics(Widget):
-    pass
-
 class AsyncApp(App):
     other_task = None
     appStatus = None
     audio = AudioInterface()
     devices = audio.devices
+    output_idx=0
     csound = CsoundSampler()
 
     def build(self):
@@ -67,10 +70,10 @@ class AsyncApp(App):
             output_list = self.devices["devices"]["output_list"]
             for outdev in output_list:
                 if dev in outdev.values():
-                    output_idx = selected_idx
+                    self.output_idx = selected_idx
                     self.devices["out"] = outdev
                     self.csound.cleanup()
-                    self.csound.set_output(output_idx)
+                    self.csound.set_output(self.output_idx)
                     self.csound.compile_and_start()
                     print(self.devices["out"])
                     print(f"Csound index: {output_idx}, {type(output_idx)}")
@@ -98,7 +101,7 @@ class AsyncApp(App):
         recordingStatus = False
         record_task = None
 
-        self.csound.set_output()
+        self.csound.set_output(self.output_idx)
         # self.csound.set_midi()
         self.csound.compile_and_start()
         
@@ -126,8 +129,16 @@ class AsyncApp(App):
 
                     elif self.appStatus == "playSample":
                         pass
-                        # f = asyncio.create_task(self.csound.playSample())
                         self.csound.play_sample()
+                        # playback_task = asyncio.create_task(self.audio.player('recordedFile.wav', self.devices['out']))
+
+                    elif self.appStatus == "playMidi":
+                        pass
+                        # self.csound.cleanup()
+                        # self.csound.set_output(self.output_idx)
+                        # self.csound.play_midi_file(midi_file)
+                        # self.csound.compile_and_start()
+
                         # playback_task = asyncio.create_task(self.audio.player('recordedFile.wav', self.devices['out']))
 
                 self.appStatus = None
@@ -137,6 +148,27 @@ class AsyncApp(App):
         finally:
             # when canceled, print that it finished
             print('Done wasting time')
+
+
+
+class FileChoosePopup(Popup):
+    load = ObjectProperty()
+
+class Graphics(Widget):
+    midi_path = StringProperty("No file chosen")
+    the_popup = ObjectProperty(None)
+
+    def open_popup(self):
+        self.the_popup = FileChoosePopup(load=self.load)
+        self.the_popup.open()
+
+    def load(self, selection):
+        midi_file = str(selection[0])
+        self.the_popup.dismiss()
+        print(self.midi_file)
+        #return midi_file somewhere outside into the main app
+
+
 
 
 if __name__ == '__main__':
