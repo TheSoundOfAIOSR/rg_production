@@ -135,7 +135,7 @@
         text: 'Play Midi'
         pos: dp(20),dp(290)
         size: dp(100), dp(50)
-        on_press: root.open_popup() #app.nextEvent('playMidi')
+        on_press: app.nextEvent('open_popup')
 
     Image:
         source: ''
@@ -223,7 +223,7 @@
         orientation: "vertical"
         FileChooser:
             id: filechooser
-            FileChooserIconLayout
+            FileChooserListLayout
 
         BoxLayout:
             size_hint: (1, 0.1)

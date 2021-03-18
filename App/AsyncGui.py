@@ -26,6 +26,7 @@ from Modules.PreprocessingSample import pitchshift
 class AsyncApp(App):
     other_task = None
     appStatus = None
+    midi_status = None
     audio = AudioInterface()
     devices = audio.devices
     output_idx=0
@@ -100,6 +101,7 @@ class AsyncApp(App):
     async def main_loop(self):
         recordingStatus = False
         record_task = None
+        filechooser = Graphics()
 
         self.csound.set_output(self.output_idx)
         # self.csound.set_midi()
@@ -107,7 +109,7 @@ class AsyncApp(App):
         
         sample = self.csound.sample_path
 
-        pitchshift(self.csound.audio_dir,sample, 24)
+        # pitchshift(self.csound.audio_dir,sample, 24)
         '''This method is also run by the asyncio loop and periodically prints
         something.
         '''
@@ -132,16 +134,27 @@ class AsyncApp(App):
                         self.csound.play_sample()
                         # playback_task = asyncio.create_task(self.audio.player('recordedFile.wav', self.devices['out']))
 
-                    elif self.appStatus == "playMidi":
-                        pass
-                        # self.csound.cleanup()
-                        # self.csound.set_output(self.output_idx)
-                        # self.csound.play_midi_file(midi_file)
-                        # self.csound.compile_and_start()
+                    elif self.appStatus == "open_popup":
+                        filechooser.open_popup()
+                        self.midi_status = "load_midi_wait"
+
+                    elif self.midi_status == "load_midi_wait":
+                        if filechooser.midi_file != None:
+                            self.midi_status = "load_midi"
+                            self.midi_file = filechooser.midi_file
+
+                    elif self.midi_status == "load_midi":
+                        print("here")
+                        self.csound.cleanup()
+                        self.csound.set_output(self.output_idx)
+                        self.csound.play_midi_file(self.midi_file)
+                        self.csound.compile_and_start()
+                        self.midi_status = None
 
                         # playback_task = asyncio.create_task(self.audio.player('recordedFile.wav', self.devices['out']))
 
                 self.appStatus = None
+
                 await asyncio.sleep(0.01)
         except asyncio.CancelledError as e:
             print('Wasting time was canceled', e)
@@ -149,23 +162,21 @@ class AsyncApp(App):
             # when canceled, print that it finished
             print('Done wasting time')
 
-
-
 class FileChoosePopup(Popup):
     load = ObjectProperty()
 
 class Graphics(Widget):
     midi_path = StringProperty("No file chosen")
     the_popup = ObjectProperty(None)
+    midi_file = None
 
     def open_popup(self):
         self.the_popup = FileChoosePopup(load=self.load)
         self.the_popup.open()
 
     def load(self, selection):
-        midi_file = str(selection[0])
+        self.midi_file = str(selection[0])
         self.the_popup.dismiss()
-        print(self.midi_file)
         #return midi_file somewhere outside into the main app
 
 
