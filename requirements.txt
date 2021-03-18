@@ -2,6 +2,7 @@ kivy==2.0.0
 sounddevice==0.4.1
 Kivy-Garden==0.1.4
 ctcsound==6.14.2
+python-rtmidi==1.4.7
 librosa
 kivy-garden
 pyrubberband
