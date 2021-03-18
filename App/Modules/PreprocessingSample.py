@@ -29,7 +29,7 @@ def pitchshift(folder, filename, shifts=24):
     print('shifting pitch')
     root = 40 # e2 is 40
     
-    for n_steps in range(0 - shifts//2,( shifts//2) +1):
+    for n_steps in range(0 ,shifts +1):
         # audio_shifted = librosa.effects.pitch_shift(audio, target_sr, n_steps, bins_per_octave=12)
         audio_shifted = pyrb.pitch_shift(audio, target_sr, n_steps)
         new_filename = f"{root+n_steps}.wav"

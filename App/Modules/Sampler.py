@@ -23,7 +23,7 @@ class CsoundSampler:
   <CsoundSynthesizer>
 
   <CsOptions>
-    -d
+    ;-d
     -b 1024 -B 128
    -+rtmidi=NULL
    --midi-key=5 --midi-velocity-amp=4
@@ -42,16 +42,18 @@ class CsoundSampler:
     ;Sname chnget "gSname"
     Sname = "{self.sample_path}" 
 
-    ;iNum notnum
-    iNum = p5
+    iNum notnum
+    ;iNum = p5
     {self.string_pitch_to_file()}
 
 
     ivol = p4
     ipb = 1
     inchs = filenchnls(Sname)
-
-
+    
+    
+    printf_i "Audiofile '%s' ", 1, Sname 
+    
     if inchs == 1 then
 
     aLeft diskin2 Sname, ipb
@@ -133,14 +135,11 @@ class CsoundSampler:
       Sname = "{self.sample_path}"
       '''
 
-      for i in range(0, 24):
-        root_minus_octave = root -12 # e2 is 40
-        note = i + root_minus_octave
+      for i in range(0, 25):
+        note = i + root
         s += f'''
-         elseif iNum == {note} then
-          ;Sname = "{os.path.join(self.audio_dir, f"{note}.wav")}"
-          ;Sname = "{self.audio_dir}{note}.wav"
-          Sname = "{self.audio_dir + '/' + str(note)}.wav"
+        elseif iNum == {note} then
+           Sname = "{self.audio_dir + '/' + str(note)}.wav"
         '''
 
       s += "endif\n"

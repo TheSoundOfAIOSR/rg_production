@@ -19,7 +19,7 @@ Config.set('graphics', 'resizable', False)
 
 from Modules.AudioInterface import AudioInterface
 from Modules.Sampler import CsoundSampler
-from Modules.PreprocessingSample import pitchshift
+# from Modules.PreprocessingSample import pitchshift
 
 # from Modules.testSampler import CsoundSampler
 
@@ -150,6 +150,7 @@ class AsyncApp(App):
                         self.csound.play_midi_file(self.midi_file)
                         self.csound.compile_and_start()
                         self.midi_status = None
+                        filechooser.midi_file = None
 
                         # playback_task = asyncio.create_task(self.audio.player('recordedFile.wav', self.devices['out']))
 
