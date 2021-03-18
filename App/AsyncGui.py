@@ -11,8 +11,7 @@ from kivy.clock import Clock
 from kivy.garden.knob import Knob
 from kivy.core.audio import SoundLoader
 from kivy.properties import ObjectProperty, StringProperty
-from kivy.uix.tabbedpanel import TabbedPanel
-from kivy.lang import Builder
+from kivy.core.window import Window
 from kivy.uix.popup import Popup
 from kivy.config import Config
 Config.set('graphics', 'resizable', False)
@@ -33,7 +32,11 @@ class AsyncApp(App):
     csound = CsoundSampler()
 
     def build(self):
+        Window.bind(on_dropfile=self._on_file_drop)
         return Graphics()
+
+    def _on_file_drop(self, window, file_path):
+        print(file_path)
 
     def nextEvent(self, event):
 
@@ -163,6 +166,7 @@ class AsyncApp(App):
             # when canceled, print that it finished
             print('Done wasting time')
 
+
 class FileChoosePopup(Popup):
     load = ObjectProperty()
 
@@ -179,8 +183,6 @@ class Graphics(Widget):
         self.midi_file = str(selection[0])
         self.the_popup.dismiss()
         #return midi_file somewhere outside into the main app
-
-
 
 
 if __name__ == '__main__':
