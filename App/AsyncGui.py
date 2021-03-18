@@ -19,7 +19,7 @@ Config.set('graphics', 'resizable', False)
 
 from Modules.AudioInterface import AudioInterface
 from Modules.Sampler import CsoundSampler
-#from Modules.PreprocessingSample import pitchshift
+from Modules.PreprocessingSample import pitchshift
 
 # from Modules.testSampler import CsoundSampler
 
@@ -107,7 +107,7 @@ class AsyncApp(App):
         
         sample = self.csound.sample_path
 
-        # pitchshift(self.csound.audio_dir,sample, 24)
+        pitchshift(self.csound.audio_dir,sample, 24)
         '''This method is also run by the asyncio loop and periodically prints
         something.
         '''

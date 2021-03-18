@@ -19,3 +19,4 @@ Resources for Research Group - Production
 
 **MIDI related**
  * [Print MIDI note/velocity on user input, inside of Python](midi.py)
+ * [Midi list devices](midi_devices.ipynb)
