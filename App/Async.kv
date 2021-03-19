@@ -112,7 +112,7 @@
                 app.select_audio_device(self.text + "-->>output_device")
         Spinner:
             text: 'Midi Input'
-            values: ['A','B','C']
+            values: [midi_in for midi_in in app.midi_devices["input"]]
             on_text:
                 print("The spinner {} has text {}".format(self, self.text))
 
