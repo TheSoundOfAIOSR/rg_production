@@ -1,15 +1,16 @@
 import ctcsound
 import os
 
+
 class CsoundSampler:
-  
+
     def __init__(self):
         print("init Csound")
         self.cs = ctcsound.Csound()
-        self.audio_dir =  "/Users/linyanting/Desktop/rg_production/resources/audiodata/test/"
+        self.audio_dir = "/Users/linyanting/Desktop/rg_production/resources/audiodata/test/"
         sample = '48.wav'
         self.sample_path = self.audio_dir + sample
-  
+
     def compileAndStart(self):
         csd = f'''
   <CsoundSynthesizer>
@@ -80,7 +81,7 @@ class CsoundSampler:
         self.pt.play()
 
     def playSample(self):
-        sco = "i 1 0 1 1 " + '\"' + self.sample_path + '\"' 
+        sco = "i 1 0 1 1 " + '\"' + self.sample_path + '\"'
         self.cs.readScore(sco)
         self.stringPitch2File()
 
@@ -93,17 +94,17 @@ class CsoundSampler:
 
     # Temporarily add from C#(48) to B3(59)
     def stringPitch2File(self):
-      s = f'''
+        s = f'''
       if iNum == 48 then
       Sname = "{self.sample_path}"
       '''
 
-      for i in range(49, 60):
-        s += f'''
+        for i in range(49, 60):
+            s += f'''
         elseif iNum == {i} then
           Sname = "{self.audio_dir}{i}.wav"
         '''
 
-      s += "endif\n"
+        s += "endif\n"
 
-      return s
+        return s
