@@ -36,6 +36,7 @@ class AsyncApp(App):
     audio = AudioInterface()
     devices = audio.devices
     output_idx = 0
+    midi_input_idx = 0
     csound = CsoundSampler()
 
     def build(self):
@@ -86,6 +87,19 @@ class AsyncApp(App):
                     print(f"Csound index: {output_idx}, {type(output_idx)}")
 
         print(selected_device)
+
+
+    def selec_midi_device(self, event):
+        selected_device = event
+        """
+        selected_device in the form:
+        [idx]"Midi device nane"
+        """
+        # TODO: improve implementation, maybe with regex
+        selected_idx = int(selected_device.split("[")[1].split("]")[0])
+        print("MIDI device selected: ", self.midi_devices["input"][selected_idx])
+        print(f"Using API: {self.midi_devices['api']}")
+        
 
     def app_func(self):
         '''This will run both methods asynchronously and then block until they

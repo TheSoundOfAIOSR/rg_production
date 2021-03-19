@@ -112,9 +112,10 @@
                 app.select_audio_device(self.text + "-->>output_device")
         Spinner:
             text: 'Midi Input'
-            values: [midi_in for midi_in in app.midi_devices["input"]]
+            values: [f"[{idx}]" + midi_in for idx, midi_in in enumerate(app.midi_devices["input"])]
             on_text:
                 print("The spinner {} has text {}".format(self, self.text))
+                app.selec_midi_device(self.text)
 
     Label:
         id: lab
