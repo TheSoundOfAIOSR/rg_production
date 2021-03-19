@@ -115,7 +115,7 @@
             values: [f"[{idx}]" + midi_in for idx, midi_in in enumerate(app.midi_devices["input"])]
             on_text:
                 print("The spinner {} has text {}".format(self, self.text))
-                app.selec_midi_device(self.text)
+                app.select_midi_device(self.text)
 
     Label:
         id: lab

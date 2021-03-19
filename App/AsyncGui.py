@@ -89,7 +89,7 @@ class AsyncApp(App):
         print(selected_device)
 
 
-    def selec_midi_device(self, event):
+    def select_midi_device(self, event):
         selected_device = event
         """
         selected_device in the form:

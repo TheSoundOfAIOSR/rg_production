@@ -24,7 +24,7 @@ class MidiInterface:
         api = []
         for idx, name in zip(self.api_supported_idxs, self.api_supported_names):
             dev = {"idx": idx, "name": name +
-                                       " (" + rtmidi.get_api_display_name(idx) + ")"}
+                   " (" + rtmidi.get_api_display_name(idx) + ")"}
             api.append(dev.copy())
 
         midi_devices = {
