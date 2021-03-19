@@ -37,6 +37,7 @@ class AsyncApp(App):
 
     def _on_file_drop(self, window, file_path):
         print(file_path)
+        # pass file_path to md player which triggers on_press play button of popup
 
     def nextEvent(self, event):
 
