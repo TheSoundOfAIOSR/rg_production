@@ -97,7 +97,8 @@ class AsyncApp(App):
         """
         # TODO: improve implementation, maybe with regex
         selected_idx = int(selected_device.split("[")[1].split("]")[0])
-        print("MIDI device selected: ", self.midi_devices["input"][selected_idx])
+        self.midi_input_idx = selected_idx
+        print("MIDI device selected: ", self.midi_devices["input"][self.midi_input_idx])
         print(f"Using API: {self.midi_devices['api']}")
         
 
