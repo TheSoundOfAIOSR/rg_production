@@ -29,12 +29,7 @@ from confs import Configuration
 
 # from Modules.testSampler import CsoundSampler
 
-#python script option
-#config = Configuration.Config()
-
-# yaml file option
-with open("confs/configuration.yaml", "r") as f:
-    config = yaml.safe_load(f)
+config = Configuration.Config()
 
 class AsyncApp(App):
     other_task = None
@@ -42,13 +37,11 @@ class AsyncApp(App):
     midi_status = None
     midi = MidiInterface()
     midi_devices = midi.devices
-    #audio = AudioInterface(config.WAVE_OUTPUT_FILENAME)
-    audio = AudioInterface(config["audio_interface"]["WAVE_OUTPUT_FILENAME"])
+    audio = AudioInterface(config.WAVE_OUTPUT_FILENAME)
     devices = audio.devices
     output_idx = 0
     midi_input_idx = 0
-    #csound = CsoundSampler(config.audio_dir, config.sample_path)
-    csound = CsoundSampler(config["folder_configuration"]["audio_dir"], config["folder_configuration"]["sample_path"])
+    csound = CsoundSampler(config.audio_dir, config.sample_path)
 
     def build(self):
         return Graphics()
