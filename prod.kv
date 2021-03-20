@@ -5,7 +5,7 @@
     max: 100
     step: 1
     value: 0
-    knobimg_source: "../assets/black_knob.png"
+    knobimg_source: "assets/black_knob.png"
     show_label: True  # Show central label
     show_marker: False  # Do not show surrounding marker
 
@@ -23,7 +23,7 @@
         Rectangle:
             pos: self.pos
             size: self.size
-            source: '../assets/background.png'
+            source: 'assets/background.png'
 
     ToggleButton:
         size: dp(100), dp(100)
@@ -31,12 +31,12 @@
         border: (0, 0, 0, 0)
         id: record
         on_press: app.set_event('ToggleRecord')
-        background_normal: '../assets/record_off.png'
-        background_down: '../assets/record_on.png'
+        background_normal: 'assets/record_off.png'
+        background_down: 'assets/record_on.png'
     
     SliderLayout:
         id: some_slider
-        cols: 8
+        sliders: 8
         pos: dp(150), dp(490)
         size: dp(200), dp(100)
         

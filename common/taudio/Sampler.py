@@ -1,24 +1,23 @@
 import ctcsound
 import os
-import pathlib
-from sys import platform 
+import pathlib as pl
+from sys import platform, argv
+import common.log as log
+
+
+logger = log.setup_logger()
+
 
 class CsoundSampler:
-  
     def __init__(self):
         print("init Csound")
         self.cs = ctcsound.Csound()
-        self.working_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # one level above
-        self.audio_dir = os.path.join(self.working_dir, 'generated_sample')
-
-        if "\\" in self.audio_dir:
-          self.audio_dir = self.audio_dir.replace("\\", "/")
-
-        sample = "e2.wav"
-
-        self.sample_path = self.audio_dir + '/' + sample
-        print(f"Sample loaded: {self.sample_path}")
-        self.csd = f'''
+        # one level above
+        self.working_dir = pl.Path(argv[0]).parent.absolute()
+        self.audio_dir = self.working_dir / pl.Path("generated_sample")
+        self.sample_path = self.audio_dir / pl.Path("e2.wav")
+        logger.debug(f"Sample loaded: {self.sample_path}")
+        self.csd = f"""
 
   <CsoundSynthesizer>
 
@@ -40,7 +39,7 @@ class CsoundSampler:
     instr 1 ; Sampler
 
     ;Sname chnget "gSname"
-    Sname = "{self.sample_path}" 
+    Sname = "{self.sample_path.as_posix()}" 
 
     iNum notnum
     ;iNum = p5
@@ -86,24 +85,24 @@ class CsoundSampler:
   </CsoundSynthesizer>
 
 
-  '''
+  """
 
-    def set_output(self,output=0):
+    def set_output(self, output=0):
         self.cs.setOption(f"-odac{output}")
 
-    def set_midi(self,device):
+    def set_midi(self, device):
         self.cs.setOption("-+rtmidi")
         self.cs.setOption(f" -M{device} ")
 
-    def play_midi_file(self,file):
+    def play_midi_file(self, file):
         self.cs.setOption("-+rtmidi")
         self.cs.setOption(f"--midifile={file}")
 
-    def read_midi_file(self,file):
+    def read_midi_file(self, file):
         self.cs.setOption(f"--midifile={file}")
 
     def compile_and_start(self):
-        print("Starting Sampler")
+        logger.debug("Starting Sampler")
 
         # self.cs.setStringChannel("gSname", self.sample_path)
         self.cs.compileCsdText(self.csd)
@@ -115,7 +114,7 @@ class CsoundSampler:
         # sco = "i 1 0 1 1 40" # the 40 will be substitued with the value from the Keyboard on screen from gui
         sco = f"i 1 0 1 1 {pitch}"
 
-        self.cs.readScore(sco) 
+        self.cs.readScore(sco)
         # print(self.stringPitch2File())
 
     def cleanup(self):
@@ -123,28 +122,29 @@ class CsoundSampler:
         self.pt.join()
         self.cs.cleanup()
         self.cs.reset()
-    
-# ==============================
 
-    # 
+    # ==============================
+
+    #
     def string_pitch_to_file(self):
 
-      root = 40
-      s = f'''
+        root = 40
+        s = f"""
       if iNum == {root} then
       Sname = "{self.sample_path}"
-      '''
+      """
 
-      for i in range(0, 25):
-        note = i + root
-        s += f'''
+        for i in range(0, 25):
+            note = i + root
+            s += f"""
         elseif iNum == {note} then
-           Sname = "{self.audio_dir + '/' + str(note)}.wav"
-        '''
+           Sname = "{(self.audio_dir / pl.Path(str(note))).as_posix()}.wav"
+        """
 
-      s += "endif\n"
+        s += "endif\n"
 
-      return s
+        return s
+
 
 # if __name__ == '__main__':
-  # cs = CsoundSampler()
+# cs = CsoundSampler()

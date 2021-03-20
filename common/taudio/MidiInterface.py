@@ -24,7 +24,7 @@ class MidiInterface:
         for idx, name in zip(self.api_supported_idxs, self.api_supported_names):
             dev = {
                 "idx": idx,
-                "name": name + " (" + rtmidi.get_api_display_name(idx) + ")",
+                "name": f"{name} ({rtmidi.get_api_display_name(idx)})",
             }
             api.append(dev.copy())
 
@@ -41,19 +41,6 @@ class MidiInterface:
         }
 
         return midi_devices
-
-
-def select_midi_device(self, event):
-    selected_device = event
-    """
-    selected_device in the form:
-    [idx]"Midi device nane"
-    """
-    # TODO: improve implementation, maybe with regex
-    selected_idx = int(selected_device.split("[")[1].split("]")[0])
-    self.midi_input_idx = selected_idx
-    print("MIDI device selected: ", self.midi_devices["input"][self.midi_input_idx])
-    print(f"Using API: {self.midi_devices['api']}")
 
 
 if __name__ == "__main__":

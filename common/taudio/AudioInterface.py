@@ -1,7 +1,3 @@
-import sys
-
-sys.path.append(".")
-
 import queue
 import numpy as np
 import sounddevice as sd
@@ -10,10 +6,11 @@ import asyncio
 import pyaudio
 import wave
 from typing import *
-import logging
+import common.log as log
+from common.config import Config
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger = log.setup_logger()
+config = Config.load_config()
 
 
 class AudioInterface:
@@ -22,7 +19,7 @@ class AudioInterface:
         self.devices = self.get_audio_devices()
         self.input_devices = None
         self.output_devices = None
-        self.WAVE_OUTPUT_FILENAME = "recordedFile.wav"
+        self.WAVE_OUTPUT_FILENAME = config.record_file
         # self.device_index=2
 
     async def capture_and_play(
@@ -84,7 +81,7 @@ class AudioInterface:
         """
         async for in_data, out_data, status in self.capture_and_play(**kwargs):
             if status:
-                print(status)
+                logger.debug(status)
             out_data[:] = in_data
 
     # async def player(self, audio_file: str, output_device: dict):

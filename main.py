@@ -11,32 +11,26 @@ from kivy.lang import Builder
 from kivy.uix.popup import Popup
 from kivy.config import Config
 
-from customw.basic import *
-from customw.slider_layout import *
+from common.customw.basic import *
+from common.customw.slider_layout import *
 
-from taudio.AudioInterface import AudioInterface
-from taudio.MidiInterface import MidiInterface
-from taudio.Sampler import CsoundSampler
-from taudio.PreprocessingSample import pitchshift
+from common.taudio.AudioInterface import AudioInterface
+from common.taudio.MidiInterface import MidiInterface
+from common.taudio.Sampler import CsoundSampler
+from common.taudio.PreprocessingSample import pitchshift
 
-import logging
+import common.log as log
+from common.config import Config as cfg
+import sys
 
-formatter = logging.Formatter(
-    fmt="%(asctime)s - %(levelname)s - %(module)s - %(message)s"
-)
-
-handler = logging.StreamHandler()
-handler.setFormatter(formatter)
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-logger.addHandler(handler)
+logger = log.setup_logger()
 
 
 class ProdApp(App):
     other_task = None
     appStatus = None
     midi_status = None
+    config = None
     midi = MidiInterface()
     audio = AudioInterface()
     csound = CsoundSampler()
@@ -69,7 +63,7 @@ class ProdApp(App):
 
         return asyncio.gather(run_wrapper(), self.other_task)
 
-    def select_audio_device(self, slider_obj, event):
+    def select_audio_device(self, obj, event):
         selected_device = event
 
         # will work for now but need to improve, soething more robust
@@ -82,6 +76,7 @@ class ProdApp(App):
         to extract just <device_name>...
         """
         dev = selected_device  # just the device name
+        io = obj.name
 
         # handling input
         if io == "input":
@@ -120,6 +115,12 @@ class ProdApp(App):
         recording_status = False
         record_task = None
         filechooser = Graphics()
+
+        try:
+            self.config = cfg.load_config()
+        except:
+            logger.error("Unable to load config", exc_info=True)
+            sys.exit(1)
 
         self.csound.set_output(self.output_idx)
         # self.csound.set_midi()
@@ -177,7 +178,7 @@ class ProdApp(App):
 
                 await asyncio.sleep(0.01)
         except asyncio.CancelledError as e:
-            logger.error(f"Wasting time was canceled", exc_info=e)
+            logger.error(f"Wasting time was canceled", exc_info=True)
         finally:
             # when canceled, print that it finished
             logger.debug("Done wasting time")
