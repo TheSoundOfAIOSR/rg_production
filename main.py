@@ -6,8 +6,7 @@ from kivy.clock import Clock
 from kivy.garden.knob import Knob
 from kivy.core.audio import SoundLoader
 from kivy.properties import ObjectProperty, StringProperty
-from kivy.uix.tabbedpanel import TabbedPanel
-from kivy.lang import Builder
+from kivy.core.window import Window
 from kivy.uix.popup import Popup
 from kivy.config import Config
 
@@ -32,8 +31,8 @@ class ProdApp(App):
     midi_status = None
     config = None
     midi = MidiInterface()
-    audio = AudioInterface()
-    csound = CsoundSampler()
+    audio = AudioInterface(config.record_file)
+    csound = CsoundSampler(config.audio_dir, config.sample_path)
     midi_devices = midi.devices
     devices = audio.devices
     output_idx = 0
@@ -42,7 +41,11 @@ class ProdApp(App):
     def build(self):
         return Graphics()
 
+    def _on_file_drop(self, window, file_path):
+        print(file_path)
+        # pass file_path to md player which triggers on_press play button of popup
     def set_event(self, event):
+
         self.appStatus = event
         logger.debug(f"Set appStatus to {self.appStatus}")
 
@@ -96,6 +99,7 @@ class ProdApp(App):
                     self.devices["out"] = out_dev
                     self.csound.cleanup()
                     self.csound.set_output(self.output_idx)
+                    self.csound.set_midi_api()
                     self.csound.compile_and_start()
                     logger.debug(self.devices["out"])
                     logger.debug(
@@ -123,7 +127,7 @@ class ProdApp(App):
             sys.exit(1)
 
         self.csound.set_output(self.output_idx)
-        # self.csound.set_midi()
+        self.csound.set_midi_api()
         self.csound.compile_and_start()
 
         sample = self.csound.sample_path
@@ -166,11 +170,12 @@ class ProdApp(App):
                     elif self.midi_status == "load_midi":
                         logging.debug("here")
                         self.csound.cleanup()
-                        self.csound.set_output(self.output_idx)
                         self.csound.play_midi_file(self.midi_file)
+                        self.csound.set_output(0)
                         self.csound.compile_and_start()
                         self.midi_status = None
                         filechooser.midi_file = None
+                        logger.debug(self.output_idx)
 
                         # playback_task = asyncio.create_task(self.audio.player('recordedFile.wav', self.devices['out']))
 

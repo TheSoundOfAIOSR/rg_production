@@ -9,13 +9,13 @@ logger = log.setup_logger()
 
 
 class CsoundSampler:
-    def __init__(self):
+    def __init__(self, audio_dir, sample_path):
         print("init Csound")
         self.cs = ctcsound.Csound()
         # one level above
-        self.working_dir = pl.Path(argv[0]).parent.absolute()
+        self.working_dir = pl.Path(audio_dir).parent.absolute()
         self.audio_dir = self.working_dir / pl.Path("generated_sample")
-        self.sample_path = self.audio_dir / pl.Path("e2.wav")
+        self.sample_path = pl.Path(sample_path)
         logger.debug(f"Sample loaded: {self.sample_path}")
         self.csd = f"""
 
@@ -23,8 +23,7 @@ class CsoundSampler:
 
   <CsOptions>
     ;-d
-    -b 1024 -B 128
-   -+rtmidi=NULL
+    -b 1024 -B 256
    --midi-key=5 --midi-velocity-amp=4
   </CsOptions>
 
@@ -78,7 +77,7 @@ class CsoundSampler:
 
   <CsScore>
 
-  f 0 3600    ; 1 hour long empty score
+  f 0 36000    ; 1 hour long empty score
 
   </CsScore>
 
@@ -94,6 +93,13 @@ class CsoundSampler:
         self.cs.setOption("-+rtmidi")
         self.cs.setOption(f" -M{device} ")
 
+    def set_midi_api(self):
+        self.cs.setOption("-+rtmidi=NULL")
+
+
+    def set_midi(self,device):
+        self.cs.setOption("-+rtmidi=portmidi")
+        self.cs.setOption(f"--midi-device={device}")
     def play_midi_file(self, file):
         self.cs.setOption("-+rtmidi")
         self.cs.setOption(f"--midifile={file}")
