@@ -6,14 +6,12 @@ import pyrubberband as pyrb                 # pitch shifting
 from pydub import AudioSegment, effects     # amplitude normalization
 from scipy.io.wavfile import write
 
-target_sr = 44100
-
 # https://stackoverflow.com/questions/42492246/how-to-normalize-the-volume-of-an-audio-file-in-python-any-packages-currently-a
 def match_target_amplitude(sound, target_dBFS):
     change_in_dBFS = target_dBFS - sound.dBFS
     return sound.apply_gain(change_in_dBFS)
 
-def pitchshift(folder, filename, shifts=24):
+def pitchshift(folder, filename, target_sr, shifts=24):
     """
     Pitch shift of the audio file given as input and save in in the folder given as input
 

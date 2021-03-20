@@ -11,12 +11,13 @@ import wave
 
 class AudioInterface:
 
-    def __init__(self):
+    def __init__(self, wave_output_filename):
 
         self.devices = self.get_audio_devices()
         self.input_devices = None
         self.output_devices = None
-        self.WAVE_OUTPUT_FILENAME = "recordedFile.wav"
+        #self.WAVE_OUTPUT_FILENAME = "recordedFile.wav"
+        self.WAVE_OUTPUT_FILENAME = wave_output_filename
         # self.device_index=2
 
     async def capture_and_play(self, buffersize=256, *, channels=1, dtype='float32',

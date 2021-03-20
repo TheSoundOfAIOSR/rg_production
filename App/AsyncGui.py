@@ -20,11 +20,14 @@ Config.set('graphics', 'resizable', False)
 from Modules.AudioInterface import AudioInterface
 from Modules.Sampler import CsoundSampler
 from Modules.MidiInterface import MidiInterface
+from confs import Configuration
 
 
 # from Modules.PreprocessingSample import pitchshift
 
 # from Modules.testSampler import CsoundSampler
+
+config = Configuration.Config()
 
 class AsyncApp(App):
     other_task = None
@@ -32,11 +35,11 @@ class AsyncApp(App):
     midi_status = None
     midi = MidiInterface()
     midi_devices = midi.devices
-    audio = AudioInterface()
+    audio = AudioInterface(config.WAVE_OUTPUT_FILENAME)
     devices = audio.devices
     output_idx = 0
     midi_input_idx = 0
-    csound = CsoundSampler()
+    csound = CsoundSampler(config.audio_dir, config.sample_path)
 
     def build(self):
         Window.bind(on_dropfile=self._on_file_drop)
