@@ -4,7 +4,6 @@ in asyncio event loop as just another async coroutine.
 import asyncio
 import pyaudio
 import wave
-import yaml
 
 from kivy.app import App
 from kivy.uix.widget import Widget
