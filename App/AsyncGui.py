@@ -86,6 +86,7 @@ class AsyncApp(App):
                     self.devices["out"] = outdev
                     self.csound.cleanup()
                     self.csound.set_output(self.output_idx)
+                    self.csound.set_midi_api()
                     self.csound.compile_and_start()
                     print(self.devices["out"])
                     print(f"Csound index: {output_idx}, {type(output_idx)}")
@@ -104,6 +105,11 @@ class AsyncApp(App):
         self.midi_input_idx = selected_idx
         print("MIDI device selected: ", self.midi_devices["input"][self.midi_input_idx])
         print(f"Using API: {self.midi_devices['api']}")
+        print(f"{self.output_idx}")
+        self.csound.cleanup()
+        self.csound.set_output(self.output_idx)
+        self.csound.set_midi(self.midi_input_idx)
+        self.csound.compile_and_start()
         
 
     def app_func(self):
@@ -129,7 +135,7 @@ class AsyncApp(App):
         filechooser = Graphics()
 
         self.csound.set_output(self.output_idx)
-        # self.csound.set_midi()
+        self.csound.set_midi_api()
         self.csound.compile_and_start()
 
         sample = self.csound.sample_path
@@ -171,11 +177,12 @@ class AsyncApp(App):
                     elif self.midi_status == "load_midi":
                         print("here")
                         self.csound.cleanup()
-                        self.csound.set_output(self.output_idx)
                         self.csound.play_midi_file(self.midi_file)
+                        self.csound.set_output(0)
                         self.csound.compile_and_start()
                         self.midi_status = None
                         filechooser.midi_file = None
+                        print(self.output_idx)
 
                         # playback_task = asyncio.create_task(self.audio.player('recordedFile.wav', self.devices['out']))
 

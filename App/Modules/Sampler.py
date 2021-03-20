@@ -24,8 +24,7 @@ class CsoundSampler:
 
   <CsOptions>
     ;-d
-    -b 1024 -B 128
-   -+rtmidi=NULL
+    -b 1024 -B 256
    --midi-key=5 --midi-velocity-amp=4
   </CsOptions>
 
@@ -79,7 +78,7 @@ class CsoundSampler:
 
   <CsScore>
 
-  f 0 3600    ; 1 hour long empty score
+  f 0 36000    ; 1 hour long empty score
 
   </CsScore>
 
@@ -91,9 +90,14 @@ class CsoundSampler:
     def set_output(self,output=0):
         self.cs.setOption(f"-odac{output}")
 
+
+    def set_midi_api(self):
+        self.cs.setOption("-+rtmidi=NULL")
+
+
     def set_midi(self,device):
-        self.cs.setOption("-+rtmidi")
-        self.cs.setOption(f" -M{device} ")
+        self.cs.setOption("-+rtmidi=portmidi")
+        self.cs.setOption(f"--midi-device={device}")
 
     def play_midi_file(self,file):
         self.cs.setOption("-+rtmidi")
