@@ -1,6 +1,6 @@
 folder_configuration:
   audio_dir: "./generated_sample"
-  sample: "e2.wav"
+  #sample: "e2.wav"
   sample_path:  "./generated_sample/e2.wav"
 audio_interface:
   WAVE_OUTPUT_FILENAME: "recordedFile.wav"
