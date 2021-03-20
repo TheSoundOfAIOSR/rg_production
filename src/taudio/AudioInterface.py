@@ -161,7 +161,6 @@ class AudioInterface:
         output_list = []
 
         devices = sd.query_devices()
-        print(devices)
         for _id, device in enumerate(devices):
             if device["hostapi"] != 0:
                 continue

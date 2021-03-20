@@ -190,7 +190,6 @@ class ProdApp(App):
                     # Selection of actions that the application can dispatch
                     #   Start or stop the recording depending on application state
                     if self.appStatus == "ToggleRecord" and not recording_status:
-                        print("Recording")
                         recording_status = True
                         record_task = asyncio.create_task(
                             self.audio.capture_and_playback(buffersize=256)
