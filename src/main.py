@@ -93,17 +93,17 @@ class ProdApp(App):
             input_list = self.devices["devices"]["input_list"]
             for in_dev in input_list:
                 if dev == in_dev.get("name", None):
-                    input_idx = in_dev["hostapi"]
-                    self.devices["in"] = in_dev
+                    self.audio.input_idx = selected_idx
+                    self.devices["in"] = in_dev # There is redundancy with this now but will wait for future refactor
                     logger.debug(self.devices["in"])
-                    logger.debug(f"Csound index: {input_idx}, {type(input_idx)}")
+                    logger.debug(f"Csound index: {self.audio.input_idx}, {type(self.audio.input_idx)}")
         # handling output
         elif io == "output":
             output_list = self.devices["devices"]["output_list"]
             for out_dev in output_list:
                 if dev == out_dev.get("name", None):
                     self.output_idx = selected_idx
-                    self.devices["out"] = out_dev
+                    self.devices["out"] = out_dev 
                     self.csound.cleanup()
                     self.csound.set_output(self.output_idx)
                     self.csound.set_midi_api()
@@ -126,47 +126,6 @@ class ProdApp(App):
             logger.debug(f"Using API: {self.midi_devices['api']}")
 
             logger.debug(dev)
-
-
-    # def select_midi_device(self, event):
-    #     selected_device = event
-    #     """
-    #     selected_device in the form:
-    #     [idx]"Midi device nane"
-    #     """
-    #     # TODO: improve implementation, maybe with regex
-    #     selected_idx = int(selected_device.split("[")[1].split("]")[0])
-    #
-    #     self.midi_input_idx = selected_idx
-    #
-    #     print("MIDI device selected: ", self.midi_devices["input"][self.midi_input_idx])
-    #     print(f"Using API: {self.midi_devices['api']}")
-    #     print(f"{self.output_idx}")
-    #     self.csound.cleanup()
-    #     self.csound.set_output(self.output_idx)
-    #     self.csound.set_midi(self.midi_input_idx)
-    #     self.csound.compile_and_start()
-
-
-#     def app_func(self):
-#         '''This will run both methods asynchronously and then block until they
-#         are finished
-#         '''
-#
-#         self.other_task = asyncio.ensure_future(self.main_loop())
-#
-#         async def run_wrapper():
-#             # we don't actually need to set asyncio as the lib because it is
-#             # the default, but it doesn't hurt to be explicit
-#             await self.async_run(async_lib='asyncio')
-#             self.csound.cleanup()  # before terminating the app, do the cleanup for Csound
-#             print('App done')
-#             self.other_task.cancel()
-#
-#         return asyncio.gather(run_wrapper(), self.other_task)
-# =======
-#
-# >>>>>>> 736ca7f56113552adc5d8743751ee2a5ac896ec7:src/main.py
 
     async def main_loop(self):
         recording_status = False

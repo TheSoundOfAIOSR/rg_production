@@ -20,6 +20,8 @@ class AudioInterface:
         self.devices = self.get_audio_devices()
         self.input_devices = None
         self.output_devices = None
+        self.input_idx = sd.default.device[0]
+
         #self.WAVE_OUTPUT_FILENAME = "recordedFile.wav"
         # self.device_index=2
 
@@ -59,12 +61,14 @@ class AudioInterface:
             out_queue.put(np.zeros((buffersize, channels), dtype=dtype))
 
         stream = sd.Stream(
+            # device = self.input_idx, # This should work but it hangs if this is uncommented
             blocksize=buffersize,
             callback=callback,
             dtype=dtype,
             channels=channels,
             **kwargs
         )
+
         with stream:
             while True:
                 in_data, status = await in_queue.get()
@@ -173,5 +177,6 @@ class AudioInterface:
         audio_device["out"] = sd.query_devices(kind="output")
         audio_device["devices"]["input_list"] = input_list
         audio_device["devices"]["output_list"] = output_list
+
 
         return audio_device
