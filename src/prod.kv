@@ -1,0 +1,157 @@
+<BlackKnob@Knob>:
+    size: dp(80), dp(80)
+    min: 0
+    max: 100
+    step: 1
+    value: 0
+    knobimg_source: "../assets/black_knob.png"
+    show_label: True  # Show central label
+    show_marker: False  # Do not show surrounding marker
+
+<KnobLayout@GridLayout>:
+    rows: 3
+    size: dp(160), dp(100)
+    spacing: [0, 5]
+
+    BlackKnob:
+    BlackKnob:
+    BlackKnob:
+
+<Graphics>:
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: '../assets/background.png'
+
+    ToggleButton:
+        size: dp(100), dp(100)
+        pos: dp(20), dp(480)
+        border: (0, 0, 0, 0)
+        id: record
+        on_press: app.set_event('ToggleRecord')
+        background_normal: '../assets/record_off.png'
+        background_down: '../assets/record_on.png'
+    
+    SliderLayout:
+        id: some_slider
+        cols: 8
+        pos: dp(150), dp(490)
+        size: dp(200), dp(100)
+        
+    GridLayout:
+        cols: 8
+        pos: dp(150), dp(430)
+        size: dp(200), dp(100)
+        Label:
+            text: "a"
+        Label:
+            text: "b"
+        Label:
+            text: "c"
+        Label:
+            text: "d"
+        Label:
+            text: "e"
+        Label:
+            text: "f"
+        Label:
+            text: "g"
+        Label:
+            text: "h"
+
+    Button:
+        id: generate
+        text: 'Generate'
+        pos: dp(380), dp(480)
+        size: dp(100), dp(100)
+        on_press: lab.text = f"Generating with values {', '.join(list(map(lambda x: str(round(x.value, 1)), list(some_slider.children)[::-1])))}"
+
+    Button:
+        id: export
+        text: 'Export'
+        pos: dp(500), dp(480)
+        size: dp(100), dp(100)
+        on_press: lab.text = "Exporting"
+
+    GridLayout:
+        rows: 3
+        pos: dp(620), dp(480)
+        size: dp(160), dp(100)
+        Spinner:
+            name: "input"
+            text: 'Audio Input'
+            values: [f"[{indev['id']}]>" + indev["name"] for indev in app.devices["devices"]["input_list"]]
+            on_text:
+                print(f"The spinner {self} has text {self.text}")
+                app.select_audio_device(self, self.text)
+        Spinner:
+            name: "output"
+            text: 'Audio Output'
+            values: [f"[{indev['id']}]>" + indev["name"] for indev in app.devices["devices"]["output_list"]]
+            on_text:
+                print(f"The spinner {self} has text {self.text}")
+                app.select_audio_device(self, self.text)
+        Spinner:
+            name: "midi_input"
+            text: 'Midi Input'
+            values: [f"[{idx}]" + midi_in for idx, midi_in in enumerate(app.midi_devices["input"])]
+            on_text:
+                print(f"The spinner {self} has text {self.text}")
+                app.select_audio_device(self, self.text)
+
+    Label:
+        id: lab
+        pos: dp(350), dp(384)
+        text: ""
+        color: .8,.8,.8,1
+        font_size: 12
+
+    Button:
+        id: play
+        text: 'play'
+        pos: dp(20),dp(340)
+        size: dp(100), dp(50)
+        on_press:app.set_event('playSample')
+
+    Button:
+        id: playM
+        text: 'Play Midi'
+        pos: dp(20),dp(290)
+        size: dp(100), dp(50)
+        on_press: app.set_event('open_popup')
+
+    Image:
+        source: ''
+        pos: dp(150), dp(280)
+        size: self.texture_size
+
+    KnobLayout:
+        pos:  dp(20), dp(170)
+
+    KnobLayout:
+        pos:  dp(700), dp(170)
+
+<FileChoosePopup>:
+    title: "Choose a MIDI File"
+    size_hint: .9, .9
+    auto_dismiss: False
+
+    BoxLayout:
+        orientation: "vertical"
+        FileChooser:
+            id: filechooser
+            FileChooserListLayout
+
+        BoxLayout:
+            size_hint: (1, 0.1)
+            pos_hint: {'center_x': .5, 'center_y': .5}
+            spacing: 20
+            Button:
+                text: "Cancel"
+                on_release: root.dismiss()
+            Button:
+                text: "Play"
+                on_release: root.load(filechooser.selection)
+                id: ldbtn
+                disabled: True if filechooser.selection==[] else False

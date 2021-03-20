@@ -1,27 +1,37 @@
 import sys
-sys.path.append('.')
+
+sys.path.append(".")
 
 import queue
 import numpy as np
 import sounddevice as sd
 
 import asyncio
-import pyaudio
 import wave
+from typing import *
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 
 class AudioInterface:
-
-    def __init__(self, wave_output_filename):
-
+    def __init__(self):
         self.devices = self.get_audio_devices()
         self.input_devices = None
         self.output_devices = None
         #self.WAVE_OUTPUT_FILENAME = "recordedFile.wav"
-        self.WAVE_OUTPUT_FILENAME = wave_output_filename
         # self.device_index=2
 
-    async def capture_and_play(self, buffersize=256, *, channels=1, dtype='float32',
-                               pre_fill_blocks=10, **kwargs):
+    async def capture_and_play(
+        self,
+        buffersize=256,
+        *,
+        channels=1,
+        dtype="float32",
+        pre_fill_blocks=10,
+        **kwargs
+    ):
         """Generator that yields blocks of input/output data as NumPy arrays.
 
         The output blocks are uninitialized and have to be filled with
@@ -39,22 +49,28 @@ class AudioInterface:
              time: CData, status: CallbackFlags) -> None
         """
 
-        def callback(indata, outdata, frame_count, time_info, status):
-            loop.call_soon_threadsafe(in_queue.put_nowait, (indata.copy(), status))
+        def callback(in_data, outdata, frame_count, time_info, status):
+            loop.call_soon_threadsafe(in_queue.put_nowait, (in_data.copy(), status))
+            # if not out_queue.empty: # This call seems to cause microphone input to not be picked up
             outdata[:] = out_queue.get_nowait()
 
         # pre-fill output queue
         for _ in range(pre_fill_blocks):
             out_queue.put(np.zeros((buffersize, channels), dtype=dtype))
 
-        stream = sd.Stream(blocksize=buffersize, callback=callback, dtype=dtype,
-                           channels=channels, **kwargs)
+        stream = sd.Stream(
+            blocksize=buffersize,
+            callback=callback,
+            dtype=dtype,
+            channels=channels,
+            **kwargs
+        )
         with stream:
             while True:
-                indata, status = await in_queue.get()
-                outdata = np.empty((buffersize, channels), dtype=dtype)
-                yield indata, outdata, status
-                out_queue.put_nowait(outdata)
+                in_data, status = await in_queue.get()
+                out_data = np.empty((buffersize, channels), dtype=dtype)
+                yield in_data, out_data, status
+                out_queue.put_nowait(out_data)
 
     async def capture_and_playback(self, **kwargs):
         """Create a connection between audio inputs and outputs.
@@ -64,11 +80,10 @@ class AudioInterface:
         -- by Tibor Kiss
 
         """
-        async for indata, outdata, status in self.capture_and_play(**kwargs):
+        async for in_data, out_data, status in self.capture_and_play(**kwargs):
             if status:
                 print(status)
-            outdata[:] = indata
-
+            out_data[:] = in_data
 
     # async def player(self, audio_file: str, output_device: dict):
     #     """
@@ -115,7 +130,7 @@ class AudioInterface:
     #     # close PyAudio (7)
     #     # p.terminate()
 
-    def get_audio_devices(self):
+    def get_audio_devices(self) -> Dict[str, Any]:
         # TODO: change docstring
         """Function to list system audio devices.
         Returns a dictionary of the current audio devices available and currently used
@@ -139,25 +154,24 @@ class AudioInterface:
         audio_device = {
             "in": "",
             "out": "",
-            "devices": {
-                "input_list": [],
-                "output_list": []
-            }
+            "devices": {"input_list": [], "output_list": []},
         }
 
         input_list = []
         output_list = []
 
         devices = sd.query_devices()
+        print(devices)
         for _id, device in enumerate(devices):
-            if device['hostapi'] != 0:
+            if device["hostapi"] != 0:
                 continue
-            device['id'] = _id
-            input_list.append(device) if device['max_input_channels'] > device['max_output_channels'] else output_list.append(device)
+            device["id"] = _id
+            input_list.append(device) if device["max_input_channels"] > device[
+                "max_output_channels"
+            ] else output_list.append(device)
 
-
-        audio_device["in"] = sd.query_devices(kind='input')
-        audio_device["out"] = sd.query_devices(kind='output')
+        audio_device["in"] = sd.query_devices(kind="input")
+        audio_device["out"] = sd.query_devices(kind="output")
         audio_device["devices"]["input_list"] = input_list
         audio_device["devices"]["output_list"] = output_list
 

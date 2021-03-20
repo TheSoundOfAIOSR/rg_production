@@ -12,8 +12,9 @@ class Config():
           self.audio_dir = self.audio_dir.replace("\\", "/")
         
         self.sample = "e2.wav"
-        self.sample_path = os.path.join(self.audio_dir, self.sample)
-        
+        # self.sample_path = os.path.join(self.audio_dir, self.sample)
+        # self.sample_path = self.audio_dir + ‘ / ’ + sample
+        self.sample_path = self.audio_dir + '/' + self.sample
         # audio interface configuration
         self.WAVE_OUTPUT_FILENAME = "recordedFile.wav"
 
