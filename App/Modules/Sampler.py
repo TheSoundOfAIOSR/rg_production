@@ -18,7 +18,7 @@ class CsoundSampler:
 
         #sample = "e2.wav"
 
-        # self.sample_path = self.audio_dir + '/' + sample
+        #self.sample_path = self.audio_dir + '/' + sample
         print(f"Sample loaded: {self.sample_path}")
         self.csd = f'''
 
