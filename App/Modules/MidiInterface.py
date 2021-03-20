@@ -10,7 +10,6 @@ import rtmidi
 class MidiInterface:
 
     def __init__(self):
-
         self.api_supported_idxs = rtmidi.get_compiled_api()
         self.api_supported_names = [
             rtmidi.get_api_name(idx) for idx in self.api_supported_idxs
@@ -22,7 +21,6 @@ class MidiInterface:
         self.devices = self.get_midi_devices()
 
     def get_midi_devices(self):
-
         api = []
         for idx, name in zip(self.api_supported_idxs, self.api_supported_names):
             dev = {"idx": idx, "name": name +

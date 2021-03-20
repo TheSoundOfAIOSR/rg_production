@@ -14,10 +14,14 @@ from kivy.properties import ObjectProperty, StringProperty
 from kivy.core.window import Window
 from kivy.uix.popup import Popup
 from kivy.config import Config
+
 Config.set('graphics', 'resizable', False)
 
 from Modules.AudioInterface import AudioInterface
 from Modules.Sampler import CsoundSampler
+from Modules.MidiInterface import MidiInterface
+
+
 # from Modules.PreprocessingSample import pitchshift
 
 # from Modules.testSampler import CsoundSampler
@@ -26,9 +30,12 @@ class AsyncApp(App):
     other_task = None
     appStatus = None
     midi_status = None
+    midi = MidiInterface()
+    midi_devices = midi.devices
     audio = AudioInterface()
     devices = audio.devices
-    output_idx=0
+    output_idx = 0
+    midi_input_idx = 0
     csound = CsoundSampler()
 
     def build(self):
@@ -50,16 +57,16 @@ class AsyncApp(App):
         # will work for now but need to improve, soething more robust
         # TODO: improve the implementation maybe with regex
         selected_idx = int(selected_device.split("[")[1].split("]")[0])
-        
+
         '''
         Audio device in form: 
         "[0]>Sound device name-->>in/out_device", 
         to extract just "Sound device name"...
         '''
-        dev = selected_device.split("]>")[1].split("-->>")[0] # just the device name
+        dev = selected_device.split("]>")[1].split("-->>")[0]  # just the device name
         input_idx = None
         output_idx = None
-        
+
         # handling input
         if "-->>input_device" in selected_device:
             input_list = self.devices["devices"]["input_list"]
@@ -85,6 +92,20 @@ class AsyncApp(App):
 
         print(selected_device)
 
+
+    def select_midi_device(self, event):
+        selected_device = event
+        """
+        selected_device in the form:
+        [idx]"Midi device nane"
+        """
+        # TODO: improve implementation, maybe with regex
+        selected_idx = int(selected_device.split("[")[1].split("]")[0])
+        self.midi_input_idx = selected_idx
+        print("MIDI device selected: ", self.midi_devices["input"][self.midi_input_idx])
+        print(f"Using API: {self.midi_devices['api']}")
+        
+
     def app_func(self):
         '''This will run both methods asynchronously and then block until they
         are finished
@@ -96,7 +117,7 @@ class AsyncApp(App):
             # we don't actually need to set asyncio as the lib because it is
             # the default, but it doesn't hurt to be explicit
             await self.async_run(async_lib='asyncio')
-            self.csound.cleanup() # before terminating the app, do the cleanup for Csound 
+            self.csound.cleanup()  # before terminating the app, do the cleanup for Csound
             print('App done')
             self.other_task.cancel()
 
@@ -110,7 +131,7 @@ class AsyncApp(App):
         self.csound.set_output(self.output_idx)
         # self.csound.set_midi()
         self.csound.compile_and_start()
-        
+
         sample = self.csound.sample_path
 
         # pitchshift(self.csound.audio_dir,sample, 24)
@@ -171,6 +192,7 @@ class AsyncApp(App):
 class FileChoosePopup(Popup):
     load = ObjectProperty()
 
+
 class Graphics(Widget):
     midi_path = StringProperty("No file chosen")
     the_popup = ObjectProperty(None)
@@ -183,7 +205,7 @@ class Graphics(Widget):
     def load(self, selection):
         self.midi_file = str(selection[0])
         self.the_popup.dismiss()
-        #return midi_file somewhere outside into the main app
+
 
 
 if __name__ == '__main__':
