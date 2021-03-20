@@ -5,18 +5,20 @@ from sys import platform
 
 class CsoundSampler:
   
-    def __init__(self):
+    def __init__(self, audio_dir, sample_path):
         print("init Csound")
         self.cs = ctcsound.Csound()
-        self.working_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # one level above
-        self.audio_dir = os.path.join(self.working_dir, 'generated_sample')
+        self.audio_dir = audio_dir
+        self.sample_path = sample_path
+        #self.working_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # one level above
+        #self.audio_dir = os.path.join(self.working_dir, 'generated_sample')
 
-        if "\\" in self.audio_dir:
-          self.audio_dir = self.audio_dir.replace("\\", "/")
+        # if "\\" in self.audio_dir:
+        #   self.audio_dir = self.audio_dir.replace("\\", "/")
 
-        sample = "e2.wav"
+        #sample = "e2.wav"
 
-        self.sample_path = self.audio_dir + '/' + sample
+        #self.sample_path = self.audio_dir + '/' + sample
         print(f"Sample loaded: {self.sample_path}")
         self.csd = f'''
 
@@ -149,6 +151,3 @@ class CsoundSampler:
       s += "endif\n"
 
       return s
-
-# if __name__ == '__main__':
-  # cs = CsoundSampler()
