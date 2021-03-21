@@ -1,10 +1,11 @@
 import json
-import common.log
+import common.log as log
 import pathlib as pl
 from types import SimpleNamespace
 from sys import argv
 
 config_path = pl.Path(argv[0]).parent.absolute() / pl.Path("config.json")
+logger = log.setup_logger()
 
 
 class ConfigEncoder(json.JSONEncoder):

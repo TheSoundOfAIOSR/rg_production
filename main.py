@@ -29,7 +29,7 @@ class ProdApp(App):
     other_task = None
     appStatus = None
     midi_status = None
-    config = None
+    config = cfg.load_config()
     midi = MidiInterface()
     audio = AudioInterface(config.record_file)
     csound = CsoundSampler(config.audio_dir, config.sample_path)
@@ -42,8 +42,9 @@ class ProdApp(App):
         return Graphics()
 
     def _on_file_drop(self, window, file_path):
-        print(file_path)
+        logger.debug(file_path)
         # pass file_path to md player which triggers on_press play button of popup
+
     def set_event(self, event):
 
         self.appStatus = event
@@ -120,12 +121,6 @@ class ProdApp(App):
         record_task = None
         filechooser = Graphics()
 
-        try:
-            self.config = cfg.load_config()
-        except:
-            logger.error("Unable to load config", exc_info=True)
-            sys.exit(1)
-
         self.csound.set_output(self.output_idx)
         self.csound.set_midi_api()
         self.csound.compile_and_start()
@@ -168,7 +163,7 @@ class ProdApp(App):
                             self.midi_file = filechooser.midi_file
 
                     elif self.midi_status == "load_midi":
-                        logging.debug("here")
+                        logger.debug("here")
                         self.csound.cleanup()
                         self.csound.play_midi_file(self.midi_file)
                         self.csound.set_output(0)
@@ -182,7 +177,7 @@ class ProdApp(App):
                 self.appStatus = None
 
                 await asyncio.sleep(0.01)
-        except asyncio.CancelledError as e:
+        except asyncio.CancelledError:
             logger.error(f"Wasting time was canceled", exc_info=True)
         finally:
             # when canceled, print that it finished

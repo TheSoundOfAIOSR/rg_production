@@ -36,13 +36,13 @@ def pitchshift(folder, filename, shifts=24):
     logger.info("shifting pitch")
     root = 40  # e2 is 40
 
-    folder = pathlib.Path(folder).absoule()
+    folder = pl.Path(folder).absolute()
 
     for n_steps in range(0, shifts + 1):
         # audio_shifted = librosa.effects.pitch_shift(audio, target_sr, n_steps, bins_per_octave=12)
         audio_shifted = pyrb.pitch_shift(audio, target_sr, n_steps)
         new_filename = f"{root+n_steps}.wav"
-        new_filepath = folder / new_filename
+        new_filepath = folder / pl.Path(new_filename)
         audio_shifted = audio_shifted.astype("float32")
         write(new_filepath, target_sr, audio_shifted)
         logger.debug(f"Creating: {new_filename}")
@@ -54,7 +54,7 @@ def pitchshift(folder, filename, shifts=24):
     for n_steps in range(0 - shifts // 2, (shifts // 2) + 1):
         # amplitude normalization
         new_filename = f"{root+n_steps}.wav"
-        new_filepath = folder / new_filename
+        new_filepath = folder / pl.Path(new_filename)
         sound = AudioSegment.from_file(new_filepath, "wav")
         normalized_sound = match_target_amplitude(sound, -30.0)
         # another way
