@@ -31,7 +31,7 @@ class ProdApp(App):
     midi_status = None
     config = cfg.load_config()
     midi = MidiInterface()
-    audio = AudioInterface(config.record_file)
+    audio = AudioInterface()
     csound = CsoundSampler(config.audio_dir, config.sample_path)
     midi_devices = midi.devices
     devices = audio.devices
@@ -87,16 +87,16 @@ class ProdApp(App):
             input_list = self.devices["devices"]["input_list"]
             for in_dev in input_list:
                 if dev == in_dev.get("name", None):
-                    input_idx = in_dev["hostapi"]
+                    self.audio.input_idx = in_dev.get('id')
                     self.devices["in"] = in_dev
                     logger.debug(self.devices["in"])
-                    logger.debug(f"Csound index: {input_idx}, {type(input_idx)}")
+                    logger.debug(f"Input index: {self.audio.input_idx}, {type(self.audio.input_idx)}")
         # handling output
         elif io == "output":
             output_list = self.devices["devices"]["output_list"]
             for out_dev in output_list:
                 if dev == out_dev.get("name", None):
-                    self.output_idx = out_dev["hostapi"]
+                    self.output_idx = out_dev.get('id')
                     self.devices["out"] = out_dev
                     self.csound.cleanup()
                     self.csound.set_output(self.output_idx)

@@ -3,7 +3,6 @@ import numpy as np
 import sounddevice as sd
 
 import asyncio
-import pyaudio
 import wave
 from typing import *
 import common.log as log
@@ -13,13 +12,12 @@ logger = log.setup_logger()
 
 
 class AudioInterface:
-    def __init__(self, wave_output_filename):
+    def __init__(self):
 
         self.devices = self.get_audio_devices()
         self.input_devices = None
         self.output_devices = None
-        self.WAVE_OUTPUT_FILENAME = wave_output_filename
-        # self.device_index=2
+        self.input_idx = sd.default.device[0]
 
     async def capture_and_play(
         self,
@@ -57,12 +55,14 @@ class AudioInterface:
             out_queue.put(np.zeros((buffersize, channels), dtype=dtype))
 
         stream = sd.Stream(
+            # device = self.input_idx, # This should work but it hangs if this is uncommented
             blocksize=buffersize,
             callback=callback,
             dtype=dtype,
             channels=channels,
             **kwargs
         )
+
         with stream:
             while True:
                 in_data, status = await in_queue.get()
@@ -83,50 +83,6 @@ class AudioInterface:
                 logger.debug(status)
             out_data[:] = in_data
 
-    # async def player(self, audio_file: str, output_device: dict):
-    #     """
-    #     Function to play audio with a callback implementation
-    #     Args:
-    #         audio_file (str): Path of the audio file
-    #         output_device (dict): current audio devices
-    #
-    #     Returns:
-    #
-    #     """
-    #     wf = wave.open(audio_file, 'rb')
-    #
-    #     # instantiate PyAudio (1)
-    #     p = self.audio
-    #
-    #     # define callback (2)
-    #     def callback(in_data, frame_count, time_info, status):
-    #         data = wf.readframes(frame_count)
-    #         return data, pyaudio.paContinue
-    #
-    #     # open stream using callback (3)
-    #     stream = p.open(
-    #         format=p.get_format_from_width(wf.getsampwidth()),
-    #         channels=wf.getnchannels(),
-    #         rate=wf.getframerate(),
-    #         output=True,
-    #         output_device_index=output_device["index"],
-    #         stream_callback=callback
-    #     )
-    #
-    #     # start the stream (4)
-    #     stream.start_stream()
-    #
-    #     # wait for stream to finish (5)
-    #     while stream.is_active():
-    #         await asyncio.sleep(0.1)
-    #
-    #     # stop stream (6)
-    #     stream.stop_stream()
-    #     stream.close()
-    #     wf.close()
-    #
-    #     # close PyAudio (7)
-    #     # p.terminate()
 
     def get_audio_devices(self) -> Dict[str, Any]:
         # TODO: change docstring
