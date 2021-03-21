@@ -16,7 +16,7 @@ from common.customw.slider_layout import *
 from common.taudio.AudioInterface import AudioInterface
 from common.taudio.MidiInterface import MidiInterface
 from common.taudio.Sampler import CsoundSampler
-from common.taudio.PreprocessingSample import pitchshift
+# from common.taudio.PreprocessingSample import pitchshift
 
 import common.log as log
 from common.config import Config as cfg
