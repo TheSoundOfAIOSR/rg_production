@@ -13,9 +13,12 @@ class CsoundSampler:
         print("init Csound")
         self.cs = ctcsound.Csound()
         # one level above
-        self.working_dir = pl.Path(audio_dir).parent.absolute()
-        self.audio_dir = self.working_dir / pl.Path("generated_sample")
-        self.sample_path = pl.Path(sample_path)
+        self.audio_dir = (
+            pl.Path(audio_dir).absolute()
+            if audio_dir
+            else pl.Path(argv[0]).parent.absolute()
+        ) / pl.Path("generated_sample")
+        self.sample_path = pl.Path(sample_path).absolute()
         logger.debug(f"Sample loaded: {self.sample_path}")
         self.csd = f"""
 
@@ -89,17 +92,13 @@ class CsoundSampler:
     def set_output(self, output=0):
         self.cs.setOption(f"-odac{output}")
 
-    def set_midi(self, device):
-        self.cs.setOption("-+rtmidi")
-        self.cs.setOption(f" -M{device} ")
-
     def set_midi_api(self):
         self.cs.setOption("-+rtmidi=NULL")
 
-
-    def set_midi(self,device):
+    def set_midi(self, device):
         self.cs.setOption("-+rtmidi=portmidi")
         self.cs.setOption(f"--midi-device={device}")
+
     def play_midi_file(self, file):
         self.cs.setOption("-+rtmidi")
         self.cs.setOption(f"--midifile={file}")
@@ -137,7 +136,7 @@ class CsoundSampler:
         root = 40
         s = f"""
       if iNum == {root} then
-      Sname = "{self.sample_path}"
+      Sname = "{self.sample_path.as_posix()}"
       """
 
         for i in range(0, 25):

@@ -10,7 +10,6 @@ import common.log as log
 from common.config import Config
 
 logger = log.setup_logger()
-config = Config.load_config()
 
 
 class AudioInterface:
@@ -50,8 +49,8 @@ class AudioInterface:
 
         def callback(in_data, outdata, frame_count, time_info, status):
             loop.call_soon_threadsafe(in_queue.put_nowait, (in_data.copy(), status))
-            if not out_queue.empty:
-                outdata[:] = out_queue.get_nowait()
+            # if not out_queue.empty: # This call seems to cause microphone input to not be picked up
+            outdata[:] = out_queue.get_nowait()
 
         # pre-fill output queue
         for _ in range(pre_fill_blocks):
