@@ -127,5 +127,9 @@ class AudioInterface:
         audio_device["out"] = sd.query_devices(kind="output")
         audio_device["devices"]["input_list"] = input_list
         audio_device["devices"]["output_list"] = output_list
+        i = 0
+        for dev in output_list:
+            dev["id"] = i
+            i+=1
 
         return audio_device
