@@ -16,7 +16,7 @@ from common.customw.slider_layout import *
 from common.taudio.AudioInterface import AudioInterface
 from common.taudio.MidiInterface import MidiInterface
 from common.taudio.Sampler import CsoundSampler
-# from common.taudio.PreprocessingSample import pitchshift
+from common.taudio.PreprocessingSample import pitchshift
 
 import common.log as log
 from common.config import Config as cfg
@@ -125,9 +125,10 @@ class ProdApp(App):
         self.csound.set_midi_api()
         self.csound.compile_and_start()
 
-        sample = self.csound.sample_path
+        folder = self.csound.audio_dir.as_posix()
+        sample = self.csound.sample_path.as_posix()
 
-        # pitchshift(self.csound.audio_dir, sample, 24)
+        pitchshift(folder, sample, 24)
         """This method is also run by the asyncio loop and periodically prints
         something.
         """

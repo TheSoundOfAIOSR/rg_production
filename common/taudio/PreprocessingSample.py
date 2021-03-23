@@ -51,7 +51,7 @@ def pitchshift(folder, filename, shifts=24):
         # write("{}{}.wav".format(folder, i+root), y_shift, sr)
         # write(f'{folder}/{root+i}.wav', sr, y_shift)
 
-    for n_steps in range(0 - shifts // 2, (shifts // 2) + 1):
+    for n_steps in range(0, shifts + 1):
         # amplitude normalization
         new_filename = f"{root+n_steps}.wav"
         new_filepath = folder / pl.Path(new_filename)
