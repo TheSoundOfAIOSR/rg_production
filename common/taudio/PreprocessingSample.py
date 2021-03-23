@@ -2,7 +2,7 @@ import sys
 
 import librosa
 import numpy as np
-import pyrubberband as pyrb  # pitch shifting
+# import pyrubberband as pyrb  # pitch shifting
 from pydub import AudioSegment, effects  # amplitude normalization
 from scipy.io.wavfile import write
 from common.config import Config
@@ -39,8 +39,8 @@ def pitchshift(folder, filename, shifts=24):
     folder = pl.Path(folder).absolute()
 
     for n_steps in range(0, shifts + 1):
-        # audio_shifted = librosa.effects.pitch_shift(audio, target_sr, n_steps, bins_per_octave=12)
-        audio_shifted = pyrb.pitch_shift(audio, target_sr, n_steps)
+        audio_shifted = librosa.effects.pitch_shift(audio, target_sr, n_steps, bins_per_octave=12)
+        # audio_shifted = pyrb.pitch_shift(audio, target_sr, n_steps)
         new_filename = f"{root+n_steps}.wav"
         new_filepath = folder / pl.Path(new_filename)
         audio_shifted = audio_shifted.astype("float32")
