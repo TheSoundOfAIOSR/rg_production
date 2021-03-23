@@ -102,12 +102,19 @@ class ProdApp(App):
                     self.csound.set_output(self.output_idx)
                     self.csound.set_midi_api()
                     self.csound.compile_and_start()
+                    self.csound.start_perf_thread()
                     logger.debug(self.devices["out"])
                     logger.debug(
                         f"Csound index: {self.output_idx}, {type(self.output_idx)}"
                     )
         elif io == "midi_input":
             self.midi_input_idx = self.midi_devices["input"].index(dev)
+            self.csound.cleanup()
+            self.csound.set_output(self.output_idx)
+            self.csound.set_midi_api('portmidi')
+            self.csound.set_midi_device(self.midi_input_idx)
+            self.csound.compile_and_start()
+            self.csound.start_perf_thread()
             logger.debug(
                 "MIDI device selected: ",
                 self.midi_devices["input"][self.midi_input_idx],
@@ -124,6 +131,7 @@ class ProdApp(App):
         self.csound.set_output(self.output_idx)
         self.csound.set_midi_api()
         self.csound.compile_and_start()
+        self.csound.start_perf_thread()
 
         folder = self.csound.audio_dir.as_posix()
         sample = self.csound.sample_path.as_posix()
@@ -167,8 +175,9 @@ class ProdApp(App):
                         logger.debug("here")
                         self.csound.cleanup()
                         self.csound.play_midi_file(self.midi_file)
-                        self.csound.set_output(0)
+                        self.csound.set_output(self.output_idx)
                         self.csound.compile_and_start()
+                        self.csound.start_perf_thread()
                         self.midi_status = None
                         filechooser.midi_file = None
                         logger.debug(self.output_idx)

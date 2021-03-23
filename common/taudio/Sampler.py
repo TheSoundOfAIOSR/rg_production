@@ -44,7 +44,7 @@ class CsoundSampler:
     Sname = "{self.sample_path.as_posix()}" 
 
     iNum notnum
-    ;iNum = p5
+    iNum = p5
     {self.string_pitch_to_file()}
 
 
@@ -92,35 +92,30 @@ class CsoundSampler:
     def set_output(self, output=0):
         self.cs.setOption(f"-odac{output}")
 
-    def set_midi_api(self):
-        self.cs.setOption("-+rtmidi=NULL")
+    def set_midi_api(self, api='NULL'):
+        self.cs.setOption(f"-+rtmidi={api}")
 
-    def set_midi(self, device):
-        self.cs.setOption("-+rtmidi=portmidi")
+    def set_midi_device(self, device):
         self.cs.setOption(f"--midi-device={device}")
 
-    def play_midi_file(self, file):
-        self.cs.setOption("-+rtmidi")
-        self.cs.setOption(f"--midifile={file}")
 
-    def read_midi_file(self, file):
+    def play_midi_file(self, file):
+        self.set_midi_api(api='')
         self.cs.setOption(f"--midifile={file}")
 
     def compile_and_start(self):
         logger.debug("Starting Sampler")
-
-        # self.cs.setStringChannel("gSname", self.sample_path)
         self.cs.compileCsdText(self.csd)
         self.cs.start()
+
+    def start_perf_thread(self):
         self.pt = ctcsound.CsoundPerformanceThread(self.cs.csound())
         self.pt.play()
 
     def play_sample(self, pitch=40):
         # sco = "i 1 0 1 1 40" # the 40 will be substitued with the value from the Keyboard on screen from gui
         sco = f"i 1 0 1 1 {pitch}"
-
         self.cs.readScore(sco)
-        # print(self.stringPitch2File())
 
     def cleanup(self):
         self.pt.stop()
@@ -150,6 +145,3 @@ class CsoundSampler:
 
         return s
 
-
-# if __name__ == '__main__':
-# cs = CsoundSampler()
