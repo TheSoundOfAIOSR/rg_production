@@ -136,7 +136,7 @@ class ProdApp(App):
         folder = self.csound.audio_dir.as_posix()
         sample = self.csound.sample_path.as_posix()
 
-        pitchshift(folder, sample, 24)
+        pitchshift(folder, sample, 40, 48)
         """This method is also run by the asyncio loop and periodically prints
         something.
         """

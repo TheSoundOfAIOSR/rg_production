@@ -3,15 +3,21 @@ import os
 import pathlib as pl
 from sys import platform, argv
 import common.log as log
-
+from common.config import Config
 
 logger = log.setup_logger()
+config = Config.load_config()
+
+target_sr = config.sampling_rate
+root_note = config.root
 
 
 class CsoundSampler:
     def __init__(self, audio_dir, sample_path):
         print("init Csound")
         self.cs = ctcsound.Csound()
+        self.cs.sr = target_sr
+        self.root = root_note
         # one level above
         self.audio_dir = (
             pl.Path(audio_dir).absolute()
@@ -31,7 +37,6 @@ class CsoundSampler:
   </CsOptions>
 
   <CsInstruments>
-  sr = 44100
   ksmps = 32
   nchnls = 2
   0dbfs = 1.0
@@ -125,17 +130,18 @@ class CsoundSampler:
 
     # ==============================
 
-    #
+    def set_root(self,r=60):
+        self.root = r 
+
     def string_pitch_to_file(self):
 
-        root = 40
         s = f"""
-      if iNum == {root} then
+      if iNum == {self.root} then
       Sname = "{self.sample_path.as_posix()}"
       """
 
-        for i in range(0, 25):
-            note = i + root
+        for i in range(self.root - 24, self.root + 25):
+            note = i
             s += f"""
         elseif iNum == {note} then
            Sname = "{(self.audio_dir / pl.Path(str(note))).as_posix()}.wav"
