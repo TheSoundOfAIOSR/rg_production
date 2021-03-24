@@ -7,6 +7,7 @@ from scipy.io.wavfile import write
 from common.config import Config
 import common.log as log
 import pathlib as pl
+from multiprocessing import Pool
 
 logger = log.setup_logger()
 config = Config.load_config()
@@ -20,6 +21,18 @@ def match_target_amplitude(sound, target_dBFS):
 
 
 # TODO : SEPARATE PITCHSHIFT, NORMALIZATION INTO 2 FUNCTIONS
+
+
+
+def utility_pitchshift(audio, target_sr, n_steps, root, folder):
+    audio_shifted = librosa.effects.pitch_shift(audio, target_sr, n_steps, bins_per_octave=12)
+    new_filename = f"{root + n_steps}.wav"
+    new_filepath = folder / pl.Path(new_filename)
+    audio_shifted = audio_shifted.astype("float32")
+    write(new_filepath, target_sr, audio_shifted)
+    logger.debug(f"Creating: {new_filename}")
+    logger.debug("==============================")
+
 
 def pitchshift(folder, filename, root=60, shifts=48):
     """
@@ -39,14 +52,25 @@ def pitchshift(folder, filename, root=60, shifts=48):
 
     folder = pl.Path(folder).absolute()
 
-    for n_steps in range(- (shifts//2), 1 + (shifts//2)):
-        audio_shifted = librosa.effects.pitch_shift(audio, target_sr, n_steps, bins_per_octave=12)
-        new_filename = f"{root + n_steps}.wav"
-        new_filepath = folder / pl.Path(new_filename)
-        audio_shifted = audio_shifted.astype("float32")
-        write(new_filepath, target_sr, audio_shifted)
-        logger.debug(f"Creating: {new_filename}")
-        logger.debug("==============================")
+
+    with Pool(3) as pool:
+        for n_steps in range(- (shifts//2), 1 + (shifts//2)):
+            pool.apply_async(
+                utility_pitchshift,
+                (audio, target_sr, n_steps, root, folder)
+            )
+        pool.close()
+        pool.join()
+
+
+    # for n_steps in range(- (shifts//2), 1 + (shifts//2)):
+    #     audio_shifted = librosa.effects.pitch_shift(audio, target_sr, n_steps, bins_per_octave=12)
+    #     new_filename = f"{root + n_steps}.wav"
+    #     new_filepath = folder / pl.Path(new_filename)
+    #     audio_shifted = audio_shifted.astype("float32")
+    #     write(new_filepath, target_sr, audio_shifted)
+    #     logger.debug(f"Creating: {new_filename}")
+    #     logger.debug("==============================")
 
         # write("{}{}.wav".format(folder, i+root), y_shift, sr)
         # write(f'{folder}/{root+i}.wav', sr, y_shift)
