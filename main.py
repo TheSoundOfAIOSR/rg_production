@@ -137,7 +137,6 @@ class ProdApp(App):
         sample = self.csound.sample_path.as_posix()
 
         preprocess(folder, sample, 40, 48)
-        # normalize(folder, sample, 40, 48)
 
         """This method is also run by the asyncio loop and periodically prints
         something.
