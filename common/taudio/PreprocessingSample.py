@@ -2,7 +2,6 @@ import sys
 
 import librosa
 import numpy as np
-# from pydub import AudioSegment, effects  # amplitude normalization
 from scipy.io.wavfile import write
 from common.config import Config
 import common.log as log
@@ -59,33 +58,3 @@ def preprocess(folder, filename, root=60, shifts=48):
     pool.join()
 
     logger.info(f"Audio files saved in folder: {folder}")
-
-
-
-
-# # https://stackoverflow.com/questions/42492246/how-to-normalize-the-volume-of-an-audio-file-in-python-any-packages-currently-a
-# def match_target_amplitude(sound, target_dBFS):
-#     change_in_dBFS = target_dBFS - sound.dBFS
-#     return sound.apply_gain(change_in_dBFS)
-
-# def normalize(folder, filename, root=60, shifts=48):
-#     """
-#     Normalize the audio file given as input and save in in the folder given as input
-
-#     Args:
-#         folder (str): path to folder where to save the normalized audio
-#         filename (str): path to audio file to normalize
-#         root (int, optional): root note of 'filename' sample
-#         shifts (int, optional): normalize to apply. Defaults to 24.
-#     """
-#     logger.info("normalizing audio")
-
-#     for n_steps in range(root - (shifts//2), root + ((shifts + 1)//2)):
-#         # amplitude normalization
-#         new_filename = f"{n_steps+root}.wav"
-#         new_filepath = folder / pl.Path(new_filename)
-#         sound = AudioSegment.from_file(new_filepath, "wav")
-#         normalized_sound = match_target_amplitude(sound, -30.0)
-#         normalized_sound.export(new_filepath, format="wav")
-#         logger.debug(f"Normalizing: {new_filename}")
-#         logger.debug("==============================")

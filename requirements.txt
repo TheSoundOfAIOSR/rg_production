@@ -5,6 +5,4 @@ ctcsound==6.14.2
 python-rtmidi==1.4.7
 librosa
 kivy-garden
-pyrubberband
-pydub
 numpy
