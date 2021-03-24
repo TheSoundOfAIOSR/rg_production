@@ -16,7 +16,7 @@ from common.customw.slider_layout import *
 from common.taudio.AudioInterface import AudioInterface
 from common.taudio.MidiInterface import MidiInterface
 from common.taudio.Sampler import CsoundSampler
-from common.taudio.PreprocessingSample import pitchshift
+from common.taudio.PreprocessingSample import pitchshift, normalize
 
 import common.log as log
 from common.config import Config as cfg
@@ -137,6 +137,8 @@ class ProdApp(App):
         sample = self.csound.sample_path.as_posix()
 
         pitchshift(folder, sample, 40, 48)
+        normalize(folder, sample, 40, 48)
+
         """This method is also run by the asyncio loop and periodically prints
         something.
         """

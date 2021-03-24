@@ -51,7 +51,20 @@ def pitchshift(folder, filename, root=60, shifts=48):
         # write("{}{}.wav".format(folder, i+root), y_shift, sr)
         # write(f'{folder}/{root+i}.wav', sr, y_shift)
 
+    logger.info(f"Audio files saved in folder: {folder}")
 
+
+
+def normalize(folder, filename, root=60, shifts=48):
+    """
+    Normalize the audio file given as input and save in in the folder given as input
+
+    Args:
+        folder (str): path to folder where to save the normalized audio
+        filename (str): path to audio file to normalize
+        root (int, optional): root note of 'filename' sample
+        shifts (int, optional): normalize to apply. Defaults to 24.
+    """
     logger.info("normalizing audio")
 
     for n_steps in range(root - (shifts//2), root + ((shifts + 1)//2)):
@@ -65,5 +78,3 @@ def pitchshift(folder, filename, root=60, shifts=48):
         normalized_sound.export(new_filepath, format="wav")
         logger.debug(f"Normalizing: {new_filename}")
         logger.debug("==============================")
-
-    logger.info(f"Audio files saved in folder: {folder}")
