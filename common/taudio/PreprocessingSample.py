@@ -46,7 +46,7 @@ def preprocess(folder, filename, root=60, shifts=48):
     folder = pl.Path(folder).absolute()
 
 
-    pool = mp.Pool(mp.cpu_count())
+    pool = mp.pool.ThreadPool(mp.cpu_count())
     
     for n_steps in range(- (shifts//2), 1 + (shifts//2)):
         pool.apply_async(
