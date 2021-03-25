@@ -19,6 +19,9 @@
     BlackKnob:
 
 <Graphics>:
+
+    on_midi_file: app.midi_file = self.midi_file; lab.text = self.midi_file if self.midi_file else ""
+    
     canvas.before:
         Rectangle:
             pos: self.pos
@@ -104,7 +107,6 @@
     Label:
         id: lab
         pos: dp(350), dp(384)
-        text: ""
         color: .8,.8,.8,1
         font_size: 12
 
