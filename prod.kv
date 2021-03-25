@@ -120,7 +120,7 @@
         text: 'Play Midi'
         pos: dp(20),dp(290)
         size: dp(100), dp(50)
-        on_press: app.set_event('open_popup')
+        on_press: app.set_event('midi_loaded')
 
     Image:
         source: ''
@@ -132,30 +132,3 @@
 
     KnobLayout:
         pos:  dp(700), dp(170)
-
-<FileChoosePopup>:
-    title: "Choose a MIDI File"
-    size_hint: .9, .9
-    auto_dismiss: False
-
-    BoxLayout:
-        orientation: "vertical"
-        FileChooser:
-            id: filechooser
-            FileChooserListLayout
-
-        Label:
-            text: 'or drop file here'
-            color: 0.4, 0.8, 1.0, 1.0
-        BoxLayout:
-            size_hint: (1, 0.2)
-            pos_hint: {'center_x': .5, 'center_y': .5}
-            spacing: 20
-            Button:
-                text: "Cancel"
-                on_release: root.dismiss()
-            Button:
-                text: "Play"
-                on_release: root.load(filechooser.selection)
-                id: ldbtn
-                disabled: True if filechooser.selection==[] else False
