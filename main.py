@@ -25,7 +25,6 @@ logger = log.setup_logger()
 class ProdApp(App):
     other_task = None
     appStatus = None
-    midi_status = None
     config = cfg.load_config()
     midi = MidiInterface()
     audio = AudioInterface()
@@ -42,7 +41,7 @@ class ProdApp(App):
 
     def _on_file_drop(self, window, file_path):
         path = str(file_path)
-        self.midi_file = path[1:].strip("'")  # TODO need more elegant fix to get rid of b and ' '
+        self.midi_file = path[1:].strip("'")  # TODO elegant fix to get rid of b and ' in path
         print(self.midi_file)  # TODO replace with a function which passes text to label
 
     def set_event(self, event):
@@ -166,15 +165,14 @@ class ProdApp(App):
                     elif self.appStatus == "midi_loaded":
                         if self.midi_file is None:
                             print('please drag and drop a .mid file here')
-                            filechooser.midi_text()  # TODO need to fix this function, im trying to pass text to label
+                            # filechooser.midi_text()  # TODO need to fix this function, im trying to pass text to label
                         else:
                             self.csound.cleanup()
                             self.csound.play_midi_file(self.midi_file)
                             self.csound.set_output(self.output_idx)
                             self.csound.compile_and_start()
                             self.csound.start_perf_thread()
-                            self.midi_status = None
-                            filechooser.midi_file = None
+                            self.midi_file = None
                             logger.debug(self.output_idx)
 
                         # playback_task = asyncio.create_task(self.audio.player('recordedFile.wav', self.devices['out']))
