@@ -1,23 +1,20 @@
+import sys
 import asyncio
 
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.clock import Clock
 from kivy.garden.knob import Knob
-from kivy.core.window import Window
 from kivy.config import Config
 
 from common.customw.basic import *
 from common.customw.slider_layout import *
-
 from common.taudio.AudioInterface import AudioInterface
 from common.taudio.MidiInterface import MidiInterface
 from common.taudio.Sampler import CsoundSampler
 from common.taudio.PreprocessingSample import preprocess
-
-import common.log as log
 from common.config import Config as cfg
-import sys
+import common.log as log
 
 logger = log.setup_logger()
 
@@ -31,18 +28,11 @@ class ProdApp(App):
     csound = CsoundSampler(config.audio_dir, config.sample_path)
     midi_devices = midi.devices
     devices = audio.devices
-    midi_file = None
     output_idx = 0
     midi_input_idx = 0
 
     def build(self):
-        Window.bind(on_dropfile=self._on_file_drop)
         return Graphics()
-
-    def _on_file_drop(self, window, file_path):
-        path = str(file_path)
-        self.midi_file = path[1:].strip("'")  # TODO elegant fix to get rid of b and ' in path
-        print(self.midi_file)  # TODO replace with a function which passes text to label
 
     def set_event(self, event):
         self.appStatus = event
@@ -85,16 +75,18 @@ class ProdApp(App):
             input_list = self.devices["devices"]["input_list"]
             for in_dev in input_list:
                 if dev == in_dev.get("name", None):
-                    self.audio.input_idx = in_dev.get('id')
+                    self.audio.input_idx = in_dev.get("id")
                     self.devices["in"] = in_dev
                     logger.debug(self.devices["in"])
-                    logger.debug(f"Input index: {self.audio.input_idx}, {type(self.audio.input_idx)}")
+                    logger.debug(
+                        f"Input index: {self.audio.input_idx}, {type(self.audio.input_idx)}"
+                    )
         # handling output
         elif io == "output":
             output_list = self.devices["devices"]["output_list"]
             for out_dev in output_list:
                 if dev == out_dev.get("name", None):
-                    self.output_idx = out_dev.get('id')
+                    self.output_idx = out_dev.get("id")
                     self.devices["out"] = out_dev
                     self.csound.cleanup()
                     self.csound.set_output(self.output_idx)
@@ -109,7 +101,7 @@ class ProdApp(App):
             self.midi_input_idx = self.midi_devices["input"].index(dev)
             self.csound.cleanup()
             self.csound.set_output(self.output_idx)
-            self.csound.set_midi_api('portmidi')
+            self.csound.set_midi_api("portmidi")
             self.csound.set_midi_device(self.midi_input_idx)
             self.csound.compile_and_start()
             self.csound.start_perf_thread()
@@ -164,7 +156,7 @@ class ProdApp(App):
 
                     elif self.appStatus == "midi_loaded":
                         if self.midi_file is None:
-                            print('please drag and drop a .mid file here')
+                            print("please drag and drop a .mid file here")
                             # filechooser.midi_text()  # TODO need to fix this function, im trying to pass text to label
                         else:
                             self.csound.cleanup()
