@@ -97,21 +97,20 @@ class CsoundSampler:
     def set_output(self, output=0):
         self.cs.setOption(f"-odac{output}")
 
-    def set_midi_api(self, api='NULL'):
+    def set_midi_api(self, api="NULL"):
         self.cs.setOption(f"-+rtmidi={api}")
 
     def set_midi_device(self, device):
         self.cs.setOption(f"--midi-device={device}")
 
-
     def play_midi_file(self, file):
-        self.set_midi_api(api='')
+        self.set_midi_api(api="")
         self.cs.setOption(f"--midifile={file}")
 
     def compile_and_start(self):
         logger.debug("Starting Sampler")
         self.cs.compileCsdText(self.csd)
-        self.cs.start()
+        return self.cs.start()
 
     def start_perf_thread(self):
         self.pt = ctcsound.CsoundPerformanceThread(self.cs.csound())
@@ -130,8 +129,8 @@ class CsoundSampler:
 
     # ==============================
 
-    def set_root(self,r=60):
-        self.root = r 
+    def set_root(self, r=60):
+        self.root = r
 
     def string_pitch_to_file(self):
 
@@ -150,4 +149,3 @@ class CsoundSampler:
         s += "endif\n"
 
         return s
-

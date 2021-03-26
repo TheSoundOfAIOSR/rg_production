@@ -20,8 +20,9 @@
 
 <Graphics>:
 
-    on_midi_file: app.midi_file = self.midi_file; lab.text = self.midi_file if self.midi_file else ""
-    
+    message_label: lab
+    playing_midi: False
+
     canvas.before:
         Rectangle:
             pos: self.pos
@@ -107,6 +108,7 @@
     Label:
         id: lab
         pos: dp(350), dp(384)
+        text: root.midi_file
         color: .8,.8,.8,1
         font_size: 12
 
@@ -119,7 +121,7 @@
 
     Button:
         id: playM
-        text: 'Play Midi'
+        text: 'Play/Stop Midi'
         pos: dp(20),dp(290)
         size: dp(100), dp(50)
         on_press: app.set_event('midi_loaded')

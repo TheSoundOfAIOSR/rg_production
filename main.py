@@ -20,19 +20,26 @@ logger = log.setup_logger()
 
 
 class ProdApp(App):
-    other_task = None
-    appStatus = None
-    config = cfg.load_config()
-    midi = MidiInterface()
-    audio = AudioInterface()
-    csound = CsoundSampler(config.audio_dir, config.sample_path)
-    midi_devices = midi.devices
-    devices = audio.devices
-    output_idx = 0
-    midi_input_idx = 0
+    def __init__(self, **kwargs):
+        super(ProdApp, self).__init__(**kwargs)
+        self.other_task = None
+        self.appStatus = None
+        self.midi_file = None
+        self.config = cfg.load_config()
+        self.midi = MidiInterface()
+        self.audio = AudioInterface()
+        self.csound = CsoundSampler(self.config.audio_dir, self.config.sample_path)
+        self.midi_devices = self.midi.devices
+        self.devices = self.audio.devices
+        self.output_idx = 0
+        self.midi_input_idx = 0
+        self.playing_midi = False
 
     def build(self):
         return Graphics()
+
+    def set_msg_txt(self, text):
+        self.root.message_label.text = text
 
     def set_event(self, event):
         self.appStatus = event
@@ -56,18 +63,12 @@ class ProdApp(App):
         return asyncio.gather(run_wrapper(), self.other_task)
 
     def select_audio_device(self, obj, event):
-        selected_device = event
-
-        # will work for now but need to improve, something more robust
-        # TODO: improve the implementation maybe with regex
-        # selected_idx = int(selected_device.split("[")[1].split("]")[0])
-
         """
-        Audio device in form: 
-        "0/1/M <device_name>", 
+        Audio device in form:
+        "0/1/M <device_name>",
         to extract just <device_name>...
         """
-        dev = selected_device  # just the device name
+        dev = event  # just the device name
         io = obj.name
 
         # handling input
@@ -106,17 +107,15 @@ class ProdApp(App):
             self.csound.compile_and_start()
             self.csound.start_perf_thread()
             logger.debug(
-                "MIDI device selected: ",
-                self.midi_devices["input"][self.midi_input_idx],
+                f"MIDI device selected: {self.midi_devices['input'][self.midi_input_idx]}"
             )
             logger.debug(f"Using API: {self.midi_devices['api']}")
 
-        logger.debug(selected_device)
+        logger.debug(dev)
 
     async def main_loop(self):
         recording_status = False
         record_task = None
-        filechooser = Graphics()
 
         self.csound.set_output(self.output_idx)
         self.csound.set_midi_api()
@@ -126,7 +125,10 @@ class ProdApp(App):
         folder = self.csound.audio_dir.as_posix()
         sample = self.csound.sample_path.as_posix()
 
-        # preprocess(folder, sample, 40, 48)
+        # TODO: Turn on preprocess in config, and if it's done in preprocess write false to preprocess field in config.json
+        # because we don't want to preprocess twice (it take at least 20 seconds to do so)
+        if self.config.preprocess:
+            preprocess(folder, sample, 40, 48)
 
         """This method is also run by the asyncio loop and periodically prints
         something.
@@ -155,17 +157,29 @@ class ProdApp(App):
                         # 'out']))
 
                     elif self.appStatus == "midi_loaded":
-                        if self.midi_file is None:
-                            print("please drag and drop a .mid file here")
-                            # filechooser.midi_text()  # TODO need to fix this function, im trying to pass text to label
-                        else:
+                        if self.root.playing_midi:
                             self.csound.cleanup()
-                            self.csound.play_midi_file(self.midi_file)
-                            self.csound.set_output(self.output_idx)
-                            self.csound.compile_and_start()
-                            self.csound.start_perf_thread()
-                            self.midi_file = None
-                            logger.debug(self.output_idx)
+                            self.root.playing_midi = False
+                        else:
+                            if self.midi_file is None:
+                                self.set_msg_txt(
+                                    "Please drag and drop a .mid file here"
+                                )
+                            else:
+                                self.csound.cleanup()
+                                self.csound.play_midi_file(self.midi_file)
+                                self.csound.set_output(self.output_idx)
+                                r = self.csound.compile_and_start()
+                                if r < 0:
+                                    self.set_msg_txt(
+                                        "Can't play that file, check file structure or create issue at GitHub repo"
+                                    )
+                                else:
+                                    self.csound.start_perf_thread()
+                                    self.set_msg_txt("")
+                                self.root.playing_midi = True
+                                self.midi_file = None
+                                logger.debug(self.output_idx)
 
                         # playback_task = asyncio.create_task(self.audio.player('recordedFile.wav', self.devices['out']))
 

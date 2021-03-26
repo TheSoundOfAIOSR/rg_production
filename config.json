@@ -1,1 +1,13 @@
-{"root": 40,"sampling_rate": 44100, "record_file": "recordedFile.wav", "audio_dir": null, "sample_path": "generated_sample/e2.wav", "saved_devices": {"input": 0, "output": 1, "midi_input": null}}
+{
+    "root": 40,
+    "preprocess": false,
+    "sampling_rate": 44100,
+    "record_file": "recordedFile.wav",
+    "audio_dir": null,
+    "sample_path": "generated_sample/e2.wav",
+    "saved_devices": {
+        "input": 0,
+        "output": 1,
+        "midi_input": null
+    }
+}
