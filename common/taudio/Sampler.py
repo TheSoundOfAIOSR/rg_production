@@ -42,10 +42,15 @@ class CsoundSampler:
   0dbfs = 1.0
 
   massign 0, 1
+  
+  gkVol init 0.9
+  gkVol chnexport "vol", 1, 2, 1, 0, 1
+
+  gkPan init 0.5
+  gkPan chnexport "pan", 1, 2, 1, 0, 1
 
     instr 1 ; Sampler
 
-    ;Sname chnget "gSname"
     Sname = "{self.sample_path.as_posix()}" 
 
     iNum notnum
@@ -56,6 +61,9 @@ class CsoundSampler:
     ivol = p4
     ipb = 1
     inchs = filenchnls(Sname)
+
+    kPanLeft = sqrt(1 - gkPan)
+    kPanRight = sqrt(gkPan)
     
     
     printf_i "Audiofile '%s' ", 1, Sname 
@@ -75,6 +83,12 @@ class CsoundSampler:
     aR = aRight*p4
 
     endif
+
+    aL *= gkVol
+    aR *= gkVol
+
+    aL *= kPanLeft
+    aR *= kPanRight
 
     outs aL,aR
 
@@ -128,6 +142,12 @@ class CsoundSampler:
         self.cs.reset()
 
     # ==============================
+
+    def set_master_volume(self, value=0.9):
+        self.cs.setControlChannel("vol", value)
+    
+    def set_panning(self, value=0.5):
+        self.cs.setControlChannel("pan", value)
 
     def set_root(self, r=60):
         self.root = r
