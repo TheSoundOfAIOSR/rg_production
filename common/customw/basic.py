@@ -15,6 +15,5 @@ class Graphics(Widget):
         self.app = App.get_running_app()
 
     def _on_file_drop(self, window, file_path):
-        self.message_label.text = (
-            self.midi_file
-        ) = self.app.midi_file = file_path.decode()
+        self.midi_file = self.app.midi_file = file_path.decode()
+        self.app.set_msg_txt(f"{self.midi_file} - has been loaded")
