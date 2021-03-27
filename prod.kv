@@ -21,6 +21,7 @@
 
     BlackKnob:
         id: volume
+        value: 0.9
         on_touch_move: app.csound.set_master_volume(self.value*self.value)
     Label:
         text:"Volume"
@@ -28,6 +29,7 @@
 
     BlackKnob:
         id: panning
+        value: 0.5
         on_touch_move: app.csound.set_panning(self.value)
     Label:
         text:"Pan"
