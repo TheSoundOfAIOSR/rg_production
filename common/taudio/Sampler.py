@@ -62,8 +62,8 @@ class CsoundSampler:
     ipb = 1
     inchs = filenchnls(Sname)
 
-    kPanLeft = sqrt(1 - gkPan)
-    kPanRight = sqrt(gkPan)
+    kPanRight = sqrt(1 - gkPan)
+    kPanLeft = sqrt(gkPan)
     
     
     printf_i "Audiofile '%s' ", 1, Sname 
