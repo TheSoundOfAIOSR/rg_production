@@ -160,6 +160,7 @@ class ProdApp(App):
                         if self.root.playing_midi:
                             self.csound.cleanup()
                             self.root.playing_midi = False
+                            self.set_msg_txt("")
                         else:
                             if self.midi_file is None:
                                 self.set_msg_txt(
@@ -176,7 +177,7 @@ class ProdApp(App):
                                     )
                                 else:
                                     self.csound.start_perf_thread()
-                                    self.set_msg_txt("")
+                                    self.set_msg_txt(f"Playing - {self.midi_file}")
                                 self.root.playing_midi = True
                                 self.midi_file = None
                                 logger.debug(self.output_idx)
