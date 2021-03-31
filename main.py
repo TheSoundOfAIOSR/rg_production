@@ -23,6 +23,7 @@ logger = log.setup_logger()
 class ProdApp(App):
     def __init__(self, **kwargs):
         super(ProdApp, self).__init__(**kwargs)
+        self.sm = StateManager()
         self.other_task = None
         self.appStatus = None
         self.midi_file = None
@@ -35,7 +36,6 @@ class ProdApp(App):
         self.output_idx = 0
         self.midi_input_idx = 0
         self.playing_midi = False
-        self.sm = StateManager()
 
     def build(self):
         return Graphics()
@@ -51,7 +51,6 @@ class ProdApp(App):
         """This will run both methods asynchronously and then block until they
         are finished
         """
-
         self.other_task = asyncio.ensure_future(self.main_loop())
 
         async def run_wrapper():
@@ -116,8 +115,11 @@ class ProdApp(App):
         logger.debug(dev)
 
     async def main_loop(self):
+
         recording_status = False
         record_task = None
+        self.startup = asyncio.create_task(self.sm.setup_models())
+        await self.startup
 
         self.csound.set_output(self.output_idx)
         self.csound.set_midi_api()
@@ -126,11 +128,11 @@ class ProdApp(App):
 
         folder = self.csound.audio_dir.as_posix()
         sample = self.csound.sample_path.as_posix()
-
+        # await asyncio.sleep(1000000)
         # TODO: Turn on preprocess in config, and if it's done in preprocess write false to preprocess field in config.json
         # because we don't want to preprocess twice (it take at least 20 seconds to do so)
-        if self.config.preprocess:
-            preprocess(folder, sample, 40, 48)
+        # if self.config.preprocess:
+        #     preprocess(folder, sample, 40, 48)
 
         """This method is also run by the asyncio loop and periodically prints
         something.
