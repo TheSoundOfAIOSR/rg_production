@@ -7,6 +7,7 @@ from kivy.clock import Clock
 from kivy.garden.knob import Knob
 from kivy.config import Config
 
+from common.state.state_manager import StateManager
 from common.customw.basic import *
 from common.customw.slider_layout import *
 from common.taudio.AudioInterface import AudioInterface
@@ -34,6 +35,7 @@ class ProdApp(App):
         self.output_idx = 0
         self.midi_input_idx = 0
         self.playing_midi = False
+        self.sm = StateManager()
 
     def build(self):
         return Graphics()
