@@ -42,4 +42,4 @@ async def dummy_sg_generate(inputs):
     print("Starting sound generation")
     await asyncio.sleep(2)
 
-    return [1, 2, 3, 4]
+    return {"res":[1, 2, 3, 4]}

@@ -7,3 +7,4 @@ class StateEnum(Enum):
     Recording = 3
     New_Descriptor_Generation = 4
     New_Sound_Generation = 5
+    Preprocessing = 6

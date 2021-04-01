@@ -21,7 +21,7 @@ class StateManager(EventDispatcher):
     def __init__(self, **kwargs):
         super(StateManager, self).__init__(**kwargs)
         self.register_event_type('on_critical_button_pressed')
-        self.register_event_type('on_enter_state')
+        self.register_event_type('on_pipeline_action')
 
         """Application Variables"""
         self.text = None
@@ -55,6 +55,17 @@ class StateManager(EventDispatcher):
                             'cb': sound_gen_cb
                         },
                 },
+                'pipeline_action_started_recording': {
+                    'next_state': StateEnum.Recording
+                },
+                'pipeline_action_start_sg':{
+                    'pre_work': {
+                        'f': dummy_sg_generate,
+                        'args': 'sound_descriptor',
+                        'cb': sound_gen_cb
+                    },
+                    'next_state': StateEnum.New_Sound_Generation,
+                }
 
             },
             StateEnum.Recording: {
@@ -62,10 +73,19 @@ class StateManager(EventDispatcher):
                     'f': dummy_stt_stop,
                     'cb': stop_recording_cb,
                 },
-                'state_change_toggle_record': {
+                'pipeline_action_stop_recording': {
                     'next_state': StateEnum.Playing_Idle
-                }
+                },
+
             },
+            StateEnum.New_Sound_Generation: {
+                'pipeline_action_received_audio': {
+                    'pre_work': {
+
+                    },
+                    'next_state': StateEnum.Preprocessing
+                },
+            }
         }
 
 
@@ -73,20 +93,7 @@ class StateManager(EventDispatcher):
 
         return await callback(await f(), stmgr=stmgr) if callback else await f()
 
-    def on_critical_button_pressed(self, *args):
-        """
-        Perform an action when "Record" or "Generate" is pressed
-
-        """
-        action = args[0]['action']
-        _source = self.enter_state_callbacks[self.state][action]
-
-        if "conditions" in _source.keys():
-            condition = _source['conditions']
-            condition = conditions_met(condition['operator'], self, condition['args'])
-
-            _source = _source[condition]
-
+    def make_call(self, _source):
         f = _source['f']
         cb = _source['cb']
 
@@ -98,13 +105,33 @@ class StateManager(EventDispatcher):
             self.active_task = asyncio.create_task(
                 self._callback(partial(f), callback=cb, stmgr=self))
 
-    def on_enter_state(self, *args):
+    def on_critical_button_pressed(self, *args):
+        """
+        Perform an action when "Record" or "Generate" is pressed
+
+        """
+        action = args[0]['action']
+        print(action)
+        _source = self.enter_state_callbacks[self.state][action]
+
+        if "conditions" in _source.keys():
+            condition = _source['conditions']
+            condition = conditions_met(condition['operator'], self, condition['args'])
+
+            _source = _source[condition]
+
+        self.make_call(_source)
+
+    def on_pipeline_action(self, *args):
 
         action = args[0]['action']
         logger.debug(f"Triggered by {action}")
+
+        if 'pre_work' in self.enter_state_callbacks[self.state][action].keys():
+            _source = self.enter_state_callbacks[self.state][action]['pre_work']
+            self.make_call(_source)
         self.state = self.enter_state_callbacks[self.state][action]['next_state']
         logger.debug(f"New State {self.state}")
-
 
     async def setup_models(self):
 
