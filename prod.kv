@@ -53,7 +53,7 @@
         pos: dp(20), dp(480)
         border: (0, 0, 0, 0)
         id: record
-        on_press: app.sm.dispatch('on_critical_button_pressed', {'source': 'record'})
+        on_press: app.sm.dispatch('on_critical_button_pressed', {'action': 'user_action_toggle_record'})
         background_normal: 'assets/record_off.png'
         background_down: 'assets/record_on.png'
     
@@ -89,7 +89,7 @@
         text: 'Generate'
         pos: dp(380), dp(480)
         size: dp(100), dp(100)
-        on_press: app.sm.dispatch('on_critical_button_pressed', {'source':'generate'})
+        on_press: app.sm.dispatch('on_critical_button_pressed', {'action': 'user_action_generate'})
 
     Button:
         id: export

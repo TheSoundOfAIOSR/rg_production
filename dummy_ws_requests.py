@@ -22,12 +22,12 @@ async def dummy_stt_start(microphone_name):
     return True
 
 async def dummy_stt_stop():
-    print("Stopping STT, starting inference")
+    print("Stopping STT and extracting text")
     await asyncio.sleep(5)
     return {"res":"A warm guitar sound with lots of vibratto"}
 
 async def dummy_tts_transcribe(text):
-    print("Starting text inference")
+    print("Starting TTS Transcribe")
     await asyncio.sleep(2)
     outputs = {
         'velocity': 75,
@@ -38,7 +38,7 @@ async def dummy_tts_transcribe(text):
     }
     return {"res": outputs}
 
-async def dummy_sg_transcribe(inputs):
+async def dummy_sg_generate(inputs):
     print("Starting sound generation")
     await asyncio.sleep(2)
 

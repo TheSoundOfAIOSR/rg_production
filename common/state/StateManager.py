@@ -9,11 +9,19 @@ from .StateEnum import StateEnum
 
 logger = log.setup_logger()
 
+def conditions_met(operator, stmgr, args):
+    args = [vars(stmgr)[a] for a in args]
+
+    return {
+        "eq": lambda: len(set(args)) == 1,
+        "neq": lambda: len(set(args)) != 1,
+    }.get(operator, lambda: 'Not a valid operation')()
+
 class StateManager(EventDispatcher):
     def __init__(self, **kwargs):
         super(StateManager, self).__init__(**kwargs)
         self.register_event_type('on_critical_button_pressed')
-        self.register_event_type('on_state_changed')
+        self.register_event_type('on_enter_state')
 
         """Application Variables"""
         self.text = None
@@ -27,39 +35,83 @@ class StateManager(EventDispatcher):
         self.enter_state_callbacks = {
             StateEnum.Loading: "",
             StateEnum.Update: "",
-            StateEnum.Playing_Idle: {'user_action_toggle_record': }
-            StateEnum.Recording: recording_callback,
-            StateEnum.New_Descriptor_Generation: "",
-            StateEnum.New_Sound_Generation: {'f': dummy_tts_transcribe, 'cb': sound_gen_cb},
-        }
+            StateEnum.Playing_Idle: {'user_action_toggle_record':
+                                         {'f': dummy_stt_start,
+                                          'args':'microphone_hint',
+                                          'cb': start_recording_cb,
+                                          },
 
-        
+                                     'user_action_generate':
+                                         {
+                                             'conditions': {'operator':'neq', 'args': ['text', 'last_transcribed_text']},
+                                             True: {
+                                                    'f': dummy_tts_transcribe,
+                                                    'args': 'text',
+                                                    'cb': tts_transcribe_cb,
+                                            },
+                                             False: {
+                                                 'f': dummy_sg_generate,
+                                                 'args': 'sound_descriptor',
+                                                 'cb': sound_gen_cb
+                                             }
+                                         },
+
+                                     'state_change_toggle_record': {'next_state': StateEnum.Recording}
+
+                                     },
+            StateEnum.Recording: {'user_action_toggle_record':
+                                         {'f': dummy_stt_stop,
+                                          'cb': stop_recording_cb,
+                                          },
+                                  'state_change_toggle_record': {'next_state': StateEnum.Playing_Idle}
+
+                                  },
+            # StateEnum.New_Descriptor_Generation: "",
+            # StateEnum.New_Sound_Generation: {'f': dummy_tts_transcribe, 'cb': sound_gen_cb},
+        }
 
         self.user_action_callbacks = {
             "record": toggle_record,
             "generate": infer_pipeline
         }
 
-    async def _callback(self, f, callback=None):
+    async def _callback(self, f, callback=None, stmgr=None):
 
-        return await callback(await f()) if callback else await f()
+        return await callback(await f(), stmgr=stmgr) if callback else await f()
 
     def on_critical_button_pressed(self, *args):
         """
         Perform an action when "Record" or "Generate" is pressed
 
         """
-        source = args[0]['source']
-        print("In critical button pressed")
+        action = args[0]['action']
+        _source = self.enter_state_callbacks[self.state][action]
 
-        self.active_task = asyncio.create_task(
-            self._callback(partial(self.user_action_callbacks[source], self)))
+        if "conditions" in _source.keys():
+            condition = _source['conditions']
+            condition = conditions_met(condition['operator'], self, condition['args'])
 
-    def try_state_change(self, *args):
-        self.active_task = asyncio.create_task(
-            self._callback(partial(self.enter_state_callbacks[self.state]['f'], self), callback=self.enter_state_callbacks[self.state]['cb']))
+            _source = _source[condition]
 
-        print("State was changed internally")
+        f = _source['f']
+        cb = _source['cb']
+
+        if 'args' in _source.keys():
+            f_args = vars(self)[_source['args']]
+            self.active_task = asyncio.create_task(
+                self._callback(partial(f, f_args), callback=cb, stmgr=self))
+        else:
+            self.active_task = asyncio.create_task(
+                self._callback(partial(f), callback=cb, stmgr=self))
+
+
+    def on_enter_state(self, *args):
+
+        action = args[0]['action']
+        logger.debug(f"Triggered by {action}")
+        self.state = self.enter_state_callbacks[self.state][action]['next_state']
+        logger.debug(f"New State {self.state}")
+
 
     async def setup_models(self):
 
