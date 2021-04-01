@@ -36,7 +36,7 @@ async def dummy_tts_transcribe(text):
         'qualities': ['bright', 'percussive'],
         'latent_sample': [0.] * 16
     }
-    return outputs
+    return {"res": outputs}
 
 async def dummy_sg_transcribe(inputs):
     print("Starting sound generation")

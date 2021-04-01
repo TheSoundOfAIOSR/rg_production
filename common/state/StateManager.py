@@ -13,6 +13,7 @@ class StateManager(EventDispatcher):
     def __init__(self, **kwargs):
         super(StateManager, self).__init__(**kwargs)
         self.register_event_type('on_critical_button_pressed')
+        self.register_event_type('on_state_changed')
 
         """Application Variables"""
         self.text = None
@@ -23,15 +24,18 @@ class StateManager(EventDispatcher):
         self.microphone_hint = "Microphone-1" # TODO get default from sounddevice
         self.active_task = None
         self.app = App.get_running_app()
-        # self.state_callbacks = {
-        #     StateEnum.Loading: "",
-        #     StateEnum.Update: "",
-        #     StateEnum.Recording: recording_callback,
-        #     StateEnum.New_Descriptor_Generation: "",
-        #     StateEnum.New_Sound_Generation: "",
-        # }
+        self.enter_state_callbacks = {
+            StateEnum.Loading: "",
+            StateEnum.Update: "",
+            StateEnum.Playing_Idle: {'user_action_toggle_record': }
+            StateEnum.Recording: recording_callback,
+            StateEnum.New_Descriptor_Generation: "",
+            StateEnum.New_Sound_Generation: {'f': dummy_tts_transcribe, 'cb': sound_gen_cb},
+        }
 
-        self.action_callbacks = {
+        
+
+        self.user_action_callbacks = {
             "record": toggle_record,
             "generate": infer_pipeline
         }
@@ -39,10 +43,6 @@ class StateManager(EventDispatcher):
     async def _callback(self, f, callback=None):
 
         return await callback(await f()) if callback else await f()
-
-    async def stt_event_handler(self, *args):
-        logger.debug(args)
-        "Update state vars"
 
     def on_critical_button_pressed(self, *args):
         """
@@ -53,7 +53,13 @@ class StateManager(EventDispatcher):
         print("In critical button pressed")
 
         self.active_task = asyncio.create_task(
-            self._callback(partial(self.action_callbacks[source], self)))
+            self._callback(partial(self.user_action_callbacks[source], self)))
+
+    def try_state_change(self, *args):
+        self.active_task = asyncio.create_task(
+            self._callback(partial(self.enter_state_callbacks[self.state]['f'], self), callback=self.enter_state_callbacks[self.state]['cb']))
+
+        print("State was changed internally")
 
     async def setup_models(self):
 
