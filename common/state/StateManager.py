@@ -1,23 +1,13 @@
 from kivy.event import EventDispatcher
 from kivy.app import App
 import common.log as log
-from enum import Enum
 from dummy_ws_requests import *
+from functools import *
+from statecb import *
+from .StateEnum import StateEnum
+# from common.state.StateEnum import StateEnum
 
 logger = log.setup_logger()
-
-class StateEnum(Enum):
-    Loading = 1
-    Update = 2
-    Playing_Idle = 3
-    Recording = 4
-    New_Descriptor_Generation = 4
-    New_Sound_Generation = 5
-
-class GUILight(Enum):
-    Green = 1
-    Yellow = 2
-    Red = 3
 
 class StateManager(EventDispatcher):
     def __init__(self, **kwargs):
@@ -31,6 +21,28 @@ class StateManager(EventDispatcher):
         self.state = StateEnum.Loading
         self.recording_status = False
         self.microphone_hint = "Microphone-1" # TODO get default from sounddevice
+        self.active_task = None
+        self.app = App.get_running_app()
+        # self.state_callbacks = {
+        #     StateEnum.Loading: "",
+        #     StateEnum.Update: "",
+        #     StateEnum.Recording: recording_callback,
+        #     StateEnum.New_Descriptor_Generation: "",
+        #     StateEnum.New_Sound_Generation: "",
+        # }
+
+        self.action_callbacks = {
+            "record": toggle_record,
+            "generate": infer_pipeline
+        }
+
+    async def _callback(self, f, callback=None):
+
+        return await callback(await f()) if callback else await f()
+
+    async def stt_event_handler(self, *args):
+        logger.debug(args)
+        "Update state vars"
 
     def on_critical_button_pressed(self, *args):
         """
@@ -38,12 +50,10 @@ class StateManager(EventDispatcher):
 
         """
         source = args[0]['source']
+        print("In critical button pressed")
 
-        if self.state == StateEnum.Playing_Idle:
-            if source == "record" and self.recording_status == False:
-                """ Send start command to STT websocket"""
-                self.recording_status = True
-                self.state = StateEnum.Recording
+        self.active_task = asyncio.create_task(
+            self._callback(partial(self.action_callbacks[source], self)))
 
     async def setup_models(self):
 
