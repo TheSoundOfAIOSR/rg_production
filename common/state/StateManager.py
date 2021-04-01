@@ -32,48 +32,42 @@ class StateManager(EventDispatcher):
         self.microphone_hint = "Microphone-1" # TODO get default from sounddevice
         self.active_task = None
         self.app = App.get_running_app()
-        self.enter_state_callbacks = {
+        self.enter_state_callbacks =     enter_state_callbacks = {
             StateEnum.Loading: "",
             StateEnum.Update: "",
-            StateEnum.Playing_Idle: {'user_action_toggle_record':
-                                         {'f': dummy_stt_start,
-                                          'args':'microphone_hint',
-                                          'cb': start_recording_cb,
-                                          },
+            StateEnum.Playing_Idle: {
+                'user_action_toggle_record':{
+                    'f': dummy_stt_start,
+                    'args':'microphone_hint',
+                    'cb': start_recording_cb,
+                },
+                'user_action_generate':{
+                    'conditions': {
+                        'operator':'neq', 'args': ['text', 'last_transcribed_text']},
+                        True: {
+                            'f': dummy_tts_transcribe,
+                            'args': 'text',
+                            'cb': tts_transcribe_cb,
+                        },
+                        False: {
+                            'f': dummy_sg_generate,
+                            'args': 'sound_descriptor',
+                            'cb': sound_gen_cb
+                        },
+                },
 
-                                     'user_action_generate':
-                                         {
-                                             'conditions': {'operator':'neq', 'args': ['text', 'last_transcribed_text']},
-                                             True: {
-                                                    'f': dummy_tts_transcribe,
-                                                    'args': 'text',
-                                                    'cb': tts_transcribe_cb,
-                                            },
-                                             False: {
-                                                 'f': dummy_sg_generate,
-                                                 'args': 'sound_descriptor',
-                                                 'cb': sound_gen_cb
-                                             }
-                                         },
-
-                                     'state_change_toggle_record': {'next_state': StateEnum.Recording}
-
-                                     },
-            StateEnum.Recording: {'user_action_toggle_record':
-                                         {'f': dummy_stt_stop,
-                                          'cb': stop_recording_cb,
-                                          },
-                                  'state_change_toggle_record': {'next_state': StateEnum.Playing_Idle}
-
-                                  },
-            # StateEnum.New_Descriptor_Generation: "",
-            # StateEnum.New_Sound_Generation: {'f': dummy_tts_transcribe, 'cb': sound_gen_cb},
+            },
+            StateEnum.Recording: {
+                'user_action_toggle_record':{
+                    'f': dummy_stt_stop,
+                    'cb': stop_recording_cb,
+                },
+                'state_change_toggle_record': {
+                    'next_state': StateEnum.Playing_Idle
+                }
+            },
         }
 
-        self.user_action_callbacks = {
-            "record": toggle_record,
-            "generate": infer_pipeline
-        }
 
     async def _callback(self, f, callback=None, stmgr=None):
 
@@ -104,7 +98,6 @@ class StateManager(EventDispatcher):
             self.active_task = asyncio.create_task(
                 self._callback(partial(f), callback=cb, stmgr=self))
 
-
     def on_enter_state(self, *args):
 
         action = args[0]['action']
@@ -119,3 +112,8 @@ class StateManager(EventDispatcher):
         await asyncio.gather(dummy_stt_startup(), dummy_tts_startup(), dummy_stt_startup())
         print("Finished setting up web sockets")
         self.state = StateEnum.Playing_Idle
+
+
+def get_state_action_callbacks():
+
+    return "enter_state_callbacks"

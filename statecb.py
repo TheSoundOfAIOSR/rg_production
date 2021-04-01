@@ -74,11 +74,11 @@ async def infer_pipeline(stmgr, *args):
 
 async def tts_transcribe_cb(*args, stmgr=None):
     res = args[0]
-    print("tts_trasncribe_cb")
-    # if res['res']:
-    #     stmgr.sound_descriptor = res['res']
-    #     stmgr.app.root.ids['lab'].text = str(stmgr.sound_descriptor)
-    #     await start_sound_gen(stmgr)
+    if res['res']:
+        stmgr.sound_descriptor = res['res']
+        stmgr.app.root.ids['lab'].text = str(stmgr.sound_descriptor)
+        stmgr.dispatch('on_enter_state', {'action':'trigger_sg', 'res':args})
+
 
 async def start_sound_gen(stmgr):
     await asyncio.create_task(_callback(partial(dummy_sg_transcribe, [stmgr.sound_descriptor]), callback=sound_gen_cb, stmgr=stmgr))
