@@ -32,7 +32,7 @@ class StateManager(EventDispatcher):
         self.microphone_hint = "Microphone-1" # TODO get default from sounddevice
         self.active_task = None
         self.app = App.get_running_app()
-        self.enter_state_callbacks =     enter_state_callbacks = {
+        self.enter_state_callbacks = {
             StateEnum.Loading: "",
             StateEnum.Update: "",
             StateEnum.Playing_Idle: {
@@ -97,7 +97,6 @@ class StateManager(EventDispatcher):
             }
             }
         }
-
 
     async def _callback(self, f, callback=None, stmgr=None):
         return await callback(await f(), stmgr=stmgr) if callback else await f(stmgr=stmgr)
