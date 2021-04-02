@@ -17,28 +17,31 @@ async def toggle_record(stmgr, *args):
         asyncio.create_task(_callback(partial(dummy_stt_stop), callback=stop_recording_cb, stmgr=stmgr))
 
 async def start_recording_cb(*args, stmgr=None):
-    if args[0] == True:
+    print(args)
+    resp = args[0]
+    if resp['resp']:
         stmgr.app.root.ids['generate'].disabled = True
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_started_recording'})
-    elif args[0] == False:
-        error_message = "Error: stt_start"
-        stmgr.app.root.ids['lab'].text = str(error_message)
-        logger.info(f"{error_message}")
+    elif not resp['resp']:
+        stmgr.app.root.ids['lab'].text = str(resp)
+        logger.info(f"{resp}")
     else:
-        logger.info(f"Something went wrong in STT Start ")
+        logger.info(f"Something unexpected went wrong in STT Start")
 
 
 async def stop_recording_cb(*args, stmgr=None):
-    res = args[0]
-    if res['res']:
-        stmgr.text = res['res']
+    resp = args[0]
+    print(resp)
+    if resp['resp']:
+        stmgr.text = res['resp']
         stmgr.app.root.ids['lab'].text = str(stmgr.text)
         stmgr.app.root.ids['generate'].disabled = False
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_stop_recording', 'res':args})
+    elif not resp['resp']:
+        stmgr.app.root.ids['lab'].text = str(resp)
+        logger.info(f"{resp}")
     else:
-        error_message = "Error: stt_stop"
-        stmgr.app.root.ids['lab'].text = str(error_message)
-        logger.info(f"{error_message}")
+        logger.info("Something unexpected went wrong in STT Stop")
 
 async def infer_pipeline(stmgr, *args):
     print("Inferring pipeline")

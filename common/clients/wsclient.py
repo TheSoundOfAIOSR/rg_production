@@ -6,8 +6,9 @@ class STTClient(WebsocketClient):
         super(STTClient, self).__init__(**kwargs)
 
     async def _producer(self, websocket):
+
         while True:
-            await asyncio.sleep(1)
+            await asyncio.sleep(100)
 
 class TTSClient(WebsocketClient):
     def __init__(self, **kwargs):
@@ -15,7 +16,7 @@ class TTSClient(WebsocketClient):
 
     async def _producer(self, websocket):
         while True:
-            await asyncio.sleep(1)
+            await asyncio.sleep(100)
 
         # logging.debug(await self.example_func("blo"))
         # if you want to pass function with arguments, you can use functools.partial(func, args)
@@ -27,4 +28,4 @@ class SGClient(WebsocketClient):
 
     async def _producer(self, websocket):
         while True:
-            await asyncio.sleep(1)
+            await asyncio.sleep(100)

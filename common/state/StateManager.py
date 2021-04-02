@@ -32,7 +32,7 @@ class StateManager(EventDispatcher):
         self.sound_descriptor = None
         self.state = StateEnum.Playing_Idle
         self.recording_status = False
-        self.microphone_hint = "Microphone-1" # TODO get default from sounddevice
+        self.microphone_hint = '1' # TODO get default from sounddevice
         self.active_task = None
         self.sampler_gui_action = None
         self.app = App.get_running_app()
@@ -41,10 +41,9 @@ class StateManager(EventDispatcher):
         WS Clients placeholders
         """
         self.stt =  ws.STTClient(host="localhost", port=8786)#host=self.app.config.host, port=self.app.config.base_port
+        asyncio.ensure_future(self.stt.run())
         # self.tts = ws.TTSClient(host=self.config.host, port=self.config.base_port + 1)
         # self.sg = ws.SGClient(host=self.config.host, port=self.config.base_port + 2)
-
-
 
     async def _callback(self, f, callback=None, stmgr=None):
         return await callback(await f(), stmgr=stmgr) if callback else await f(stmgr=stmgr)
@@ -97,7 +96,7 @@ class StateManager(EventDispatcher):
         
 
     async def setup_models(self):
-        await self.stt.start()
+        await self.stt.setup_model()
         # await asyncio.gather(dummy_stt_startup(), dummy_tts_startup(), dummy_stt_startup())
 
 
@@ -106,7 +105,7 @@ class StateManager(EventDispatcher):
             StateEnum.Update: "",
             StateEnum.Playing_Idle: {
                 'user_action_toggle_record':{
-                    'f': dummy_stt_start,
+                    'f': self.stt.start,
                     'args':'microphone_hint',
                     'cb': start_recording_cb,
                 },

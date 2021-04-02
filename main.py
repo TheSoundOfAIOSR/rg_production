@@ -19,6 +19,8 @@ import common.log as log
 import common.clients
 logger = log.setup_logger()
 
+import common.clients.wsclient as ws
+
 
 class ProdApp(App):
     def __init__(self, **kwargs):
@@ -36,6 +38,8 @@ class ProdApp(App):
         self.midi_input_idx = 0
         self.playing_midi = False
 
+        # self.stt_client = ws.STTClient(host="localhost", port=8786)
+
     def build(self):
         return Graphics()
 
@@ -51,8 +55,12 @@ class ProdApp(App):
         are finished
         """
         self.sm = StateManager()
-        asyncio.gather(self.sm.stt.run()) # self.sm.tts.run() self.sm.sg.run()
+        # self.stt_connection = asyncio.ensure_future(self.sm.stt.run())
         self.other_task = asyncio.ensure_future(self.main_loop())
+
+
+        # asyncio.ensure_future(self.sm.stt.run()) # self.sm.tts.run() self.sm.sg.run()
+        # self.other_task = asyncio.ensure_future(self.main_loop())
         # self.sm.tts = ws.TTS
         # self.sm.stt =  ws.STTClient(host=config.host, port=config.base_port)
         # self.sm.sg = ws.SGClient(host=config.host, port=config.base_port + 2)
@@ -118,10 +126,36 @@ class ProdApp(App):
         logger.debug(dev)
 
     async def main_loop(self):
+
+        print("sleeping")
+        await asyncio.sleep(5)
+        print("setting up models")
+        await self.sm.stt.setup_model()
+        print(await self.sm.stt.status())
+        print("getting state callbacks")
+        self.sm.get_state_action_callbacks()
+        print("main loop")
+
+
         self.csound.set_output(self.output_idx)
         self.csound.set_midi_api()
         self.csound.compile_and_start()
         self.csound.start_perf_thread()
+
+        # await asyncio.sleep(5)
+        # logger.debug(await self.stt_client.status())
+        # logger.debug(await self.stt_client.setup_model())
+        # logger.debug(await self.stt_client.status())
+        # logger.debug(await self.stt_client.start('1'))
+        # res = await self.stt_client.setup()
+
+        # arr = res['resp'][0]
+        # f = np.array(arr)
+        # preprocess(folder, f, 60, 48)
+
+        # await self.sm.setup_models()
+
+
 
         # TODO: Move to WS_INIT event??
 
