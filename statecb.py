@@ -5,23 +5,6 @@ from dummy_ws_requests import *
 from functools import *
 logger = log.setup_logger()
 
-def updating(stmgr):
-    if INITIALIZED and stmgr.state & StateEnum.RECORDING:
-        stmgr.stt.stop()
-        stmgr.state = ...
-
-def dispatch_slider_set(stmgr, response):
-    for slider in app.root.sliders.list:
-        ...
-def playing_idle(stmgr):
-    pass
-    # if stmgr.source == ... and stmgr.recording_status == ...:
-    #     ...
-    #     app.sliders ...
-    # elif ...:
-    #     ...
-    #     return {"resp": False}
-
 async def _callback(f, callback=None, stmgr = None):
 
     return await callback(await f(), stmgr=stmgr) if callback else await f()
@@ -84,5 +67,7 @@ async def preprocessing_cb(*args, stmgr=None):
 
     stmgr.app.root.ids['record'].disabled = False
     stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_finished_preprocessing', 'res': args})
-    pass
 
+async def finished_model_setup(*args, stmgr=None):
+
+    stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_go_to_playing'})

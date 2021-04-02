@@ -1,6 +1,7 @@
 from enum import Enum
 
 class StateEnum(Enum):
+    Exit = -1
     Loading = 0
     Update = 1
     Playing_Idle = 2

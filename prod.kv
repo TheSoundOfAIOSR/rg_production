@@ -108,7 +108,8 @@
             values: [in_dev["name"] for in_dev in app.devices["devices"]["input_list"]]
             on_text:
                 print(f"The spinner {self} has text {self.text}")
-                app.select_audio_device(self, self.text)
+                app.sm.dispatch('on_update_mic_hint', self.text)
+
         Spinner:
             name: "output"
             text: 'Audio Output'
@@ -136,14 +137,14 @@
         text: 'play'
         pos: dp(20),dp(340)
         size: dp(100), dp(50)
-        on_press:app.set_event('playSample')
+        on_press:app.sm.dispatch('on_sampler_gui_action', 'play_sample')
 
     Button:
         id: playM
         text: 'Play/Stop Midi'
         pos: dp(20),dp(290)
         size: dp(100), dp(50)
-        on_press: app.set_event('midi_loaded')
+        on_press: app.sm.dispatch('on_sampler_gui_action', 'midi_loaded')
 
     Image:
         source: ''
