@@ -42,21 +42,19 @@ class StateManager(EventDispatcher):
                     'cb': start_recording_cb,
                 },
                 'user_action_generate':{
-                    'conditions': {
-                        'operator':'neq', 'args': ['text', 'last_transcribed_text']},
-                        True: {
-                            'f': dummy_tts_transcribe,
-                            'args': 'text',
-                            'cb': tts_transcribe_cb,
-                        },
-                        False: {
-                            'f': dummy_sg_generate,
-                            'args': 'sound_descriptor',
-                            'cb': sound_gen_cb
-                        },
+                    'f': infer_pipeline,
+                    'cb': None,
                 },
                 'pipeline_action_started_recording': {
                     'next_state': StateEnum.Recording
+                },
+                'pipeline_action_start_tts':{
+                    'pre_work': {
+                        'f': dummy_tts_transcribe,
+                        'args': 'text',
+                        'cb': tts_transcribe_cb
+                    },
+                    'next_state': StateEnum.New_Descriptor_Generation
                 },
                 'pipeline_action_start_sg':{
                     'pre_work': {
@@ -66,7 +64,6 @@ class StateManager(EventDispatcher):
                     },
                     'next_state': StateEnum.New_Sound_Generation,
                 }
-
             },
             StateEnum.Recording: {
                 'user_action_toggle_record':{
@@ -76,27 +73,38 @@ class StateManager(EventDispatcher):
                 'pipeline_action_stop_recording': {
                     'next_state': StateEnum.Playing_Idle
                 },
-
+            },
+            StateEnum.New_Descriptor_Generation: {
+                'pipeline_action_start_sg': {
+                    'pre_work': {
+                        'f': dummy_sg_generate,
+                        'args': 'sound_descriptor',
+                        'cb': sound_gen_cb
+                    },
+                    'next_state': StateEnum.New_Sound_Generation,
+                }
             },
             StateEnum.New_Sound_Generation: {
                 'pipeline_action_received_audio': {
                     'pre_work': {
-
+                        'f': dummy_preprocessing,
+                        'cb': preprocessing_cb
                     },
                     'next_state': StateEnum.Preprocessing
                 },
+            StateEnum.Preprocessing:{
+                'next_state': StateEnum.Playing_Idle
+            }
             }
         }
 
 
     async def _callback(self, f, callback=None, stmgr=None):
-
-        return await callback(await f(), stmgr=stmgr) if callback else await f()
+        return await callback(await f(), stmgr=stmgr) if callback else await f(stmgr=stmgr)
 
     def make_call(self, _source):
         f = _source['f']
         cb = _source['cb']
-
         if 'args' in _source.keys():
             f_args = vars(self)[_source['args']]
             self.active_task = asyncio.create_task(

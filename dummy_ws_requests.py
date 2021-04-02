@@ -43,3 +43,10 @@ async def dummy_sg_generate(inputs):
     await asyncio.sleep(2)
 
     return {"res":[1, 2, 3, 4]}
+
+async def dummy_preprocessing():
+
+    print("Doing some preprocessing")
+    await asyncio.sleep(5)
+
+    return True

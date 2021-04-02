@@ -58,17 +58,12 @@ async def stop_recording_cb(*args, stmgr=None):
         logger.info(f"{error_message}")
 
 async def infer_pipeline(stmgr, *args):
+    print("Inferring pipeline")
     stmgr.app.root.ids['record'].disabled = True
     if stmgr.text is not None and stmgr.text is not stmgr.last_transcribed_text:
-        # TTS first if new text needs to be transcribed
-        asyncio.create_task\
-            (_callback(partial(dummy_tts_transcribe, [stmgr.text]), callback=tts_transcribe_cb, stmgr=stmgr))
+        stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_start_tts', 'res':args})
     elif stmgr.text == stmgr.last_transcribed_text:
-        start_sound_gen()
-
-        pass
-    stmgr.app.root.ids['record'].disabled = False
-
+        stmgr.dispatch('on_pipeline_action',  {'action':'pipeline_action_start_sg', 'res':args})
 
     logger.debug(f"Infer Pipeline {stmgr.state}")
 
@@ -84,3 +79,10 @@ async def sound_gen_cb(*args, stmgr=None):
     if res['res']:
         stmgr.app.root.ids['lab'].text = "Received Sound "
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_received_audio', 'res':args})
+
+async def preprocessing_cb(*args, stmgr=None):
+
+    stmgr.app.root.ids['record'].disabled = False
+    stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_finished_preprocessing', 'res': args})
+    pass
+
