@@ -3,7 +3,7 @@ from kivy.app import App
 import common.log as log
 from dummy_ws_requests import *
 from functools import *
-from statecb import *
+from common.state.statecb import *
 from .StateEnum import StateEnum
 import common.clients.wsclient as ws
 # from common.state.StateEnum import StateEnum
