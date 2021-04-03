@@ -127,14 +127,14 @@ class ProdApp(App):
 
     async def main_loop(self):
 
-        print("sleeping")
-        await asyncio.sleep(5)
-        print("setting up models")
-        await self.sm.stt.setup_model()
-        print(await self.sm.stt.status())
-        print("getting state callbacks")
+        # print("sleeping")
+        # await asyncio.sleep(5)
+        # print("setting up models")
+        # await self.sm.stt.setup_model()
+        # print(await self.sm.stt.status())
+        # print("getting state callbacks")
         self.sm.get_state_action_callbacks()
-        print("main loop")
+        # print("main loop")
 
 
         self.csound.set_output(self.output_idx)
