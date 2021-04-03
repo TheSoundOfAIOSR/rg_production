@@ -18,6 +18,15 @@ def conditions_met(operator, stmgr, args):
         "neq": lambda: len(set(args)) != 1,
     }.get(operator, lambda: 'Not a valid operation')()
 
+
+class ActionManager():
+    def __init__(self, f=None, args=None, cb=None, next_state=None, pre_work=False):
+        self.f = f
+        self.args = args
+        self.cb = cb
+        self.next_state = next_state
+        self.pre_work = False
+
 class StateManager(EventDispatcher):
     def __init__(self, **kwargs):
         super(StateManager, self).__init__(**kwargs)
@@ -49,15 +58,17 @@ class StateManager(EventDispatcher):
         return await callback(await f(), stmgr=stmgr) if callback else await f(stmgr=stmgr)
 
     def make_call(self, _source):
-        f = _source['f']
-        cb = _source['cb']
-        if 'args' in _source.keys():
-            f_args = vars(self)[_source['args']]
+        f = _source.f
+        cb = _source.cb
+
+        if _source.args:
+            f_args = _source.args
             self.active_task = asyncio.create_task(
                 self._callback(partial(f, f_args), callback=cb, stmgr=self))
         else:
             self.active_task = asyncio.create_task(
                 self._callback(partial(f), callback=cb, stmgr=self))
+
 
     def on_critical_button_pressed(self, *args):
         """
@@ -68,23 +79,17 @@ class StateManager(EventDispatcher):
         print(action)
         _source = self.enter_state_callbacks[self.state][action]
 
-        if "conditions" in _source.keys():
-            condition = _source['conditions']
-            condition = conditions_met(condition['operator'], self, condition['args'])
-
-            _source = _source[condition]
-
         self.make_call(_source)
 
     def on_pipeline_action(self, *args):
-
+        print("On pipeline action")
         action = args[0]['action']
         logger.debug(f"Triggered by {action}")
 
-        if 'pre_work' in self.enter_state_callbacks[self.state][action].keys():
-            _source = self.enter_state_callbacks[self.state][action]['pre_work']
-            self.make_call(_source)
-        self.state = self.enter_state_callbacks[self.state][action]['next_state']
+        if self.enter_state_callbacks[self.state][action].pre_work:
+            _source = self.enter_state_callbacks[self.state][action].pre_work
+
+        self.state = self.enter_state_callbacks[self.state][action].next_state
         logger.debug(f"New State {self.state}")
 
     def on_sampler_gui_action(self, *args):
@@ -104,64 +109,28 @@ class StateManager(EventDispatcher):
         self.enter_state_callbacks = {
             StateEnum.Update: "",
             StateEnum.Playing_Idle: {
-                'user_action_toggle_record':{
-                    'f': self.stt.start,
-                    'args':'microphone_hint',
-                    'cb': start_recording_cb,
-                },
-                'user_action_generate':{
-                    'f': infer_pipeline,
-                    'cb': None,
-                },
-                'pipeline_action_started_recording': {
-                    'next_state': StateEnum.Recording
-                },
-                'pipeline_action_start_tts':{
-                    'pre_work': {
-                        'f': dummy_tts_transcribe,
-                        'args': 'text',
-                        'cb': tts_transcribe_cb
-                    },
-                    'next_state': StateEnum.New_Descriptor_Generation
-                },
-                'pipeline_action_start_sg':{
-                    'pre_work': {
-                        'f': dummy_sg_generate,
-                        'args': 'sound_descriptor',
-                        'cb': sound_gen_cb
-                    },
-                    'next_state': StateEnum.New_Sound_Generation,
-                }
+                'user_action_toggle_record': ActionManager(f=self.stt.start, args='microphone_hint', cb=start_recording_cb),
+                'user_action_generate': ActionManager(f=infer_pipeline),
+                'pipeline_action_started_recording': ActionManager(next_state=StateEnum.Recording),
+                'pipeline_action_start_tts': ActionManager(f=)
+            },
+            StateEnum.Pre_TTS: {
+                'pipeline_action_start_tts': ActionManager(f=dummy_tts_transcribe, args='text', cb=tts_transcribe_cb,
+                                                           next_state=StateEnum.New_Descriptor_Generation,
+                                                           pre_work=True),
+            },
+            StateEnum.Pre_SG: {
+              'pipeline_action_start_sg':  ActionManager(f=dummy_sg_generate, args='sound_descriptor', cb=sound_gen_cb,
+                                                          next_state=StateEnum.New_Sound_Generation, pre_work=True),
             },
             StateEnum.Recording: {
-                'user_action_toggle_record':{
-                    'f': self.stt.stop,
-                    'cb': stop_recording_cb,
-                },
-                'pipeline_action_stop_recording': {
-                    'next_state': StateEnum.Playing_Idle
-                },
-            },
+                'user_action_toggle_record': ActionManager(f=self.stt.stop, cb=stop_recording_cb),
+                'pipeline_action_stop_recording': ActionManager(next_state=StateEnum.Playing_Idle),},
             StateEnum.New_Descriptor_Generation: {
-                'pipeline_action_start_sg': {
-                    'pre_work': {
-                        'f': dummy_sg_generate,
-                        'args': 'sound_descriptor',
-                        'cb': sound_gen_cb
-                    },
-                    'next_state': StateEnum.New_Sound_Generation,
-                }
-            },
+                'pipeline_action_start_sg': ActionManager(f=dummy_sg_generate, args='sound_descriptor', cb=sound_gen_cb,
+                                                           next_state=StateEnum.New_Sound_Generation, pre_work=True),},
             StateEnum.New_Sound_Generation: {
-                'pipeline_action_received_audio': {
-                    'pre_work': {
-                        'f': dummy_preprocessing,
-                        'cb': preprocessing_cb
-                    },
-                    'next_state': StateEnum.Preprocessing
-                },
-            StateEnum.Preprocessing:{
-                'next_state': StateEnum.Playing_Idle
-            }
-            }
+                'pipeline_action_received_audio': ActionManager(f=dummy_preprocessing, cb=preprocessing_cb,
+                                                                next_state=StateEnum.Preprocessing)},
+            StateEnum.Preprocessing:{'pipeline_action_finished_preprocessing': ActionManager(next_state=StateEnum.Playing_Idle)}
         }

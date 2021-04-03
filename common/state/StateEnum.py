@@ -6,6 +6,7 @@ class StateEnum(Enum):
     Update = 1
     Playing_Idle = 2
     Recording = 3
-    New_Descriptor_Generation = 4
-    New_Sound_Generation = 5
-    Preprocessing = 6
+    Inferring_Pipeline = 4
+    New_Descriptor_Generation = 5
+    New_Sound_Generation = 6
+    Preprocessing = 7

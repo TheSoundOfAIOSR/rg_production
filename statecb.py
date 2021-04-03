@@ -30,16 +30,20 @@ async def start_recording_cb(*args, stmgr=None):
 
 
 async def stop_recording_cb(*args, stmgr=None):
+    print(stmgr)
     resp = args[0]
     print(resp)
+    resp['resp'] = "A warm guitar sound"
+    logger.debug(f"Manually setting resp['resp'] stop_recording_cb ")
+    print(resp['resp'])
     if resp['resp']:
-        stmgr.text = res['resp']
-        stmgr.app.root.ids['lab'].text = str(stmgr.text)
+        stmgr.text = resp['resp']
+        stmgr.app.root.ids['lab'].text = stmgr.text
         stmgr.app.root.ids['generate'].disabled = False
-        stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_stop_recording', 'res':args})
+        stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_stop_recording'})
     elif not resp['resp']:
         stmgr.app.root.ids['lab'].text = str(resp)
-        logger.info(f"{resp}")
+        logger.debug(f"There was an error when STT module returned {resp}")
     else:
         logger.info("Something unexpected went wrong in STT Stop")
 
@@ -51,7 +55,6 @@ async def infer_pipeline(stmgr, *args):
     elif stmgr.text == stmgr.last_transcribed_text:
         stmgr.dispatch('on_pipeline_action',  {'action':'pipeline_action_start_sg', 'res':args})
 
-    logger.debug(f"Infer Pipeline {stmgr.state}")
 
 async def tts_transcribe_cb(*args, stmgr=None):
     res = args[0]
