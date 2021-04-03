@@ -22,9 +22,16 @@ async def dummy_stt_start(microphone_name):
     return {"resp":"True"}
 
 async def dummy_stt_stop():
+    from random import randrange
+
+    texts = ["A warm guitar sound with lots of vibratto",
+             "long decay guitar sound... that's also bright",
+             "weird guitar sound with a twang at the end",
+             "something else too"]
+
     print("Stopping STT and extracting text")
     await asyncio.sleep(5)
-    return {"resp":"A warm guitar sound with lots of vibratto"}
+    return {"resp": texts[randrange(3)]}
 
 async def dummy_tts_transcribe(text):
     print("Starting TTS Transcribe")

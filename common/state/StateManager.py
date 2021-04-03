@@ -55,8 +55,6 @@ class StateManager(EventDispatcher):
         # self.sg = ws.SGClient(host=self.config.host, port=self.config.base_port + 2)
 
     async def _callback(self, f, callback=None, stmgr=None):
-        print(f)
-        print(callback)
         return await callback(await f(), stmgr=stmgr) if callback else await f(stmgr=stmgr)
 
     def make_call(self, _source):
@@ -74,7 +72,6 @@ class StateManager(EventDispatcher):
     def on_pipeline_action(self, *args):
         action = args[0]['action']
         logger.debug(f"On Pipeline Action - Triggered by {action}")
-        print(self.state, action)
         _source = self.enter_state_callbacks[self.state][action]
         self.state = _source.next_state
         logger.debug(f"New State {self.state} making call")
@@ -116,7 +113,7 @@ class StateManager(EventDispatcher):
             StateEnum.Playing_Idle: {
                 'user_action_toggle_record': ActionManager(f=dummy_stt_start, args='microphone_hint', cb=start_recording_cb, next_state=StateEnum.Recording),
                 # 'user_action_toggle_record': ActionManager(f=self.stt.start, args='microphone_hint', cb=start_recording_cb),
-                # 'user_action_generate': ActionManager(f=infer_pipeline, next_state=StateEnum.Inferring_Pipeline, pre_work=True),
+                'user_action_generate': ActionManager(f=infer_pipeline, next_state=StateEnum.Inferring_Pipeline),
                 # 'pipeline_action_started_recording': ActionManager(next_state=StateEnum.Recording),
             },
             StateEnum.Recording: {
@@ -125,21 +122,23 @@ class StateManager(EventDispatcher):
                 # 'pipeline_action_stop_recording': ActionManager(next_state=StateEnum.Playing_Idle),
             },
             StateEnum.New_Text:{
-              'pipeline_action_received_text': ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle)
+                'pipeline_action_received_text': ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle)
             },
-
             StateEnum.Inferring_Pipeline:{
                 'pipeline_action_start_tts': ActionManager(f=dummy_tts_transcribe, args='text', cb=tts_transcribe_cb,
-                                                           next_state=StateEnum.Inferring_Pipeline,
-                                                           pre_work=True),
+                                                           next_state=StateEnum.New_Descriptor_Generation),
                 'pipeline_action_start_sg': ActionManager(f=dummy_sg_generate, args='sound_descriptor', cb=sound_gen_cb,
-                                                          next_state=StateEnum.New_Sound_Generation, pre_work=True),
+                                                          next_state=StateEnum.New_Sound_Generation),
             },
             StateEnum.New_Descriptor_Generation: {
-                'pipeline_action_start_sg': ActionManager(f=dummy_sg_generate, args='sound_descriptor', cb=sound_gen_cb,
-                                                           next_state=StateEnum.New_Sound_Generation, pre_work=True),},
+                'pipeline_action_received_descriptor': ActionManager(f=infer_pipeline, next_state=StateEnum.Inferring_Pipeline)
+            },
             StateEnum.New_Sound_Generation: {
                 'pipeline_action_received_audio': ActionManager(f=dummy_preprocessing, cb=preprocessing_cb,
-                                                                next_state=StateEnum.Preprocessing)},
-            StateEnum.Preprocessing:{'pipeline_action_finished_preprocessing': ActionManager(next_state=StateEnum.Playing_Idle)}
+                                                                next_state=StateEnum.Preprocessing)
+            },
+            StateEnum.Preprocessing:{
+                'pipeline_action_finished_preprocessing': ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle)
+            },
+
         }
