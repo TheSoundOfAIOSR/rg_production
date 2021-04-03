@@ -174,7 +174,7 @@ class ProdApp(App):
         something.
         """
         try:
-            while self.root and self.sm.state != StateEnum.Exit:
+            while True:
 
                 if self.sm.sampler_gui_action and self.sm.state == StateEnum.Playing_Idle:
 
@@ -182,31 +182,33 @@ class ProdApp(App):
                         self.csound.play_sample()
                         self.sm.sampler_gui_action = None
 
-                    # if self.sm.sampler_gui_action == "midi_loaded":
-                    #     if self.root.playing_midi:
-                    #         self.csound.cleanup()
-                    #         self.root.playing_midi = False
-                    #         self.set_msg_txt("")
-                    #     else:
-                    #         if self.midi_file is None:
-                    #             self.set_msg_txt(
-                    #                 "Please drag and drop a .mid file here"
-                    #             )
-                    #         else:
-                    #             self.csound.cleanup()
-                    #             self.csound.play_midi_file(self.midi_file)
-                    #             self.csound.set_output(self.output_idx)
-                    #             r = self.csound.compile_and_start()
-                    #             if r < 0:
-                    #                 self.set_msg_txt(
-                    #                     "Can't play that file, check file structure or create issue at GitHub repo"
-                    #                 )
-                    #             else:
-                    #                 self.csound.start_perf_thread()
-                    #                 self.set_msg_txt(f"Playing - {self.midi_file}")
-                    #             self.root.playing_midi = True
-                    #             self.midi_file = None
-                    #             logger.debug(self.output_idx)
+                    if self.sm.sampler_gui_action == "midi_loaded":
+                        self.sm.sampler_gui_action = None
+
+                        if self.root.playing_midi:
+                            self.csound.cleanup()
+                            self.root.playing_midi = False
+                            self.set_msg_txt("")
+                        else:
+                            if self.midi_file is None:
+                                self.set_msg_txt(
+                                    "Please drag and drop a .mid file here"
+                                )
+                            else:
+                                self.csound.cleanup()
+                                self.csound.play_midi_file(self.midi_file)
+                                self.csound.set_output(self.output_idx)
+                                r = self.csound.compile_and_start()
+                                if r < 0:
+                                    self.set_msg_txt(
+                                        "Can't play that file, check file structure or create issue at GitHub repo"
+                                    )
+                                else:
+                                    self.csound.start_perf_thread()
+                                    self.set_msg_txt(f"Playing - {self.midi_file}")
+                                self.root.playing_midi = True
+                                self.midi_file = None
+                                logger.debug(self.output_idx)
 
 
                 await asyncio.sleep(0.01)
