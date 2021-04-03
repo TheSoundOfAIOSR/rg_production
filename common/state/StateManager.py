@@ -78,15 +78,22 @@ class StateManager(EventDispatcher):
     def on_pipeline_action(self, *args):
         action = args[0]['action']
         logger.debug(f"On Pipeline Action - Triggered by {action}")
-        _source = self.enter_state_callbacks[self.state][action]
-        self.state = _source.next_state
-        logger.debug(f"New State {self.state} making call")
 
-        if _source.f:
-            self.make_call(_source)
-        # if self.enter_state_callbacks[self.state][action].pre_work:
-        #     _source = self.enter_state_callbacks[self.state][action].pre_work
+        _source = self.enter_state_callbacks[self.state].get(action, None)
 
+        if action == 'handle_errors' or not _source:
+            error_msg = "There was an unexpected error. Returning to idle state. check server status or restart."
+            logger.debug(error_msg)
+            self.app.root.ids['lab'].text = error_msg
+
+            _source = self.enter_state_callbacks['handle_errors']
+
+        if _source:
+            self.state = _source.next_state
+            logger.debug(f"New State {self.state} making call")
+
+            if _source.f:
+                self.make_call(_source)
 
     def on_sampler_gui_action(self, *args):
         self.sampler_gui_action = args[0]
@@ -94,7 +101,6 @@ class StateManager(EventDispatcher):
     def on_update_mic_hint(self, *args):
         self.microphone_hint = args[0]
         logger.log(f"Set mic hint to {self.microphone_hint}")
-        
 
     async def setup_models(self):
         await self.stt.setup_model()
@@ -131,6 +137,7 @@ class StateManager(EventDispatcher):
                 'pipeline_action_received_text': ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle)
             },
             StateEnum.Inferring_Pipeline:{
+                'pipeline_action_nothing_to_infer': ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle),
                 'pipeline_action_start_tts': ActionManager(f=dummy_tts_transcribe, args='text', cb=tts_transcribe_cb,
                                                            next_state=StateEnum.New_Descriptor_Generation),
                 'pipeline_action_start_sg': ActionManager(f=dummy_sg_generate, args='sound_descriptor', cb=sound_gen_cb,
@@ -146,5 +153,6 @@ class StateManager(EventDispatcher):
             StateEnum.Preprocessing:{
                 'pipeline_action_finished_preprocessing': ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle)
             },
+            'handle_errors':ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle)
 
         }

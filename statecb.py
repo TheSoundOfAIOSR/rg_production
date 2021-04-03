@@ -18,6 +18,7 @@ async def start_recording_cb(*args, stmgr=None):
         logger.info(f"{resp}")
     else:
         logger.info(f"Something unexpected went wrong in STT Start")
+        stmgr.dispatch('on_pipeline_action', {'action':'handle_errors', 'res':args})
 
 
 async def stop_recording_cb(*args, stmgr=None):
@@ -34,17 +35,17 @@ async def stop_recording_cb(*args, stmgr=None):
         logger.debug(f"There was an error when STT module returned {resp}")
     else:
         logger.info("Something unexpected went wrong in STT Stop")
+        stmgr.dispatch('on_pipeline_action', {'action':'handle_errors', 'res':args})
+
 
 async def infer_pipeline(stmgr, *args):
-    print("Inferring pipeline")
     stmgr.app.root.ids['record'].disabled = True
-    print(stmgr.sound_descriptor)
+    stmgr.app.root.ids['generate'].disabled = True
     if stmgr.sound_descriptor:
         print("here")
         latent_sample = [slider.value for slider in stmgr.app.root.ids['some_slider'].children]
         stmgr.sound_descriptor['latent_sample'] = latent_sample
 
-    print(stmgr.sound_descriptor)
     """ 
         if text is the same as previously inferred text and sound descriptor is not none -> call SG
         
@@ -53,12 +54,14 @@ async def infer_pipeline(stmgr, *args):
         else error
     """
     if stmgr.text == stmgr.last_transcribed_text and stmgr.text is not stmgr.sound_descriptor: #both could be none
+
         stmgr.dispatch('on_pipeline_action',  {'action':'pipeline_action_start_sg', 'res':args})
 
     elif stmgr.text is not stmgr.last_transcribed_text and stmgr.text:
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_start_tts', 'res':args})
     else:
-        logger.log("Something went wrong inferring pipeline ")
+        stmgr.app.root.ids['lab'].text = "Nothing new to infer"
+        stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_nothing_to_infer'})
 
 async def tts_transcribe_cb(*args, stmgr=None):
     print(tts_transcribe_cb)
@@ -69,8 +72,7 @@ async def tts_transcribe_cb(*args, stmgr=None):
         stmgr.app.root.ids['lab'].text = str(stmgr.sound_descriptor)
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_received_descriptor', 'res':args})
     else:
-        # TODO
-        pass
+        stmgr.dispatch('on_pipeline_action', {'action':'handle_errors', 'res':args})
 
 
 async def sound_gen_cb(*args, stmgr=None):
@@ -80,6 +82,9 @@ async def sound_gen_cb(*args, stmgr=None):
         stmgr.last_sound_parameters = stmgr.sound_descriptor
         stmgr.app.root.ids['lab'].text = "Received Sound "
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_received_audio', 'res':args})
+    else:
+        stmgr.dispatch('on_pipeline_action', {'action':'handle_errors', 'res':args})
+
 
 async def preprocessing_cb(*args, stmgr=None):
 
@@ -91,10 +96,12 @@ async def play_idle_cb(*args, stmgr=None):
     # reinitialize record button,
     stmgr.app.root.ids['record'].state= 'normal'
     stmgr.app.root.ids['record'].disabled = False
-    if stmgr.text is not stmgr.last_transcribed_text or stmgr.sound_descriptor is not stmgr.last_sound_parameters:
-        stmgr.app.root.ids['generate'].disabled = False
-    else:
-        stmgr.app.root.ids['generate'].disabled = True
+    stmgr.app.root.ids['generate'].disabled = False
+
+    # if stmgr.text is not stmgr.last_transcribed_text or stmgr.sound_descriptor is not stmgr.last_sound_parameters:
+    #     stmgr.app.root.ids['generate'].disabled = False
+    # else:
+    #     stmgr.app.root.ids['generate'].disabled = True
 
 async def finished_model_setup(*args, stmgr=None):
 
