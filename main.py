@@ -55,9 +55,8 @@ class ProdApp(App):
         are finished
         """
         self.sm = StateManager()
-        # self.stt_connection = asyncio.ensure_future(self.sm.stt.run())
+        # self.ws_connection_loops = asyncio.ensure_future(self.sm.stt.run())
         self.other_task = asyncio.ensure_future(self.main_loop())
-
 
         # asyncio.ensure_future(self.sm.stt.run()) # self.sm.tts.run() self.sm.sg.run()
         # self.other_task = asyncio.ensure_future(self.main_loop())
@@ -126,9 +125,9 @@ class ProdApp(App):
         logger.debug(dev)
 
     async def main_loop(self):
+        # await asyncio.sleep(5) # This is so
 
         # print("sleeping")
-        # await asyncio.sleep(5)
         # print("setting up models")
         # await self.sm.stt.setup_model()
         # print(await self.sm.stt.status())

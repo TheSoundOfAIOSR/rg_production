@@ -20,4 +20,4 @@ class SliderLayout(BoxLayout):
 
     def build_sliders(self, _):
         for i in range(self.sliders):
-            self.add_widget(Slider(orientation="vertical", min=0, max=1))
+            self.add_widget(Slider(orientation="vertical", min=-7, max=7))

@@ -1,23 +1,26 @@
 import asyncio
+import common.log as log
+
+logger = log.setup_logger()
 
 async def dummy_stt_startup():
-    print("Starting up STT WS")
+    logger.debug("Starting up STT WS")
     await asyncio.sleep(1)
     return {"resp":"True"}
 
 async def dummy_tts_startup():
-    print("Starting up TTS WS")
+    logger.debug("Starting up TTS WS")
     await asyncio.sleep(1)
     return {"resp":"True"}
 
 async def dummy_sg_startup():
-    print("Starting up SG WS")
+    logger.debug("Starting up SG WS")
     await asyncio.sleep(1)
     return {"resp":"True"}
 
 async def dummy_stt_start(microphone_name):
 
-    print("Starting to transcribe w/ ", microphone_name)
+    logger.debug(f"Starting to transcribe w/ {microphone_name}")
     await asyncio.sleep(1)
     return {"resp":"True"}
 
@@ -29,12 +32,12 @@ async def dummy_stt_stop():
              "weird guitar sound with a twang at the end",
              "something else too"]
 
-    print("Stopping STT and extracting text")
+    logger.debug("Stopping STT and extracting text")
     await asyncio.sleep(5)
     return {"resp": texts[randrange(3)]}
 
 async def dummy_tts_transcribe(text):
-    print("Starting TTS Transcribe")
+    logger.debug("Starting TTS Transcribe")
     await asyncio.sleep(2)
     outputs = {
         'velocity': 75,
@@ -46,14 +49,14 @@ async def dummy_tts_transcribe(text):
     return {"resp": outputs}
 
 async def dummy_sg_generate(inputs):
-    print("Starting sound generation")
+    logger.debug("Starting sound generation")
     await asyncio.sleep(2)
 
     return {"resp":[1, 2, 3, 4]}
 
 async def dummy_preprocessing():
 
-    print("Doing some preprocessing")
+    logger.debug("Doing some preprocessing")
     await asyncio.sleep(5)
 
     return {"resp":"True"}

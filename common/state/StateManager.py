@@ -20,6 +20,10 @@ def conditions_met(operator, stmgr, args):
 
 
 class ActionManager():
+
+    __slots__ = [
+        "f", "args", "cb", "next_state"
+    ]
     def __init__(self, f=None, args=None, cb=None, next_state=None, pre_work=False):
         self.f = f
         self.args = args
@@ -46,6 +50,7 @@ class StateManager(EventDispatcher):
         self.sampler_gui_action = None
         self.app = App.get_running_app()
         self.enter_state_callbacks = None
+        self.audio = None
         """
         WS Clients placeholders
         """
@@ -60,9 +65,10 @@ class StateManager(EventDispatcher):
     def make_call(self, _source):
         f = _source.f
         cb = _source.cb
-
+        # TODO: FIX SOME TIME
+        # self.active_task = asyncio.create_task(self._callback(partial(f, vars(self).get(_source.args, [])), callback=cb, stmgr=self))
         if _source.args:
-            f_args = _source.args
+            f_args = vars(self).get(_source.args, [])
             self.active_task = asyncio.create_task(
                 self._callback(partial(f, f_args), callback=cb, stmgr=self))
         else:
