@@ -54,8 +54,8 @@ class StateManager(EventDispatcher):
         """
         WS Clients placeholders
         """
-        # self.stt =  ws.STTClient(host="localhost", port=8786)#host=self.app.config.host, port=self.app.config.base_port
-        # asyncio.ensure_future(self.stt.run())
+        self.stt =  ws.STTClient(host="localhost", port=8786)#host=self.app.config.host, port=self.app.config.base_port
+        asyncio.ensure_future(self.stt.run())
         # self.tts = ws.TTSClient(host=self.config.host, port=self.config.base_port + 1)
         # self.sg = ws.SGClient(host=self.config.host, port=self.config.base_port + 2)
 
@@ -123,14 +123,14 @@ class StateManager(EventDispatcher):
         self.enter_state_callbacks = {
             StateEnum.Update: "",
             StateEnum.Playing_Idle: {
-                'user_action_toggle_record': ActionManager(f=dummy_stt_start, args='microphone_hint', cb=start_recording_cb, next_state=StateEnum.Recording),
+                'user_action_toggle_record': ActionManager(f=self.stt.start, args='microphone_hint', cb=start_recording_cb, next_state=StateEnum.Recording),
                 # 'user_action_toggle_record': ActionManager(f=self.stt.start, args='microphone_hint', cb=start_recording_cb),
                 'user_action_generate': ActionManager(f=infer_pipeline, next_state=StateEnum.Inferring_Pipeline),
                 # 'pipeline_action_started_recording': ActionManager(next_state=StateEnum.Recording),
             },
             StateEnum.Recording: {
                 'pipeline_action_started_recording_failed': ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle),
-                'user_action_toggle_record': ActionManager(f=dummy_stt_stop, cb=stop_recording_cb, next_state=StateEnum.New_Text),
+                'user_action_toggle_record': ActionManager(f=self.stt.stop, cb=stop_recording_cb, next_state=StateEnum.New_Text),
                 # 'pipeline_action_stop_recording': ActionManager(next_state=StateEnum.Playing_Idle),
             },
             StateEnum.New_Text:{

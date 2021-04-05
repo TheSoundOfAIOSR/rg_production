@@ -125,11 +125,11 @@ class ProdApp(App):
         logger.debug(dev)
 
     async def main_loop(self):
-        # await asyncio.sleep(5) # This is so
+        await asyncio.sleep(5) # This is so
 
         # print("sleeping")
         # print("setting up models")
-        # await self.sm.stt.setup_model()
+        await self.sm.stt.setup_model()
         # print(await self.sm.stt.status())
         # print("getting state callbacks")
         self.sm.get_state_action_callbacks()
