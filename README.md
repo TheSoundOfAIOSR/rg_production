@@ -15,6 +15,9 @@ The application was developed with **Python 3.7/8**, but should work with other 
 The sampler runs using the CSound library which needs to be installed here:
 
     https://csound.com/download.html
+    
+Note: Do not install python 2.x bindings. This will cause a crash when calling librosa/numba. https://github.com/numba/numba/issues/6862
+
 
 ## Simplified Python installation
 
