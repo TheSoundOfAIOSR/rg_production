@@ -2,9 +2,8 @@
 Research Group - Production
 
 # Usage
-In order to run the App run the following commands:
+In order to run the App simply run:
 
-    git clone https://github.com/TheSoundOfAIOSR/rg_production
     python main.py
 
 The application was developed with **Python 3.7/8**, but should work with other 3.x versions of Python.
