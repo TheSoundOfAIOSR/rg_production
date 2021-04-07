@@ -7,7 +7,7 @@ In order to run the App run the following commands:
     git clone https://github.com/TheSoundOfAIOSR/rg_production
     python main.py
 
-The application was developed with **Python 3.7**, in order to run it make sure to have all dependencies installed.
+The application was developed with **Python 3.7/8**, but should work with other 3.x versions of Python.
 
 **Note**: To use `ctcsound` make sure to have [csound](https://csound.com/download.html) installed on your system.
 
