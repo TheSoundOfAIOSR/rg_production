@@ -8,8 +8,6 @@ In order to run the App simply run:
 
 The application was developed with **Python 3.7/8**, but should work with other 3.x versions of Python.
 
-**Note**: To use `ctcsound` make sure to have [csound](https://csound.com/download.html) installed on your system.
-
 # Installation
 
 ## CSound Installation
