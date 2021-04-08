@@ -56,6 +56,8 @@ class StateManager(EventDispatcher):
         # self.sg = ws.SGClient(host=self.config.host, port=self.config.base_port + 2)
 
     async def _callback(self, f, callback=None, stmgr=None):
+        print("doing callback ")
+        print(stmgr)
         return await callback(await f(), stmgr=stmgr) if callback else await f(stmgr=stmgr)
 
     def make_call(self, _source):
@@ -176,7 +178,7 @@ class StateManager(EventDispatcher):
                 'pipeline_action_received_descriptor': ActionManager(f=infer_pipeline, next_state=StateEnum.Inferring_Pipeline)
             },
             StateEnum.New_Sound_Generation: {
-                'pipeline_action_received_audio': ActionManager(f=dummy_preprocessing, cb=preprocessing_cb,
+                'pipeline_action_received_audio': ActionManager(f=setup_preprocessing,
                                                                 next_state=StateEnum.Preprocessing)
             },
             StateEnum.Preprocessing:{

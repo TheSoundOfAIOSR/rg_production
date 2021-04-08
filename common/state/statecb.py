@@ -3,6 +3,9 @@ import common.log as log
 from common.state.StateEnum import StateEnum
 from dummy_ws_requests import *
 from functools import *
+from common.taudio.PreprocessingSample import preprocess
+import numpy as np
+
 logger = log.setup_logger()
 
 async def start_recording_cb(*args, stmgr=None):
@@ -42,7 +45,6 @@ async def infer_pipeline(stmgr, *args):
     stmgr.app.root.ids['record'].disabled = True
     stmgr.app.root.ids['generate'].disabled = True
     if stmgr.sound_descriptor:
-        print("here")
         latent_sample = [slider.value for slider in stmgr.app.root.ids['some_slider'].children]
         stmgr.sound_descriptor['latent_sample'] = latent_sample
 
@@ -76,21 +78,26 @@ async def tts_transcribe_cb(*args, stmgr=None):
 
 
 async def sound_gen_cb(*args, stmgr=None):
+    print("sound gen callback")
     res = args[0]
     if res['resp']:
-        stmgr.audio = res['resp']
+        print("here")
+        stmgr.audio = np.array(res['resp'][0])
         stmgr.last_sound_parameters = stmgr.sound_descriptor
         stmgr.app.root.ids['lab'].text = "Received Sound "
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_received_audio', 'res':args})
     else:
         stmgr.dispatch('on_pipeline_action', {'action':'handle_errors', 'res':args})
 
+async def setup_preprocessing(*args, stmgr=None):
+    print("In setup preprocessing")
 
-async def preprocessing_cb(*args, stmgr=None):
-
+    folder = stmgr.app.csound.audio_dir.as_posix()
+    preprocess(folder=folder, audio=stmgr.audio, root=60, shifts=48)
     stmgr.app.root.ids['record'].disabled = False
-    logger.debug(f"Finished preprocessing {stmgr.audio}")
+    logger.debug(f"Finished preprocessing")
     stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_finished_preprocessing', 'res': args})
+
 
 async def play_idle_cb(*args, stmgr=None):
     # reinitialize record button,
