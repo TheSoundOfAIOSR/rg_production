@@ -10,15 +10,6 @@ import common.clients.wsclient as ws
 
 logger = log.setup_logger()
 
-def conditions_met(operator, stmgr, args):
-    args = [vars(stmgr)[a] for a in args]
-
-    return {
-        "eq": lambda: len(set(args)) == 1,
-        "neq": lambda: len(set(args)) != 1,
-    }.get(operator, lambda: 'Not a valid operation')()
-
-
 class ActionManager():
 
     __slots__ = [
@@ -29,7 +20,6 @@ class ActionManager():
         self.args = args
         self.cb = cb
         self.next_state = next_state
-        # self.pre_work = False
 
 class StateManager(EventDispatcher):
     def __init__(self, **kwargs):
@@ -37,7 +27,7 @@ class StateManager(EventDispatcher):
 
         self.register_event_type('on_pipeline_action')
         self.register_event_type('on_sampler_gui_action')
-        self.register_event_type('on_update_mic_hint')
+        self.register_event_type('on_update_io')
         """Application Variables"""
         self.text = None
         self.last_transcribed_text = None
@@ -54,8 +44,14 @@ class StateManager(EventDispatcher):
         """
         WS Clients placeholders
         """
-        self.stt =  ws.STTClient(host="localhost", port=8786)#host=self.app.config.host, port=self.app.config.base_port
-        asyncio.ensure_future(self.stt.run())
+        try:
+            self.stt =  ws.STTClient(host="localhost", port=8786)#host=self.app.config.host, port=self.app.config.base_port
+            self.sg =  ws.STTClient(host="localhost", port=8080)#host=self.app.config.host, port=self.app.config.base_port
+
+            asyncio.ensure_future(self.stt.run())
+            asyncio.ensure_future(self.sg.run())
+        except:
+            print("Problem loading model")
         # self.tts = ws.TTSClient(host=self.config.host, port=self.config.base_port + 1)
         # self.sg = ws.SGClient(host=self.config.host, port=self.config.base_port + 2)
 
@@ -98,9 +94,42 @@ class StateManager(EventDispatcher):
     def on_sampler_gui_action(self, *args):
         self.sampler_gui_action = args[0]
 
-    def on_update_mic_hint(self, *args):
-        self.microphone_hint = args[0]
-        logger.log(f"Set mic hint to {self.microphone_hint}")
+    def on_update_io(self, *args):
+        arg = args[0]
+        type = arg['type']
+        dev_hint = arg['hint']
+
+        if type == "input":
+            input_list = self.app.devices["devices"]["input_list"]
+            for in_dev in input_list:
+                if dev_hint == in_dev.get("name", None):
+                    self.app.audio.input_idx = in_dev.get("id")
+                    self.app.devices["in"] = in_dev
+
+        elif type == "output":
+            output_list = self.app.devices["devices"]["output_list"]
+            for out_dev in output_list:
+                if dev_hint == out_dev.get("name", None):
+                    self.app.output_idx = out_dev.get("id")
+                    self.app.devices["out"] = out_dev
+                    self.app.csound.cleanup()
+                    self.app.csound.set_output(self.app.output_idx)
+                    self.app.csound.set_midi_api()
+                    self.app.csound.compile_and_start()
+                    self.app.csound.start_perf_thread()
+
+        elif type == "midi_input":
+            self.app.midi_input_idx = self.app.midi_devices["input"].index(dev_hint)
+            self.app.csound.cleanup()
+            self.app.csound.set_output(self.app.output_idx)
+            self.app.csound.set_midi_api("portmidi")
+            self.app.csound.set_midi_device(self.app.midi_input_idx)
+            self.app.csound.compile_and_start()
+            self.app.csound.start_perf_thread()
+            logger.debug(
+                f"MIDI device selected: {self.app.midi_devices['input'][self.app.midi_input_idx]}"
+            )
+            logger.debug(f"Using API: {self.app.midi_devices['api']}")
 
     async def setup_models(self):
         await self.stt.setup_model()
@@ -140,7 +169,7 @@ class StateManager(EventDispatcher):
                 'pipeline_action_nothing_to_infer': ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle),
                 'pipeline_action_start_tts': ActionManager(f=dummy_tts_transcribe, args='text', cb=tts_transcribe_cb,
                                                            next_state=StateEnum.New_Descriptor_Generation),
-                'pipeline_action_start_sg': ActionManager(f=dummy_sg_generate, args='sound_descriptor', cb=sound_gen_cb,
+                'pipeline_action_start_sg': ActionManager(f=self.sg.get_prediction, args='sound_descriptor', cb=sound_gen_cb,
                                                           next_state=StateEnum.New_Sound_Generation),
             },
             StateEnum.New_Descriptor_Generation: {

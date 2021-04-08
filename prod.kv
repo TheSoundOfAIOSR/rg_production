@@ -108,7 +108,7 @@
             values: [in_dev["name"] for in_dev in app.devices["devices"]["input_list"]]
             on_text:
                 print(f"The spinner {self} has text {self.text}")
-                app.sm.dispatch('on_update_mic_hint', self.text)
+                app.sm.dispatch('on_update_io', {"type":"input", "hint":self.text})
 
         Spinner:
             name: "output"
@@ -116,14 +116,14 @@
             values: [out_dev["name"] for out_dev in app.devices["devices"]["output_list"]]
             on_text:
                 print(f"The spinner {self} has text {self.text}")
-                app.select_audio_device(self, self.text)
+                app.sm.dispatch('on_update_io', {"type":"output", "hint":self.text})
         Spinner:
             name: "midi_input"
             text: 'Midi Input'
             values: [midi_in for midi_in in app.midi_devices["input"]]
             on_text:
                 print(f"The spinner {self} has text {self.text}")
-                app.select_audio_device(self, self.text)
+                app.sm.dispatch('on_update_io', {"type":"midi_input", "hint":self.text})
 
     Label:
         id: lab

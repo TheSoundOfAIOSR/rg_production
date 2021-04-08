@@ -44,7 +44,7 @@ async def dummy_tts_transcribe(text):
         'pitch': 60,
         'source': 'acoustic',
         'qualities': ['bright', 'percussive'],
-        'latent_sample': [0.] * 16
+        'latent_sample':  [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     }
     return {"resp": outputs}
 

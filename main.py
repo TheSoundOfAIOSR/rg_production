@@ -38,8 +38,6 @@ class ProdApp(App):
         self.midi_input_idx = 0
         self.playing_midi = False
 
-        # self.stt_client = ws.STTClient(host="localhost", port=8786)
-
     def build(self):
         return Graphics()
 
@@ -73,67 +71,18 @@ class ProdApp(App):
 
         return asyncio.gather(run_wrapper(), self.other_task)
 
-    def select_audio_device(self, obj, event):
-        """
-        Audio device in form:
-        "0/1/M <device_name>",
-        to extract just <device_name>...
-        """
-        dev = event  # just the device name
-        io = obj.name
-
-        # handling input
-        if io == "input":
-            input_list = self.devices["devices"]["input_list"]
-            for in_dev in input_list:
-                if dev == in_dev.get("name", None):
-                    self.audio.input_idx = in_dev.get("id")
-                    self.devices["in"] = in_dev
-                    logger.debug(self.devices["in"])
-                    logger.debug(
-                        f"Input index: {self.audio.input_idx}, {type(self.audio.input_idx)}"
-                    )
-        # handling output
-        elif io == "output":
-            output_list = self.devices["devices"]["output_list"]
-            for out_dev in output_list:
-                if dev == out_dev.get("name", None):
-                    self.output_idx = out_dev.get("id")
-                    self.devices["out"] = out_dev
-                    self.csound.cleanup()
-                    self.csound.set_output(self.output_idx)
-                    self.csound.set_midi_api()
-                    self.csound.compile_and_start()
-                    self.csound.start_perf_thread()
-                    logger.debug(self.devices["out"])
-                    logger.debug(
-                        f"Csound index: {self.output_idx}, {type(self.output_idx)}"
-                    )
-        elif io == "midi_input":
-            self.midi_input_idx = self.midi_devices["input"].index(dev)
-            self.csound.cleanup()
-            self.csound.set_output(self.output_idx)
-            self.csound.set_midi_api("portmidi")
-            self.csound.set_midi_device(self.midi_input_idx)
-            self.csound.compile_and_start()
-            self.csound.start_perf_thread()
-            logger.debug(
-                f"MIDI device selected: {self.midi_devices['input'][self.midi_input_idx]}"
-            )
-            logger.debug(f"Using API: {self.midi_devices['api']}")
-
-        logger.debug(dev)
 
     async def main_loop(self):
         await asyncio.sleep(5) # This is so
 
         # print("sleeping")
         # print("setting up models")
-        await self.sm.stt.setup_model()
-        # print(await self.sm.stt.status())
-        # print("getting state callbacks")
+        try:
+            await self.sm.stt.setup_model()
+        except:
+            print("Error starting up stt model")
+
         self.sm.get_state_action_callbacks()
-        # print("main loop")
 
 
         self.csound.set_output(self.output_idx)
