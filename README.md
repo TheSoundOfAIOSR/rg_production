@@ -41,7 +41,7 @@ To create your python venv run:
 #### Conda env
 To create your env run
    
-    conda create -n venv python=3.7
+    conda create -n venv python=3.8
 
 ## Install with pip
 Install dependencies with pip directly on your venv
