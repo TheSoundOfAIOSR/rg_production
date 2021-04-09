@@ -47,9 +47,11 @@ class StateManager(EventDispatcher):
         """
         try:
             self.stt =  ws.STTClient(host="localhost", port=8786)#host=self.app.config.host, port=self.app.config.base_port
+            self.tts = ws.STTClient(host="localhost", port=8787)
             self.sg =  ws.STTClient(host="localhost", port=8080)#host=self.app.config.host, port=self.app.config.base_port
 
             asyncio.ensure_future(self.stt.run())
+            asyncio.ensure_future(self.tts.run())
             asyncio.ensure_future(self.sg.run())
         except:
             print("Problem loading model")
@@ -175,7 +177,7 @@ class StateManager(EventDispatcher):
             },
             StateEnum.Inferring_Pipeline:{
                 'pipeline_action_nothing_to_infer': ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle),
-                'pipeline_action_start_tts': ActionManager(f=dummy_tts_transcribe, args='text', cb=tts_transcribe_cb,
+                'pipeline_action_start_tts': ActionManager(f=self.tts.process_text, args='text', cb=tts_transcribe_cb,
                                                            next_state=StateEnum.New_Descriptor_Generation),
                 'pipeline_action_start_sg': ActionManager(f=self.sg.get_prediction, args='sound_descriptor', cb=sound_gen_cb,
                                                           next_state=StateEnum.New_Sound_Generation),

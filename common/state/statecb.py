@@ -68,9 +68,17 @@ async def infer_pipeline(stmgr, *args):
 async def tts_transcribe_cb(*args, stmgr=None):
     print(tts_transcribe_cb)
     res = args[0]
+    print(res)
     if res['resp']:
+        res['resp'].pop('source', None)
         stmgr.sound_descriptor = res['resp']
         stmgr.last_transcribed_text = stmgr.text
+        stmgr.sound_descriptor['qualities'] = ['bright', 'percussive']
+
+        for num, child in enumerate(stmgr.app.root.ids['some_slider'].children):
+            child.value = res['resp']['latent_sample'][num]
+
+        print(stmgr.sound_descriptor)
         stmgr.app.root.ids['lab'].text = str(stmgr.sound_descriptor)
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_received_descriptor', 'res':args})
     else:
