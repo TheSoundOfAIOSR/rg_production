@@ -2,15 +2,11 @@
 Research Group - Production
 
 # Usage
-In order to run the App run the following commands:
+In order to run the App simply run:
 
-    git clone https://github.com/TheSoundOfAIOSR/rg_production
-    cd App
-    python Gui.py
+    python main.py
 
-The application was developed with **Python 3.7**, in order to run it make sure to have all dependencies installed.
-
-**Note**: To use `ctcsound` make sure to have [csound](https://csound.com/download.html) installed on your system.
+The application was developed with **Python 3.7/8**, but should work with other 3.x versions of Python.
 
 # Installation
 
@@ -19,6 +15,9 @@ The application was developed with **Python 3.7**, in order to run it make sure 
 The sampler runs using the CSound library which needs to be installed here:
 
     https://csound.com/download.html
+    
+Note: Do not install python 2.x bindings. This will cause a crash when calling librosa/numba. https://github.com/numba/numba/issues/6862
+
 
 ## Simplified Python installation
 
@@ -35,14 +34,14 @@ To set up the conda venv run the following commands:
 #### Python venv module
 To create your python venv run:
 
-    python -m venv osr
-    source osr/bin/activate   (Unix)
-    osr\Scripts\activate.bat  (Windows)
+    python -m venv venv
+    source venv/bin/activate   (Unix)
+    venv\Scripts\activate.bat  (Windows)
 
 #### Conda env
 To create your env run
    
-    conda create -n osr python=3.7
+    conda create -n venv python=3.8
 
 ## Install with pip
 Install dependencies with pip directly on your venv
