@@ -53,13 +53,13 @@
         pos: dp(20), dp(480)
         border: (0, 0, 0, 0)
         id: record
-        on_press: app.sm.dispatch('on_critical_button_pressed', 'toggle_record')
+        on_press: app.sm.dispatch('on_pipeline_action', {'action': 'user_action_toggle_record'})
         background_normal: 'assets/record_off.png'
         background_down: 'assets/record_on.png'
     
     SliderLayout:
         id: some_slider
-        sliders: 8
+        sliders: 16
         pos: dp(150), dp(490)
         size: dp(200), dp(100)
         
@@ -89,7 +89,7 @@
         text: 'Generate'
         pos: dp(380), dp(480)
         size: dp(100), dp(100)
-        on_press: app.sm.dispatch('on_critical_button_pressed', 'generate')
+        on_press: app.sm.dispatch('on_pipeline_action', {'action': 'user_action_generate'})
 
     Button:
         id: export
@@ -108,21 +108,22 @@
             values: [in_dev["name"] for in_dev in app.devices["devices"]["input_list"]]
             on_text:
                 print(f"The spinner {self} has text {self.text}")
-                app.select_audio_device(self, self.text)
+                app.sm.dispatch('on_update_io', {"type":"input", "hint":self.text})
+
         Spinner:
             name: "output"
             text: 'Audio Output'
             values: [out_dev["name"] for out_dev in app.devices["devices"]["output_list"]]
             on_text:
                 print(f"The spinner {self} has text {self.text}")
-                app.select_audio_device(self, self.text)
+                app.sm.dispatch('on_update_io', {"type":"output", "hint":self.text})
         Spinner:
             name: "midi_input"
             text: 'Midi Input'
             values: [midi_in for midi_in in app.midi_devices["input"]]
             on_text:
                 print(f"The spinner {self} has text {self.text}")
-                app.select_audio_device(self, self.text)
+                app.sm.dispatch('on_update_io', {"type":"midi_input", "hint":self.text})
 
     Label:
         id: lab
@@ -136,14 +137,14 @@
         text: 'play'
         pos: dp(20),dp(340)
         size: dp(100), dp(50)
-        on_press:app.set_event('playSample')
+        on_press:app.sm.dispatch('on_sampler_gui_action', 'play_sample')
 
     Button:
         id: playM
         text: 'Play/Stop Midi'
         pos: dp(20),dp(290)
         size: dp(100), dp(50)
-        on_press: app.set_event('midi_loaded')
+        on_press: app.sm.dispatch('on_sampler_gui_action', 'midi_loaded')
 
     Image:
         source: ''

@@ -1,5 +1,7 @@
 {
     "root": 40,
+    "host": "localhost",
+    "base_port": 8786,
     "preprocess": false,
     "sampling_rate": 44100,
     "record_file": "recordedFile.wav",

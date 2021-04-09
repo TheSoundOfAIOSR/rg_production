@@ -13,9 +13,6 @@ config = Config.load_config()
 
 target_sr = config.sampling_rate
 
-
-
-
 def utility_pitchshift_and_normalize(audio, target_sr, n_steps, root, folder):
     audio_shifted = librosa.effects.pitch_shift(audio, target_sr, n_steps, bins_per_octave=12)
     new_filename = f"{root + n_steps}.wav"
@@ -27,7 +24,7 @@ def utility_pitchshift_and_normalize(audio, target_sr, n_steps, root, folder):
     logger.debug("==============================")
 
 
-def preprocess(folder, filename, root=60, shifts=48):
+def preprocess(folder, audio=None, filename=None, root=60, shifts=48):
     """
     Pitch shift of the audio file given as input and save in in the folder given as input
 
@@ -37,11 +34,14 @@ def preprocess(folder, filename, root=60, shifts=48):
         root (int, optional): root note of 'filename' sample
         shifts (int, optional): shift to apply. Defaults to 24.
     """
-    logger.info("loading audio")
-    audio, orig_sr = librosa.load(filename)
-    audio = librosa.resample(audio, orig_sr, target_sr)
+    logger.debug(f"{audio}")
+    logger.debug(f"loading audio")
+    logger.debug(f"{folder}")
+    logger.debug(f"target_sr = {target_sr}")
+    # audio, orig_sr = librosa.load(filename)
+    audio = librosa.resample(audio, 16000, target_sr)
 
-    logger.info("shifting pitch")
+    logger.debug(f"shifting pitch")
 
     folder = pl.Path(folder).absolute()
 
@@ -57,4 +57,4 @@ def preprocess(folder, filename, root=60, shifts=48):
     pool.close()
     pool.join()
 
-    logger.info(f"Audio files saved in folder: {folder}")
+    logger.debug(f"Audio files saved in folder: {folder}")
