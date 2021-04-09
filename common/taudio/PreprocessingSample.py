@@ -13,9 +13,6 @@ config = Config.load_config()
 
 target_sr = config.sampling_rate
 
-
-
-
 def utility_pitchshift_and_normalize(audio, target_sr, n_steps, root, folder):
     audio_shifted = librosa.effects.pitch_shift(audio, target_sr, n_steps, bins_per_octave=12)
     new_filename = f"{root + n_steps}.wav"
