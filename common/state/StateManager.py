@@ -41,6 +41,7 @@ class StateManager(EventDispatcher):
         self.app = App.get_running_app()
         self.enter_state_callbacks = None
         self.audio = None
+        self.error_handler = ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle)
         """
         WS Clients placeholders
         """
@@ -77,7 +78,10 @@ class StateManager(EventDispatcher):
         action = args[0]['action']
         logger.debug(f"On Pipeline Action - Triggered by {action}")
 
-        _source = self.enter_state_callbacks[self.state].get(action, None)
+        if not self.enter_state_callbacks:
+            _source = self.error_handler
+        else:
+            _source = self.enter_state_callbacks[self.state].get(action, None)
 
         if action == 'handle_errors' or not _source:
             error_msg = "There was an unexpected error. Returning to idle state. check server status or restart."
@@ -105,6 +109,8 @@ class StateManager(EventDispatcher):
             input_list = self.app.devices["devices"]["input_list"]
             for in_dev in input_list:
                 if dev_hint == in_dev.get("name", None):
+                    self.microphone_hint = in_dev.get("id")
+                    print("Set hint to ", self.microphone_hint)
                     self.app.audio.input_idx = in_dev.get("id")
                     self.app.devices["in"] = in_dev
 
