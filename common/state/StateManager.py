@@ -48,7 +48,7 @@ class StateManager(EventDispatcher):
         try:
             self.stt =  ws.STTClient(host="localhost", port=8786)#host=self.app.config.host, port=self.app.config.base_port
             self.tts = ws.STTClient(host="localhost", port=8787)
-            self.sg =  ws.STTClient(host="localhost", port=8080)#host=self.app.config.host, port=self.app.config.base_port
+            self.sg =  ws.STTClient(host="localhost", port=8881)#host=self.app.config.host, port=self.app.config.base_port
 
             asyncio.ensure_future(self.stt.run())
             asyncio.ensure_future(self.tts.run())
