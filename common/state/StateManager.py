@@ -124,16 +124,16 @@ class StateManager(EventDispatcher):
                     self.app.devices["out"] = out_dev
                     self.app.csound.cleanup()
                     self.app.csound.set_output(self.app.output_idx)
-                    self.app.csound.set_midi_api()
+                    self.app.csound.set_options()
                     self.app.csound.compile_and_start()
                     self.app.csound.start_perf_thread()
 
         elif type == "midi_input":
             self.app.midi_input_idx = self.app.midi_devices["input"].index(dev_hint)
             self.app.csound.cleanup()
-            self.app.csound.set_output(self.app.output_idx)
             self.app.csound.set_midi_api("portmidi")
             self.app.csound.set_midi_device(self.app.midi_input_idx)
+            self.app.csound.set_options()
             self.app.csound.compile_and_start()
             self.app.csound.start_perf_thread()
             logger.debug(
