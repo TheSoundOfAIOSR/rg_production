@@ -6,6 +6,7 @@ from kivy.uix.widget import Widget
 from kivy.clock import Clock
 from kivy.garden.knob import Knob
 from kivy.config import Config
+Config.set('graphics', 'resizable', False)
 
 from common.state.StateManager import StateManager, StateEnum
 from kivy.uix.screenmanager import ScreenManager, Screen
