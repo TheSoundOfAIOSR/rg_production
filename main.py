@@ -8,8 +8,9 @@ from kivy.garden.knob import Knob
 from kivy.config import Config
 
 from common.state.StateManager import StateManager, StateEnum
+from kivy.uix.screenmanager import ScreenManager, Screen
 from common.customw.basic import *
-from common.customw.slider_layout import *
+from common.customw.widget_layout import *
 from common.taudio.AudioInterface import AudioInterface
 from common.taudio.MidiInterface import MidiInterface
 from common.taudio.Sampler import CsoundSampler
@@ -40,7 +41,11 @@ class ProdApp(App):
         self.playing_midi = False
 
     def build(self):
-        return Graphics()
+        #return Graphics()
+        sc = ScreenManager()
+        sc.add_widget(Graphics(name='graphics'))
+        sc.add_widget(Settings(name='settings'))
+        return sc
 
     def set_msg_txt(self, text):
         self.root.message_label.text = text

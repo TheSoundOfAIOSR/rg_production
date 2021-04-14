@@ -48,8 +48,18 @@
             size: self.size
             source: 'assets/background.png'
 
+    Button:
+        size: dp(100), dp(100)
+        size_hint: None, None
+        pos: dp(680), dp(480)
+        text: 'Goto settings'
+        on_press:
+            root.manager.current = 'settings'
+            root.manager.transition.direction = 'left'
+
     ToggleButton:
         size: dp(100), dp(100)
+        size_hint: None, None
         pos: dp(20), dp(480)
         border: (0, 0, 0, 0)
         id: record
@@ -62,46 +72,94 @@
         sliders: 16
         pos: dp(150), dp(490)
         size: dp(200), dp(100)
-        
-    GridLayout:
-        cols: 8
+        size_hint: None, None
+
+    LabelLayout:
+        id: some_label
+        labels: 16
         pos: dp(150), dp(430)
         size: dp(200), dp(100)
-        Label:
-            text: "a"
-        Label:
-            text: "b"
-        Label:
-            text: "c"
-        Label:
-            text: "d"
-        Label:
-            text: "e"
-        Label:
-            text: "f"
-        Label:
-            text: "g"
-        Label:
-            text: "h"
+        size_hint: None, None
 
     Button:
         id: generate
         text: 'Generate'
         pos: dp(380), dp(480)
         size: dp(100), dp(100)
+        size_hint: None, None
         on_press: app.sm.dispatch('on_pipeline_action', {'action': 'user_action_generate'})
+
+    Label:
+        id: lab
+        pos: dp(350), dp(384)
+        text: ""
+        color: .8,.8,.8,1
+        font_size: 12
+        size_hint: None, None
+
+    Button:
+        id: play
+        text: 'play'
+        pos: dp(20),dp(340)
+        size: dp(100), dp(50)
+        size_hint: None, None
+        on_press:app.sm.dispatch('on_sampler_gui_action', 'play_sample')
+
+    Button:
+        id: playM
+        text: 'Play/Stop Midi'
+        pos: dp(20),dp(290)
+        size: dp(100), dp(50)
+        size_hint: None, None
+        on_press: app.sm.dispatch('on_sampler_gui_action', 'midi_loaded')
+
+    Image:
+        source: ''
+        pos: dp(150), dp(280)
+        size: self.texture_size
+        size_hint: None, None
+
+    KnobLayout:
+        pos:  dp(20), dp(170)
+        size_hint: None, None
+
+    KeyboardWidget:
+        id: some_keys
+        keys: 14
+        pos: dp(120), dp(50)
+        size: dp(180), dp(200)
+        size_hint: None, None
+
+<Settings>:
+
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'assets/background.png'
+
+    Button:
+        size: dp(100), dp(100)
+        size_hint: None, None
+        pos: dp(320), dp(80)
+        text: 'Back to menu'
+        on_press:
+            root.manager.current = 'graphics'
+            root.manager.transition.direction = 'right'
 
     Button:
         id: export
         text: 'Export'
         pos: dp(500), dp(480)
         size: dp(100), dp(100)
+        size_hint: None, None
         on_press: lab.text = "Exporting"
 
     GridLayout:
         rows: 3
         pos: dp(620), dp(480)
         size: dp(160), dp(100)
+        size_hint: None, None
         Spinner:
             name: "input"
             text: 'Audio Input'
@@ -124,32 +182,3 @@
             on_text:
                 print(f"The spinner {self} has text {self.text}")
                 app.sm.dispatch('on_update_io', {"type":"midi_input", "hint":self.text})
-
-    Label:
-        id: lab
-        pos: dp(350), dp(384)
-        text: ""
-        color: .8,.8,.8,1
-        font_size: 12
-
-    Button:
-        id: play
-        text: 'play'
-        pos: dp(20),dp(340)
-        size: dp(100), dp(50)
-        on_press:app.sm.dispatch('on_sampler_gui_action', 'play_sample')
-
-    Button:
-        id: playM
-        text: 'Play/Stop Midi'
-        pos: dp(20),dp(290)
-        size: dp(100), dp(50)
-        on_press: app.sm.dispatch('on_sampler_gui_action', 'midi_loaded')
-
-    Image:
-        source: ''
-        pos: dp(150), dp(280)
-        size: self.texture_size
-
-    KnobLayout:
-        pos:  dp(20), dp(170)
