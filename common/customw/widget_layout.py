@@ -51,17 +51,19 @@ class KeyboardWidget(BoxLayout):
 
     def build_keys(self, _):
 
-        octave_widget = FloatLayout(size=(200, 100))
+        octave_widget = FloatLayout()
         for i in range(self.keys):
             white_key_widget = Button(background_normal='assets/key_up.png',
-                                          background_down='assets/key_down.png', size_hint=(1 / 7, 1), pos_hint={"x": i/7, "top": 1})
+                                      background_down='assets/key_down.png',
+                                      size_hint=(1/7, 1),
+                                      pos_hint={"x": i/7, "top": 1})
             octave_widget.add_widget(white_key_widget)
             if i in [1, 2, 4, 5, 6, 8, 9, 11, 12, 13]:
                 black_key_widget = (Button(background_normal='assets/key_up.png',
-                                          background_down='assets/key_down.png',
-                                          background_color=(0.3, 0.3, 0.3, 1),
-                                          size_hint=(1 / 14, 0.5),
-                                          pos_hint={"x": (i / 7) - 0.60 / 14, "top": 1}))
+                                           background_down='assets/key_down.png',
+                                           background_color=(0.3, 0.3, 0.3, 1),
+                                           size_hint=(1 / 14, 0.5),
+                                           pos_hint={"x": (i / 7) - 0.60 / 14, "top": 1}))
                 octave_widget.add_widget(black_key_widget)
                 black_key_widget.bind(on_press=partial(self.on_key_pressed, self.keys_ind),
                                       on_release=partial(self.on_key_released, self.keys_ind))

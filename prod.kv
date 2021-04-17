@@ -84,7 +84,7 @@
     Button:
         id: generate
         text: 'Generate'
-        pos: dp(380), dp(480)
+        pos: dp(550), dp(480)
         size: dp(100), dp(100)
         size_hint: None, None
         on_press: app.sm.dispatch('on_pipeline_action', {'action': 'user_action_generate'})
@@ -181,6 +181,7 @@
             on_text:
                 print(f"The spinner {self} has text {self.text}")
                 app.sm.dispatch('on_update_io', {"type":"output", "hint":self.text})
+
         Spinner:
             name: "midi_input"
             text: 'Midi Input'
