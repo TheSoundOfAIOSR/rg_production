@@ -71,7 +71,7 @@
         id: some_slider
         sliders: 16
         pos: dp(150), dp(490)
-        size: dp(200), dp(100)
+        size: dp(400), dp(100)
         size_hint: None, None
 
     LabelLayout:
@@ -84,7 +84,7 @@
     Button:
         id: generate
         text: 'Generate'
-        pos: dp(550), dp(480)
+        pos: dp(560), dp(480)
         size: dp(100), dp(100)
         size_hint: None, None
         on_press: app.sm.dispatch('on_pipeline_action', {'action': 'user_action_generate'})
@@ -126,7 +126,7 @@
     KeyboardWidget:
         id: some_keys
         keys: 14
-        pos: dp(250), dp(50)
+        pos: dp(220), dp(50)
         size: dp(180), dp(200)
         size_hint: None, None
 

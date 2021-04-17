@@ -20,7 +20,9 @@ class Graphics(Screen):
         self.midi_file = self.app.midi_file = file_path.decode()
         self.app.set_msg_txt(f"{self.midi_file} - has been loaded")
 
+    # def on_touch_down(self, touch):
+    #     print(touch.x, touch.y)
+
 
 class Settings(Screen):
     pass
-

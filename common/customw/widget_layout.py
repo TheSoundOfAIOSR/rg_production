@@ -36,7 +36,7 @@ class LabelLayout(BoxLayout):
 
     def build_labels(self, _):
         for i in range(self.labels):
-            self.add_widget(Label(text="A"))
+            self.add_widget(Label(text=""))
 
 
 class KeyboardWidget(BoxLayout):
