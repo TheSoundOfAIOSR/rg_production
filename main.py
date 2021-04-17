@@ -95,7 +95,7 @@ class ProdApp(App):
                         self.sm.sampler_gui_action = None
 
                         if self.root.playing_midi:
-                            self.csound.cleanup()
+                            # self.csound.cleanup()
                             self.root.playing_midi = False
                             self.set_msg_txt("")
                         else:
