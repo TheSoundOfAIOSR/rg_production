@@ -12,21 +12,31 @@ target_sr = config.sampling_rate
 root_note = config.root
 
 
+
 class CsoundSampler:
     def __init__(self, audio_dir, sample_path):
         print("init Csound")
+        
         self.cs = ctcsound.Csound()
+        
         self.cs.sr = target_sr
+        
         self.root = root_note
+        self.midi_api = "NULL"
+        self.midi_device = 0
+        self.output = 0
+        
         # one level above
         self.audio_dir = (
             pl.Path(audio_dir).absolute()
             if audio_dir
             else pl.Path(argv[0]).parent.absolute()
         ) / pl.Path("generated_sample")
+        
         self.sample_path = pl.Path(sample_path).absolute()
         logger.debug(f"Sample loaded: {self.sample_path}")
-        self.csd = f"""
+        
+        self.csd = f""" 
 
   <CsoundSynthesizer>
 
@@ -37,6 +47,7 @@ class CsoundSampler:
   </CsOptions>
 
   <CsInstruments>
+  
   ksmps = 32
   nchnls = 2
   0dbfs = 1.0
@@ -103,23 +114,35 @@ class CsoundSampler:
 
   </CsScore>
 
-  </CsoundSynthesizer>
-
-
+  </CsoundSynthesizer> 
+  
   """
 
+    
+    # ============================== 
+    
+    def set_options(self):
+        self.cs.setOption(f"-odac{self.output}")
+        self.cs.setOption(f"-+rtmidi={self.midi_api}")
+        if (self.midi_api != "NULL"):
+            self.cs.setOption(f"--midi-device={self.midi_device}") 
+    
+    
     def set_output(self, output=0):
-        self.cs.setOption(f"-odac{output}")
+        if output != self.output:
+            self.output = output
 
     def set_midi_api(self, api="NULL"):
-        self.cs.setOption(f"-+rtmidi={api}")
+        if api != self.midi_api:
+            self.midi_api = api
 
     def set_midi_device(self, device):
-        self.cs.setOption(f"--midi-device={device}")
+        if device != self.midi_device:
+            self.midi_device = device
 
     def play_midi_file(self, file):
-        self.set_midi_api(api="")
         self.cs.setOption(f"--midifile={file}")
+        self.cs.setOption(f"-odac{self.output}")
 
     def compile_and_start(self):
         logger.debug("Starting Sampler")

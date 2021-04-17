@@ -35,6 +35,7 @@ class ProdApp(App):
         self.midi_devices = self.midi.devices
         self.devices = self.audio.devices
         self.output_idx = 0
+        self.csound.set_output(output=self.output_idx)
         self.midi_input_idx = 0
         self.playing_midi = False
 
@@ -74,9 +75,7 @@ class ProdApp(App):
 
         self.sm.get_state_action_callbacks()
 
-
-        self.csound.set_output(self.output_idx)
-        self.csound.set_midi_api()
+        self.csound.set_options
         self.csound.compile_and_start()
         self.csound.start_perf_thread()
 
@@ -107,7 +106,6 @@ class ProdApp(App):
                             else:
                                 self.csound.cleanup()
                                 self.csound.play_midi_file(self.midi_file)
-                                self.csound.set_output(self.output_idx)
                                 r = self.csound.compile_and_start()
                                 if r < 0:
                                     self.set_msg_txt(
