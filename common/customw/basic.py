@@ -23,3 +23,4 @@ class Graphics(Screen):
 
 class Settings(Screen):
     pass
+
