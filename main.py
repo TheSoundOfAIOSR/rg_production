@@ -93,6 +93,11 @@ class ProdApp(App):
 
                 if self.sm.sampler_gui_action and self.sm.state == StateEnum.Playing_Idle:
 
+                    if self.sm.sampler_gui_action == "play_note":
+                        print(f"Trying to play note {self.sm.play_note}")
+                        self.csound.play_sample(self.sm.play_note)
+                        self.sm.sampler_gui_action = None
+
                     if self.sm.sampler_gui_action == "play_sample":
                         self.csound.play_sample()
                         self.sm.sampler_gui_action = None

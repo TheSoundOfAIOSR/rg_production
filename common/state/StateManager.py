@@ -28,6 +28,7 @@ class StateManager(EventDispatcher):
         self.register_event_type('on_pipeline_action')
         self.register_event_type('on_sampler_gui_action')
         self.register_event_type('on_update_io')
+        self.register_event_type('on_keyboard_press')
         """Application Variables"""
         self.text = None
         self.last_transcribed_text = None
@@ -42,6 +43,8 @@ class StateManager(EventDispatcher):
         self.enter_state_callbacks = None
         self.audio = None
         self.error_handler = ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle)
+        self.root_note = self.app.config.root
+        self.play_note = None
         """
         WS Clients placeholders
         """
@@ -100,7 +103,13 @@ class StateManager(EventDispatcher):
                 self.make_call(_source)
 
     def on_sampler_gui_action(self, *args):
+
         self.sampler_gui_action = args[0]
+
+    def on_keyboard_press(self, ind):
+        print("Keybo")
+        self.play_note = self.root_note+ind-24
+        self.sampler_gui_action = 'play_note'
 
     def on_update_io(self, *args):
         arg = args[0]
