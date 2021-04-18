@@ -51,7 +51,7 @@
     Button:
         size: dp(100), dp(100)
         size_hint: None, None
-        pos: dp(680), dp(480)
+        pos: dp(681), dp(290)
         text: 'Goto settings'
         on_press:
             root.manager.current = 'settings'
@@ -70,8 +70,8 @@
     SliderLayout:
         id: some_slider
         sliders: 16
-        pos: dp(150), dp(490)
-        size: dp(400), dp(100)
+        pos: dp(150), dp(450)
+        size: dp(500), dp(150)
         size_hint: None, None
 
     LabelLayout:
@@ -84,7 +84,7 @@
     Button:
         id: generate
         text: 'Generate'
-        pos: dp(560), dp(480)
+        pos: dp(680), dp(480)
         size: dp(100), dp(100)
         size_hint: None, None
         on_press: app.sm.dispatch('on_pipeline_action', {'action': 'user_action_generate'})
@@ -119,9 +119,9 @@
         size: self.texture_size
         size_hint: None, None
 
-    KnobLayout:
-        pos:  dp(20), dp(170)
-        size_hint: None, None
+    #KnobLayout:
+        #pos:  dp(20), dp(170)
+        #size_hint: None, None
 
     KeyboardWidget:
         id: some_keys
@@ -147,7 +147,7 @@
     Button:
         size: dp(100), dp(100)
         size_hint: None, None
-        pos: dp(320), dp(80)
+        pos: dp(350), dp(80)
         text: 'Back to menu'
         on_press:
             root.manager.current = 'graphics'
@@ -156,15 +156,15 @@
     Button:
         id: export
         text: 'Export'
-        pos: dp(500), dp(480)
+        pos: dp(350), dp(200)
         size: dp(100), dp(100)
         size_hint: None, None
         on_press: lab.text = "Exporting"
 
     GridLayout:
         rows: 3
-        pos: dp(620), dp(480)
-        size: dp(160), dp(100)
+        pos: dp(100), dp(480)
+        size: dp(600), dp(100)
         size_hint: None, None
         Spinner:
             name: "input"
