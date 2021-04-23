@@ -101,6 +101,9 @@ class CsoundSampler:
     aL *= kPanLeft
     aR *= kPanRight
 
+    aEnv madsr 0.05, p3-0.05, 1, 0.05
+    xtratim 0.05
+
     outs aL,aR
 
     endin
@@ -153,7 +156,7 @@ class CsoundSampler:
         self.pt = ctcsound.CsoundPerformanceThread(self.cs.csound())
         self.pt.play()
 
-    def play_sample(self, pitch=40):
+    def play_sample(self, pitch=root_note):
         # sco = "i 1 0 1 1 40" # the 40 will be substitued with the value from the Keyboard on screen from gui
         sco = f"i 1 0 1 1 {pitch}"
         self.cs.readScore(sco)
@@ -179,7 +182,7 @@ class CsoundSampler:
 
         s = f"""
       if iNum == {self.root} then
-      Sname = "{self.sample_path.as_posix()}"
+      Sname = "{(self.audio_dir / pl.Path(str(self.root))).as_posix()}.wav"
       """
 
         for i in range(self.root - 24, self.root + 25):

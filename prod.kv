@@ -85,6 +85,7 @@
         orientation: "vertical"
         min: 0
         max: 1
+        value: 0.8
         on_touch_move: app.csound.set_master_volume(self.value)
         on_touch_down: app.csound.set_master_volume(self.value)
         pos: dp(60), dp(80)
@@ -103,6 +104,7 @@
         orientation: "vertical"
         min: 0
         max: 1
+        value: 0.5
         on_touch_move: app.csound.set_panning(self.value)
         on_touch_down: app.csound.set_panning(self.value)
         pos: dp(140), dp(80)
