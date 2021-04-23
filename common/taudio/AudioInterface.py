@@ -123,13 +123,17 @@ class AudioInterface:
                 "max_output_channels"
             ] else output_list.append(device)
 
-        audio_device["in"] = sd.query_devices(kind="input")
-        audio_device["out"] = sd.query_devices(kind="output")
-        audio_device["devices"]["input_list"] = input_list
-        audio_device["devices"]["output_list"] = output_list
-        i = 0
-        for dev in output_list:
-            dev["id"] = i
-            i+=1
+        try:
+            audio_device["in"] = sd.query_devices(kind="input")
+        except sd.PortAudioError:
+            pass  # TODO: make label say "no audio input found, please insert a mic"
+        finally:
+            audio_device["out"] = sd.query_devices(kind="output")
+            audio_device["devices"]["input_list"] = input_list
+            audio_device["devices"]["output_list"] = output_list
+            i = 0
+            for dev in output_list:
+                dev["id"] = i
+                i += 1
 
-        return audio_device
+            return audio_device
