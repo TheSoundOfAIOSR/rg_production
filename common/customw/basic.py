@@ -22,7 +22,7 @@ class Graphics(Screen):
 
     # def on_touch_down(self, touch):
     #     print(touch.x, touch.y)
-
+set
 
 class Settings(Screen):
     pass

@@ -39,12 +39,14 @@ class StateManager(EventDispatcher):
         self.microphone_hint = '1' # TODO get default from sounddevice
         self.active_task = None
         self.sampler_gui_action = None
-        self.app = App.get_running_app()
+        self.app = None #App.get_running_app()
         self.enter_state_callbacks = None
         self.audio = None
         self.error_handler = ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle)
-        self.root_note = self.app.config.root
+        self.root_note = None #
         self.play_note = None
+        self.csound = None
+
         """
         WS Clients placeholders
         """
@@ -91,7 +93,7 @@ class StateManager(EventDispatcher):
         if action == 'handle_errors' or not _source:
             error_msg = "There was an unexpected error. Returning to idle state. check server status or restart."
             logger.debug(error_msg)
-            self.app.root.ids['lab'].text = error_msg
+            self.app.ids['lab'].text = error_msg
 
             _source = self.enter_state_callbacks['handle_errors']
 
@@ -117,7 +119,7 @@ class StateManager(EventDispatcher):
         dev_hint = arg['hint']
 
         if type == "input":
-            input_list = self.app.devices["devices"]["input_list"]
+            input_list = self.devices["devices"]["input_list"]
             for in_dev in input_list:
                 if dev_hint == in_dev.get("name", None):
                     self.microphone_hint = in_dev.get("id")
@@ -126,24 +128,24 @@ class StateManager(EventDispatcher):
                     self.app.devices["in"] = in_dev
 
         elif type == "output":
-            output_list = self.app.devices["devices"]["output_list"]
+            output_list = self.devices["devices"]["output_list"]
             for out_dev in output_list:
                 if dev_hint == out_dev.get("name", None):
-                    self.app.output_idx = out_dev.get("id")
-                    self.app.devices["out"] = out_dev
-                    self.app.csound.cleanup()
-                    self.app.csound.set_output(self.app.output_idx)
-                    self.app.csound.set_options()
-                    self.app.csound.compile_and_start()
-                    self.app.csound.start_perf_thread()
+                    self.output_idx = out_dev.get("id")
+                    self.devices["out"] = out_dev
+                    self.csound.cleanup()
+                    self.csound.set_output(self.output_idx)
+                    self.csound.set_options()
+                    self.csound.compile_and_start()
+                    self.csound.start_perf_thread()
 
         elif type == "midi_input":
-            self.app.midi_input_idx = self.app.midi_devices["input"].index(dev_hint)
-            self.app.csound.cleanup()
-            self.app.csound.set_midi_api("portmidi")
-            self.app.csound.set_midi_device(self.app.midi_input_idx)
-            self.app.csound.set_options()
-            self.app.csound.compile_and_start()
+            self.midi_input_idx = self.app.midi_devices["input"].index(dev_hint)
+            self.csound.cleanup()
+            self.csound.set_midi_api("portmidi")
+            self.csound.set_midi_device(self.app.midi_input_idx)
+            self.csound.set_options()
+            self.csound.compile_and_start()
             self.app.csound.start_perf_thread()
             logger.debug(
                 f"MIDI device selected: {self.app.midi_devices['input'][self.app.midi_input_idx]}"
@@ -168,6 +170,16 @@ class StateManager(EventDispatcher):
     # 'pipeline_action_finished_preprocessing' -> self.state = StateEnum.Playing_Idle -> play_idle_cb
 
     def get_state_action_callbacks(self):
+        print("********************************")
+        print(dir(App.get_running_app()))
+        self.devices = App.get_running_app().devices
+        self.csound = App.get_running_app().csound
+        self.app = App.get_running_app().root.get_screen("graphics")
+        # print(dir(self.app.root.get_screen("graphics")))
+        # print(self.app.root.get_screen("graphics").ids)
+        self.root_note = 40
+        print("********************************")
+
         self.enter_state_callbacks = {
             StateEnum.Update: "",
             StateEnum.Playing_Idle: {

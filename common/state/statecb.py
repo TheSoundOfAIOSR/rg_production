@@ -13,10 +13,11 @@ async def start_recording_cb(*args, stmgr=None):
 
     print(args)
     resp = args[0]
+    print(resp)
     if resp['resp']:
-        stmgr.app.root.ids['generate'].disabled = True
+        stmgr.app.ids['generate'].disabled = True
     elif not resp['resp']:
-        stmgr.app.root.ids['lab'].text = str(resp)
+        stmgr.app.ids['lab'].text = str(resp)
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_started_recording_failed'})
         logger.info(f"{resp}")
     else:
@@ -30,11 +31,11 @@ async def stop_recording_cb(*args, stmgr=None):
     print(resp)
     if resp['resp']:
         stmgr.text = resp['resp']
-        stmgr.app.root.ids['lab'].text = stmgr.text
-        stmgr.app.root.ids['generate'].disabled = False
+        stmgr.app.ids['lab'].text = stmgr.text
+        stmgr.app.ids['generate'].disabled = False
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_received_text'})
     elif not resp['resp']:
-        stmgr.app.root.ids['lab'].text = str(resp)
+        stmgr.app.ids['lab'].text = str(resp)
         logger.debug(f"There was an error when STT module returned {resp}")
     else:
         logger.info("Something unexpected went wrong in STT Stop")
@@ -42,10 +43,10 @@ async def stop_recording_cb(*args, stmgr=None):
 
 
 async def infer_pipeline(stmgr, *args):
-    stmgr.app.root.ids['record'].disabled = True
-    stmgr.app.root.ids['generate'].disabled = True
+    stmgr.app.ids['record'].disabled = True
+    stmgr.app.ids['generate'].disabled = True
     if stmgr.sound_descriptor:
-        latent_sample = [slider.value for slider in stmgr.app.root.ids['some_slider'].children]
+        latent_sample = [slider.value for slider in stmgr.app.ids['some_slider'].children]
         stmgr.sound_descriptor['latent_sample'] = latent_sample
 
     """ 
@@ -62,7 +63,7 @@ async def infer_pipeline(stmgr, *args):
     elif stmgr.text is not stmgr.last_transcribed_text and stmgr.text:
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_start_tts', 'res':args})
     else:
-        stmgr.app.root.ids['lab'].text = "Nothing new to infer"
+        stmgr.app.ids['lab'].text = "Nothing new to infer"
         stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_nothing_to_infer'})
 
 async def tts_transcribe_cb(*args, stmgr=None):
@@ -75,11 +76,11 @@ async def tts_transcribe_cb(*args, stmgr=None):
         stmgr.last_transcribed_text = stmgr.text
         stmgr.sound_descriptor['qualities'] = ['bright', 'percussive']
 
-        for num, child in enumerate(stmgr.app.root.ids['some_slider'].children):
+        for num, child in enumerate(stmgr.app.ids['some_slider'].children):
             child.value = res['resp']['latent_sample'][num]
 
         print(stmgr.sound_descriptor)
-        stmgr.app.root.ids['lab'].text = str(stmgr.sound_descriptor)
+        stmgr.app.ids['lab'].text = str(stmgr.sound_descriptor)
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_received_descriptor', 'res':args})
     else:
         stmgr.dispatch('on_pipeline_action', {'action':'handle_errors', 'res':args})
@@ -92,7 +93,7 @@ async def sound_gen_cb(*args, stmgr=None):
         print("here")
         stmgr.audio = np.array(res['resp'][0])
         stmgr.last_sound_parameters = stmgr.sound_descriptor
-        stmgr.app.root.ids['lab'].text = "Received Sound "
+        stmgr.app.ids['lab'].text = "Received Sound "
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_received_audio', 'res':args})
     else:
         stmgr.dispatch('on_pipeline_action', {'action':'handle_errors', 'res':args})
@@ -100,18 +101,18 @@ async def sound_gen_cb(*args, stmgr=None):
 async def setup_preprocessing(*args, stmgr=None):
     print("In setup preprocessing")
 
-    folder = stmgr.app.csound.audio_dir.as_posix()
-    preprocess(folder=folder, audio=stmgr.audio, root=self.sm.root_note, shifts=48)
-    stmgr.app.root.ids['record'].disabled = False
+    folder = stmgr.csound.audio_dir.as_posix()
+    preprocess(folder=folder, audio=stmgr.audio, root=40, shifts=48)
+    stmgr.app.ids['record'].disabled = False
     logger.debug(f"Finished preprocessing")
     stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_finished_preprocessing', 'res': args})
 
 
 async def play_idle_cb(*args, stmgr=None):
     # reinitialize record button,
-    stmgr.app.root.ids['record'].state= 'normal'
-    stmgr.app.root.ids['record'].disabled = False
-    stmgr.app.root.ids['generate'].disabled = False
+    stmgr.app.ids['record'].state= 'normal'
+    stmgr.app.ids['record'].disabled = False
+    stmgr.app.ids['generate'].disabled = False
 
     # if stmgr.text is not stmgr.last_transcribed_text or stmgr.sound_descriptor is not stmgr.last_sound_parameters:
     #     stmgr.app.root.ids['generate'].disabled = False
