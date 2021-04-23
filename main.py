@@ -6,10 +6,12 @@ from kivy.uix.widget import Widget
 from kivy.clock import Clock
 from kivy.garden.knob import Knob
 from kivy.config import Config
+Config.set('graphics', 'resizable', False)
 
 from common.state.StateManager import StateManager, StateEnum
+from kivy.uix.screenmanager import ScreenManager, Screen
 from common.customw.basic import *
-from common.customw.slider_layout import *
+from common.customw.widget_layout import *
 from common.taudio.AudioInterface import AudioInterface
 from common.taudio.MidiInterface import MidiInterface
 from common.taudio.Sampler import CsoundSampler
@@ -40,7 +42,11 @@ class ProdApp(App):
         self.playing_midi = False
 
     def build(self):
-        return Graphics()
+        #return Graphics()
+        sc = ScreenManager()
+        sc.add_widget(Graphics(name='graphics'))
+        sc.add_widget(Settings(name='settings'))
+        return sc
 
     def set_msg_txt(self, text):
         self.root.message_label.text = text
@@ -87,6 +93,11 @@ class ProdApp(App):
 
                 if self.sm.sampler_gui_action and self.sm.state == StateEnum.Playing_Idle:
 
+                    if self.sm.sampler_gui_action == "play_note":
+                        print(f"Trying to play note {self.sm.play_note}")
+                        self.csound.play_sample(self.sm.play_note)
+                        self.sm.sampler_gui_action = None
+
                     if self.sm.sampler_gui_action == "play_sample":
                         self.csound.play_sample()
                         self.sm.sampler_gui_action = None
@@ -95,7 +106,7 @@ class ProdApp(App):
                         self.sm.sampler_gui_action = None
 
                         if self.root.playing_midi:
-                            self.csound.cleanup()
+                            # self.csound.cleanup()
                             self.root.playing_midi = False
                             self.set_msg_txt("")
                         else:
