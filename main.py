@@ -4,7 +4,6 @@ import asyncio
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.clock import Clock
-from kivy.garden.knob import Knob
 from kivy.config import Config
 Config.set('graphics', 'resizable', False)
 
