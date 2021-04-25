@@ -1,6 +1,5 @@
 kivy==2.0.0
 sounddevice==0.4.1
-Kivy-Garden==0.1.4
 python-rtmidi==1.4.7
 librosa
 numpy
