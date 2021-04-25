@@ -25,7 +25,6 @@ To set up the conda venv run the following commands:
 
     conda env create -f environment.yml
     conda activate osr
-    garden install knob
 
 
 ## Manual Python installation
