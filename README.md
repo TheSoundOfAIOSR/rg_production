@@ -46,6 +46,5 @@ To create your env run
 Install dependencies with pip directly on your venv
 
     pip install -r requirements.txt
-    garden install knob
 
 
