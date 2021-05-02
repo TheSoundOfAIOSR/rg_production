@@ -157,9 +157,9 @@
         on_press: lab.text = "Exporting"
 
     GridLayout:
-        rows: 3
-        pos: dp(100), dp(480)
-        size: dp(600), dp(100)
+        rows: 6
+        pos: dp(100), dp(380)
+        size: dp(600), dp(200)
         size_hint: None, None
         Spinner:
             name: "input"
@@ -184,3 +184,27 @@
             on_text:
                 print(f"The spinner {self} has text {self.text}")
                 app.sm.dispatch('on_update_io', {"type":"midi_input", "hint":self.text})
+
+        Spinner:
+            name: "hwd_buffer"
+            text: 'Hardware Buffer'
+            values: ['1024', '2048', '4096', '8192', '16384']
+            on_text:
+                print(f"The spinner {self} has text {self.text}")
+                app.sm.dispatch('on_update_io', {"type":"hwd_buffer", "hint":self.text})
+
+        Spinner:
+            name: "sfw_buffer"
+            text: 'Software Buffer'
+            values: ['64', '256', '512', '1024', '2048', '4096']
+            on_text:
+                print(f"The spinner {self} has text {self.text}")
+                app.sm.dispatch('on_update_io', {"type":"sfw_buffer", "hint":self.text})
+
+        Spinner:
+            name: "samp_rate"
+            text: 'Sample Rate'
+            values: ['44100', '48000']
+            on_text:
+                print(f"The spinner {self} has text {self.text}")
+                app.sm.dispatch('on_update_io', {"type":"samp_rate", "hint":self.text})
