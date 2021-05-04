@@ -162,6 +162,15 @@ class StateManager(EventDispatcher):
         elif type == "samp_rate":
             print("sample rate has been set to " + dev_hint)
 
+        elif type == "hwd_buffer":
+            print("hardware buffer has been set to " + dev_hint)
+
+        elif type == "sfw_buffer":
+            print("software buffer has been set to " + dev_hint)
+
+        elif type == "samp_rate":
+            print("sample rate has been set to " + dev_hint)
+
     async def setup_models(self):
         await self.stt.setup_model()
         # await asyncio.gather(dummy_stt_startup(), dummy_tts_startup(), dummy_stt_startup())
