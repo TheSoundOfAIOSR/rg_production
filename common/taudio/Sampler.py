@@ -19,8 +19,9 @@ class CsoundSampler:
         
         self.cs = ctcsound.Csound()
         
-        self.cs.sr = target_sr
-        
+        self.samp_rate = target_sr
+        self.sw_buf = 1024
+        self.hw_buf = 2048
         self.root = root_note
         self.midi_api = "NULL"
         self.midi_device = 0
@@ -42,7 +43,6 @@ class CsoundSampler:
 
   <CsOptions>
     ;-d
-    -b 1024 -B 256
    --midi-key=5 --midi-velocity-amp=4
   </CsOptions>
 
@@ -125,6 +125,9 @@ class CsoundSampler:
     # ============================== 
     
     def set_options(self):
+        self.cs.sr = self.samp_rate
+        self.cs.setOption(f"-b {self.sw_buf}")
+        self.cs.setOption(f"-B {self.hw_buf}")
         self.cs.setOption(f"-odac{self.output}")
         self.cs.setOption(f"-+rtmidi={self.midi_api}")
         if (self.midi_api != "NULL"):
@@ -157,7 +160,16 @@ class CsoundSampler:
         self.pt.play()
 
     def play_sample(self, pitch=root_note):
-        # sco = "i 1 0 1 1 40" # the 40 will be substitued with the value from the Keyboard on screen from gui
+        ''' 
+        Play a note as a single Csound score note given a MIDI pitch
+
+        sco = "i 1 0 1 1 40" where 
+        i 1 = sampler, 
+        0 = start time,
+        1 = duration,
+        1 = sample read speed
+        40 = midi note to play (sample)
+        '''
         sco = f"i 1 0 1 1 {pitch}"
         self.cs.readScore(sco)
 
@@ -177,6 +189,18 @@ class CsoundSampler:
 
     def set_root(self, r=60):
         self.root = r
+    
+    def set_sw_buf(self, sw=1024):
+        if sw != self.sw_buf:
+            self.sw_buf = sw
+    
+    def set_hw_buf(self, hw=2048):
+        if hw != self.hw_buf:
+            self.hw_buf = hw
+
+    def set_sr(self, sr=44100):
+        if sr != self.samp_rate:
+            self.samp_rate = sr
 
     def string_pitch_to_file(self):
 

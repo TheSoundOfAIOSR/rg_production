@@ -154,21 +154,27 @@ class StateManager(EventDispatcher):
             logger.debug(f"Using API: {self.midi_devices['api']}")
         
         elif type == "hwd_buffer":
+            self.csound.cleanup()
+            self.csound.set_hw_buf(hw=dev_hint)
+            self.csound.set_options()
+            self.csound.compile_and_start()
+            self.csound.start_perf_thread()
             print("hardware buffer has been set to " + dev_hint)
 
         elif type == "sfw_buffer":
+            self.csound.cleanup()
+            self.csound.set_sw_buf(sw=dev_hint)
+            self.csound.set_options()
+            self.csound.compile_and_start()
+            self.csound.start_perf_thread()
             print("software buffer has been set to " + dev_hint)
 
         elif type == "samp_rate":
-            print("sample rate has been set to " + dev_hint)
-
-        elif type == "hwd_buffer":
-            print("hardware buffer has been set to " + dev_hint)
-
-        elif type == "sfw_buffer":
-            print("software buffer has been set to " + dev_hint)
-
-        elif type == "samp_rate":
+            self.csound.cleanup()
+            self.csound.set_sr(sr=dev_hint)
+            self.csound.set_options()
+            self.csound.compile_and_start()
+            self.csound.start_perf_thread()
             print("sample rate has been set to " + dev_hint)
 
     async def setup_models(self):
