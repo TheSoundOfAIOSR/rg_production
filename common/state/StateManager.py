@@ -43,6 +43,7 @@ class StateManager(EventDispatcher):
         self.enter_state_callbacks = None
         self.audio = None
         self.error_handler = ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle)
+        self.midi_devices = None
         self.root_note = None #
         self.play_note = None
         self.csound = None
@@ -53,7 +54,7 @@ class StateManager(EventDispatcher):
         try:
             self.stt =  ws.STTClient(host="localhost", port=8786)#host=self.app.config.host, port=self.app.config.base_port
             self.tts = ws.STTClient(host="localhost", port=8787)
-            self.sg =  ws.STTClient(host="localhost", port=8881)#host=self.app.config.host, port=self.app.config.base_port
+            self.sg =  ws.STTClient(host="localhost", port=8080)#host=self.app.config.host, port=self.app.config.base_port
 
             asyncio.ensure_future(self.stt.run())
             asyncio.ensure_future(self.tts.run())
@@ -124,8 +125,8 @@ class StateManager(EventDispatcher):
                 if dev_hint == in_dev.get("name", None):
                     self.microphone_hint = in_dev.get("id")
                     print("Set hint to ", self.microphone_hint)
-                    self.app.audio.input_idx = in_dev.get("id")
-                    self.app.devices["in"] = in_dev
+                    self.audio.input_idx = in_dev.get("id")
+                    self.devices["in"] = in_dev
 
         elif type == "output":
             output_list = self.devices["devices"]["output_list"]
@@ -140,17 +141,26 @@ class StateManager(EventDispatcher):
                     self.csound.start_perf_thread()
 
         elif type == "midi_input":
-            self.midi_input_idx = self.app.midi_devices["input"].index(dev_hint)
+            self.midi_input_idx = self.midi_devices["input"].index(dev_hint)
             self.csound.cleanup()
             self.csound.set_midi_api("portmidi")
-            self.csound.set_midi_device(self.app.midi_input_idx)
+            self.csound.set_midi_device(self.midi_input_idx)
             self.csound.set_options()
             self.csound.compile_and_start()
-            self.app.csound.start_perf_thread()
+            self.csound.start_perf_thread()
             logger.debug(
-                f"MIDI device selected: {self.app.midi_devices['input'][self.app.midi_input_idx]}"
+                f"MIDI device selected: {self.midi_devices['input'][self.midi_input_idx]}"
             )
-            logger.debug(f"Using API: {self.app.midi_devices['api']}")
+            logger.debug(f"Using API: {self.midi_devices['api']}")
+        
+        elif type == "hwd_buffer":
+            print("hardware buffer has been set to " + dev_hint)
+
+        elif type == "sfw_buffer":
+            print("software buffer has been set to " + dev_hint)
+
+        elif type == "samp_rate":
+            print("sample rate has been set to " + dev_hint)
 
     async def setup_models(self):
         await self.stt.setup_model()
@@ -173,11 +183,12 @@ class StateManager(EventDispatcher):
         print("********************************")
         print(dir(App.get_running_app()))
         self.devices = App.get_running_app().devices
+        self.midi_devices = App.get_running_app().midi_devices
         self.csound = App.get_running_app().csound
         self.app = App.get_running_app().root.get_screen("graphics")
         # print(dir(self.app.root.get_screen("graphics")))
         # print(self.app.root.get_screen("graphics").ids)
-        self.root_note = 40
+        self.root_note = 60
         print("********************************")
 
         self.enter_state_callbacks = {
