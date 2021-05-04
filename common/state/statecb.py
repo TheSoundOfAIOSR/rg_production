@@ -69,7 +69,7 @@ async def infer_pipeline(stmgr, *args):
 async def tts_transcribe_cb(*args, stmgr=None):
     print(tts_transcribe_cb)
     res = args[0]
-    # res = {'resp': args[0]} for mac ??
+    #res = {'resp': args[0]} #for mac ??
     print(res)
     print(args)
     if res['resp']:
