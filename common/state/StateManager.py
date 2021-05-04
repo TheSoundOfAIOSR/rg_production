@@ -43,7 +43,6 @@ class StateManager(EventDispatcher):
         self.enter_state_callbacks = None
         self.audio = None
         self.error_handler = ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle)
-        # self.devices = None 
         self.midi_devices = None
         self.root_note = None #
         self.play_note = None
