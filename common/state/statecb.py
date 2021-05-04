@@ -69,7 +69,9 @@ async def infer_pipeline(stmgr, *args):
 async def tts_transcribe_cb(*args, stmgr=None):
     print(tts_transcribe_cb)
     res = args[0]
+    # res = {'resp': args[0]} for mac ??
     print(res)
+    print(args)
     if res['resp']:
         res['resp'].pop('source', None)
         stmgr.sound_descriptor = res['resp']
@@ -83,6 +85,7 @@ async def tts_transcribe_cb(*args, stmgr=None):
         stmgr.app.ids['lab'].text = str(stmgr.sound_descriptor)
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_received_descriptor', 'res':args})
     else:
+        print("FAILURE!!!!")
         stmgr.dispatch('on_pipeline_action', {'action':'handle_errors', 'res':args})
 
 
@@ -102,7 +105,7 @@ async def setup_preprocessing(*args, stmgr=None):
     print("In setup preprocessing")
 
     folder = stmgr.csound.audio_dir.as_posix()
-    preprocess(folder=folder, audio=stmgr.audio, root=40, shifts=48)
+    preprocess(folder=folder, audio=stmgr.audio, root=60, shifts=48)
     stmgr.app.ids['record'].disabled = False
     logger.debug(f"Finished preprocessing")
     stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_finished_preprocessing', 'res': args})
