@@ -12,9 +12,9 @@ from kivy.clock import Clock
 
 
 class SliderLayout(BoxLayout):
-    """
-    SliderLayout is widget that being used to make multiple sliders
-    """
+    '''
+    SliderLayout is a widget being used to build multiple sliders to play around with latent space variables
+    '''
 
     sliders = NumericProperty(0)
 
@@ -28,6 +28,10 @@ class SliderLayout(BoxLayout):
 
 
 class LabelLayout(BoxLayout):
+    '''
+    LabelLayout is a widget being used to make multiple labels to label above sliders
+    '''    
+    
     labels = NumericProperty(0)
 
     def __init__(self, **kwargs):
@@ -40,6 +44,10 @@ class LabelLayout(BoxLayout):
 
 
 class KeyboardWidget(BoxLayout):
+    '''
+    Builds piano in boxlayout, float layout allows black keys to float over white keys, each key has an index
+    ''' 
+    
     keys = NumericProperty(0)
 
     def __init__(self, **kwargs):
