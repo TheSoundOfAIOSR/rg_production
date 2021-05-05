@@ -29,6 +29,7 @@ class StateManager(EventDispatcher):
         self.register_event_type('on_sampler_gui_action')
         self.register_event_type('on_update_io')
         self.register_event_type('on_keyboard_press')
+        self.register_event_type('on_switch')
         """Application Variables"""
         self.text = None
         self.last_transcribed_text = None
@@ -44,9 +45,10 @@ class StateManager(EventDispatcher):
         self.audio = None
         self.error_handler = ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle)
         self.midi_devices = None
-        self.root_note = None #
+        self.root_note = None
         self.play_note = None
         self.csound = None
+        self.level = 16
 
         """
         WS Clients placeholders
@@ -106,13 +108,19 @@ class StateManager(EventDispatcher):
                 self.make_call(_source)
 
     def on_sampler_gui_action(self, *args):
-
         self.sampler_gui_action = args[0]
 
+
+    def on_switch(self, instance, value):
+        if value is True:
+            self.level = 40
+        else:
+            self.level = 16
+
     def on_keyboard_press(self, ind):
-        print("Keybo")
-        self.play_note = self.root_note+ind-24
+        self.play_note = self.level + ind
         self.sampler_gui_action = 'play_note'
+
 
     def on_update_io(self, *args):
         arg = args[0]

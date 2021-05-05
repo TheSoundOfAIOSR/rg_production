@@ -5,6 +5,7 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.clock import Clock
 from kivy.config import Config
+
 Config.set('graphics', 'resizable', False)
 
 from common.state.StateManager import StateManager, StateEnum
@@ -18,6 +19,7 @@ from common.taudio.PreprocessingSample import preprocess
 from common.config import Config as cfg
 import common.log as log
 import common.clients
+
 logger = log.setup_logger()
 
 import common.clients.wsclient as ws
@@ -41,7 +43,7 @@ class ProdApp(App):
         self.playing_midi = False
 
     def build(self):
-        #return Graphics()
+        # return Graphics()
         sc = ScreenManager()
         sc.add_widget(Graphics(name='graphics'))
         sc.add_widget(Settings(name='settings'))
@@ -69,9 +71,8 @@ class ProdApp(App):
 
         return asyncio.gather(run_wrapper(), self.other_task)
 
-
     async def main_loop(self):
-        await asyncio.sleep(5) # This is so
+        await asyncio.sleep(5)  # This is so
 
         try:
             await self.sm.stt.setup_model()
@@ -127,7 +128,6 @@ class ProdApp(App):
                                 self.root.playing_midi = True
                                 self.midi_file = None
                                 logger.debug(self.output_idx)
-
 
                 await asyncio.sleep(0.01)
         except asyncio.CancelledError:

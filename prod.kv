@@ -129,7 +129,7 @@
         id: switch
         pos: dp(680), dp(200)
         size_hint: None, None
-        
+        on_active: app.sm.dispatch('on_switch', self, self.active)
 
 <Settings>:
 
