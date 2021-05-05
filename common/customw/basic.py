@@ -17,11 +17,12 @@ class Graphics(Screen):
         self.app = App.get_running_app()
 
     def _on_file_drop(self, window, file_path):
+        '''
+        allows user to drag and drop a midi file and updates status label text
+        '''
         self.midi_file = self.app.midi_file = file_path.decode()
         self.app.set_msg_txt(f"{self.midi_file} - has been loaded")
 
-    # def on_touch_down(self, touch):
-    #     print(touch.x, touch.y)
 set
 
 class Settings(Screen):
