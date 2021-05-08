@@ -36,13 +36,20 @@ class CsoundSampler:
         self.sample_path = pl.Path(sample_path).absolute()
         logger.debug(f"Sample loaded: {self.sample_path}")
 
-        self.csd = f""" 
+        self.csd = None
+
+    # ==============================
+
+    def create_csd(self):
+
+        csd = f""" 
 
   <CsoundSynthesizer>
 
   <CsOptions>
-    ;-d
-   --midi-key=5 --midi-velocity-amp=4
+   -odac{self.output}
+   --midi-key=5 
+   --midi-velocity-amp=4
   </CsOptions>
 
   <CsInstruments>
@@ -119,8 +126,8 @@ class CsoundSampler:
   </CsoundSynthesizer> 
   
   """
+        self.csd = csd 
 
-    # ==============================
 
     def set_options(self):
         """
@@ -128,14 +135,12 @@ class CsoundSampler:
         sample rate
         software buffer size
         hardware buffe size
-        audio output
         real time midi api
         midi device (if any is used)
         """
         self.cs.sr = self.samp_rate
         self.cs.setOption(f"-b {self.sw_buf}")
         self.cs.setOption(f"-B {self.hw_buf}")
-        self.cs.setOption(f"-odac{self.output}")
         self.cs.setOption(f"-+rtmidi={self.midi_api}")
         if (self.midi_api != "NULL"):
             self.cs.setOption(f"--midi-device={self.midi_device}")
@@ -144,7 +149,7 @@ class CsoundSampler:
 
     # Csound options setters
 
-    def set_output(self, output=0):
+    def set_output(self, output=1):
         if output != self.output:
             self.output = output
 
@@ -182,6 +187,7 @@ class CsoundSampler:
         Compiles the .Csd file, starts Csound
         """
         logger.debug("Starting Sampler")
+        self.create_csd()
         self.cs.compileCsdText(self.csd)
         return self.cs.start()
 
