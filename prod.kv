@@ -50,13 +50,13 @@
         size_hint: None, None
         on_press: app.sm.dispatch('on_pipeline_action', {'action': 'user_action_generate'})
 
-    Label:
-        id: lab
-        pos: dp(350), dp(384)
-        text: ""
-        color: .8,.8,.8,1
-        font_size: sp(18)
-        size_hint: None, None
+    BoxLayout:
+        size_hint: 1, 0.05
+        pos_hint: {'top':0.75}
+        Label:
+            id: lab
+            text: ""
+            font_size: sp(18)
 
     Button:
         id: play
