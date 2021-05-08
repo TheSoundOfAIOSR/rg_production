@@ -5,6 +5,7 @@ from dummy_ws_requests import *
 from functools import *
 from common.taudio.PreprocessingSample import preprocess
 import numpy as np
+from sys import platform
 
 logger = log.setup_logger()
 
@@ -68,8 +69,16 @@ async def infer_pipeline(stmgr, *args):
 
 async def tts_transcribe_cb(*args, stmgr=None):
     print(tts_transcribe_cb)
-    res = args[0]
-    #res = {'resp': args[0]} #for mac ??
+    ### THIS SHOULDN'T BE NEEDED
+    ## BUT FOR NOW IT'S A WORKAROUND
+    if platform == "linux" or platform == "linux2":
+        res = args[0]
+    elif platform == "darwin":
+        res = {'resp': args[0]}
+    # OS X
+    elif platform == "win32" or platform == "win64":
+        res = args[0]
+    # Windows...
     print(res)
     print(args)
     if res['resp']:

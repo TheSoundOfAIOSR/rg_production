@@ -52,7 +52,7 @@ class ProdApp(App):
         return sc
 
     def set_msg_txt(self, text):
-        self.root.message_label.text = text
+        self.root.get_screen("graphics").message_label.text = text
 
     def set_event(self, event):
         self.appStatus = event
@@ -107,9 +107,9 @@ class ProdApp(App):
                     if self.sm.sampler_gui_action == "midi_loaded":
                         self.sm.sampler_gui_action = None
 
-                        if self.root.playing_midi:
+                        if self.root.get_screen("graphics").playing_midi:
                             # self.csound.cleanup()
-                            self.root.playing_midi = False
+                            self.root.get_screen("graphics").playing_midi = False
                             self.set_msg_txt("")
                         else:
                             if self.midi_file is None:
@@ -127,7 +127,7 @@ class ProdApp(App):
                                 else:
                                     self.csound.start_perf_thread()
                                     self.set_msg_txt(f"Playing - {self.midi_file}")
-                                self.root.playing_midi = True
+                                self.root.get_screen("graphics").playing_midi = True
                                 self.midi_file = None
                                 logger.debug(self.output_idx)
 
