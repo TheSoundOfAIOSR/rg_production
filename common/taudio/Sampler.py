@@ -12,13 +12,12 @@ target_sr = config.sampling_rate
 root_note = config.root
 
 
-
 class CsoundSampler:
     def __init__(self, audio_dir, sample_path):
         print("init Csound")
-        
+
         self.cs = ctcsound.Csound()
-        
+
         self.samp_rate = target_sr
         self.sw_buf = 1024
         self.hw_buf = 2048
@@ -26,17 +25,17 @@ class CsoundSampler:
         self.midi_api = "NULL"
         self.midi_device = 0
         self.output = 0
-        
+
         # one level above
         self.audio_dir = (
-            pl.Path(audio_dir).absolute()
-            if audio_dir
-            else pl.Path(argv[0]).parent.absolute()
-        ) / pl.Path("generated_sample")
-        
+                             pl.Path(audio_dir).absolute()
+                             if audio_dir
+                             else pl.Path(argv[0]).parent.absolute()
+                         ) / pl.Path("generated_sample")
+
         self.sample_path = pl.Path(sample_path).absolute()
         logger.debug(f"Sample loaded: {self.sample_path}")
-        
+
         self.csd = f""" 
 
   <CsoundSynthesizer>
@@ -121,11 +120,10 @@ class CsoundSampler:
   
   """
 
-    
-    # ============================== 
-    
+    # ==============================
+
     def set_options(self):
-        '''
+        """
         sets all the appropriate csound options, based on the variable values:
         sample rate
         software buffer size
@@ -133,18 +131,19 @@ class CsoundSampler:
         audio output
         real time midi api
         midi device (if any is used)
-        '''
+        """
         self.cs.sr = self.samp_rate
         self.cs.setOption(f"-b {self.sw_buf}")
         self.cs.setOption(f"-B {self.hw_buf}")
         self.cs.setOption(f"-odac{self.output}")
         self.cs.setOption(f"-+rtmidi={self.midi_api}")
         if (self.midi_api != "NULL"):
-            self.cs.setOption(f"--midi-device={self.midi_device}") 
-    
-    # ========================================
+            self.cs.setOption(f"--midi-device={self.midi_device}")
+
+            # ========================================
+
     # Csound options setters
-    
+
     def set_output(self, output=0):
         if output != self.output:
             self.output = output
@@ -156,11 +155,11 @@ class CsoundSampler:
     def set_midi_device(self, device):
         if device != self.midi_device:
             self.midi_device = device
-    
+
     def set_sw_buf(self, sw=1024):
         if sw != self.sw_buf:
             self.sw_buf = sw
-    
+
     def set_hw_buf(self, hw=2048):
         if hw != self.hw_buf:
             self.hw_buf = hw
@@ -168,49 +167,49 @@ class CsoundSampler:
     def set_sr(self, sr=44100):
         if sr != self.samp_rate:
             self.samp_rate = sr
-    
+
     # =======================================
 
     def play_midi_file(self, file):
-        '''
+        """
         plays a midi file, given the midi file path
-        '''
+        """
         self.cs.setOption(f"--midifile={file}")
         self.cs.setOption(f"-odac{self.output}")
 
     def compile_and_start(self):
-        '''
+        """
         Compiles the .Csd file, starts Csound
-        '''
+        """
         logger.debug("Starting Sampler")
         self.cs.compileCsdText(self.csd)
         return self.cs.start()
 
     def start_perf_thread(self):
-        '''
+        """
         Creates and starts Csound Performance Thread
-        '''
+        """
         self.pt = ctcsound.CsoundPerformanceThread(self.cs.csound())
         self.pt.play()
 
     def play_sample(self, pitch=root_note):
-        ''' 
+        """
         Play a note as a single Csound score note given a MIDI pitch
 
-        sco = "i 1 0 1 1 40" where 
-        i 1 = sampler, 
+        sco = "i 1 0 1 1 40" where
+        i 1 = sampler,
         0 = start time,
         1 = duration,
         1 = sample read speed
         40 = midi note to play (sample)
-        '''
+        """
         sco = f"i 1 0 1 1 {pitch}"
         self.cs.readScore(sco)
 
     def cleanup(self):
-        '''
+        """
         Stops Csound and the performance thread and cleans up memory
-        '''
+        """
         self.pt.stop()
         self.pt.join()
         self.cs.cleanup()
@@ -220,7 +219,7 @@ class CsoundSampler:
 
     def set_master_volume(self, value=0.9):
         self.cs.setControlChannel("vol", value)
-    
+
     def set_panning(self, value=0.5):
         self.cs.setControlChannel("pan", value)
 
@@ -228,9 +227,9 @@ class CsoundSampler:
         self.root = r
 
     def string_pitch_to_file(self):
-        '''
+        """
         Sets the file to play back, based on requested Midi note
-        '''
+        """
 
         s = f"""
       if iNum == {self.root} then

@@ -14,17 +14,17 @@ config = Config.load_config()
 target_sr = config.sampling_rate
 
 def utility_pitchshift_and_normalize(audio, target_sr, n_steps, root, folder):
-    '''
-    Given an audio file as numpy array, 
-    a target sample rate, 
-    a step number name n, 
-    a root note (midi) 
+    """
+    Given an audio file as numpy array,
+    a target sample rate,
+    a step number name n,
+    a root note (midi)
     and a folder path:
 
     Pitch shifts the file n steps at the defined sample rate
     Normalizes the audio
     Saves it in a file in the format  root+n.wav
-    '''
+    """
     audio_shifted = librosa.effects.pitch_shift(audio, target_sr, n_steps, bins_per_octave=12)
     new_filename = f"{root + n_steps}.wav"
     new_filepath = folder / pl.Path(new_filename)

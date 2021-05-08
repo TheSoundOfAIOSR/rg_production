@@ -44,9 +44,9 @@ class LabelLayout(BoxLayout):
 
 
 class KeyboardWidget(BoxLayout):
-    '''
+    """
     Builds piano in boxlayout, float layout allows black keys to float over white keys, each key has an index
-    ''' 
+    """
     
     keys = NumericProperty(0)
 

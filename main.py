@@ -43,9 +43,9 @@ class ProdApp(App):
         self.playing_midi = False
 
     def build(self):
-        '''
+        """
         Returns 2 screens that hold all the GUI widgets
-        '''
+        """
         sc = ScreenManager()
         sc.add_widget(Graphics(name='graphics'))
         sc.add_widget(Settings(name='settings'))
@@ -59,9 +59,9 @@ class ProdApp(App):
         logger.debug(f"Set appStatus to {self.appStatus}")
 
     def startup(self):
-        '''
+        """
         Runs both methods asynchronously and then block until they are finished
-        '''
+        """
         self.sm = StateManager()
         self.other_task = asyncio.ensure_future(self.main_loop())
 
@@ -87,9 +87,9 @@ class ProdApp(App):
         self.csound.compile_and_start()
         self.csound.start_perf_thread()
 
-        '''
+        """
         This is the main loop which the application will run inside of.
-        '''
+        """
         try:
             while True:
 
