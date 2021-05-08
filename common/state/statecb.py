@@ -76,7 +76,7 @@ async def tts_transcribe_cb(*args, stmgr=None):
     elif platform == "darwin":
         res = {'resp': args[0]}
     # OS X
-    elif platform == "win32":
+    elif platform == "win32" or platform == "win64":
         res = args[0]
     # Windows...
     print(res)
