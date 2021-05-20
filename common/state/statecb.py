@@ -10,11 +10,9 @@ from sys import platform
 logger = log.setup_logger()
 
 async def start_recording_cb(*args, stmgr=None):
-    print("Start recording callback")
 
-    print(args)
     resp = args[0]
-    print(resp)
+    logger.debug(f"{resp}")
     if resp['resp']:
         stmgr.app.ids['generate'].disabled = True
     elif not resp['resp']:
@@ -27,11 +25,11 @@ async def start_recording_cb(*args, stmgr=None):
 
 
 async def stop_recording_cb(*args, stmgr=None):
-    print("Stop recording callback")
+
     resp = args[0]
-    print(resp)
+    logger.debug(f"{resp}")
     if resp['resp']:
-        stmgr.text = resp['resp']
+        stmgr.text = resp['resp'].lower()
         stmgr.app.ids['lab'].text = stmgr.text
         stmgr.app.ids['generate'].disabled = False
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_received_text'})
@@ -68,21 +66,23 @@ async def infer_pipeline(stmgr, *args):
         stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_nothing_to_infer'})
 
 async def tts_transcribe_cb(*args, stmgr=None):
-    print(tts_transcribe_cb)
+
     ### THIS SHOULDN'T BE NEEDED
     ## BUT FOR NOW IT'S A WORKAROUND
     if platform == "linux" or platform == "linux2":
-        res = args[0]
+        resp = args[0]
     elif platform == "darwin":
-        res = {'resp': args[0]}
+        resp = {'resp': args[0]}
     # OS X
     elif platform == "win32" or platform == "win64":
-        res = args[0]
+        resp = args[0]
     # Windows...
-    print(res)
-    print(args)
-    if res['resp']:
-        res['resp'].pop('source', None)
+    else:
+        resp = args[0]
+
+    logger.debug(f"{resp}")
+    if resp['resp']:
+        resp['resp'].pop('source', None)
         stmgr.sound_descriptor = res['resp']
         stmgr.last_transcribed_text = stmgr.text
         stmgr.sound_descriptor['qualities'] = ['bright', 'percussive']
@@ -90,19 +90,17 @@ async def tts_transcribe_cb(*args, stmgr=None):
         for num, child in enumerate(stmgr.app.ids['some_slider'].children):
             child.value = res['resp']['latent_sample'][num]
 
-        print(stmgr.sound_descriptor)
         stmgr.app.ids['lab'].text = str(stmgr.sound_descriptor)
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_received_descriptor', 'res':args})
     else:
-        print("FAILURE!!!!")
         stmgr.dispatch('on_pipeline_action', {'action':'handle_errors', 'res':args})
 
 
 async def sound_gen_cb(*args, stmgr=None):
-    print("sound gen callback")
+
     res = args[0]
+    logger.debug(f"{resp}")
     if res['resp']:
-        print("here")
         stmgr.audio = np.array(res['resp'][0])
         stmgr.last_sound_parameters = stmgr.sound_descriptor
         stmgr.app.ids['lab'].text = "Received Sound "
@@ -111,7 +109,7 @@ async def sound_gen_cb(*args, stmgr=None):
         stmgr.dispatch('on_pipeline_action', {'action':'handle_errors', 'res':args})
 
 async def setup_preprocessing(*args, stmgr=None):
-    print("In setup preprocessing")
+
 
     folder = stmgr.csound.audio_dir.as_posix()
     preprocess(folder=folder, audio=stmgr.audio, root=60, shifts=48)
