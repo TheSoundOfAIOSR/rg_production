@@ -63,18 +63,18 @@ class ProdApp(App):
         Runs both methods asynchronously and then block until they are finished
         """
         self.sm = StateManager()
-        self.other_task = asyncio.ensure_future(self.main_loop())
+        self.sampler_loop = asyncio.ensure_future(self.main_loop())
 
         async def run_wrapper():
             await self.async_run(async_lib="asyncio")
             self.csound.cleanup()  # before terminating the app, cleanup Csound
             logger.info("App done")
-            self.other_task.cancel()
+            self.sampler_loop.cancel()
 
-        return asyncio.gather(run_wrapper(), self.other_task)
+        return asyncio.gather(run_wrapper(), self.sampler_loop)
 
     async def main_loop(self):
-        await asyncio.sleep(5)  # This is so
+        await asyncio.sleep(5)  # This is so we give the models time to startup
 
         try:
             await self.sm.stt.setup_model()

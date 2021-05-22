@@ -82,15 +82,22 @@ async def tts_transcribe_cb(*args, stmgr=None):
 
     logger.debug(f"{resp}")
     if resp['resp']:
-        resp['resp'].pop('source', None)
-        stmgr.sound_descriptor = res['resp']
-        stmgr.last_transcribed_text = stmgr.text
-        stmgr.sound_descriptor['qualities'] = ['bright', 'percussive']
 
+        sound_descriptor = {}
+        for key, value in resp['resp'].items():
+            if key == 'source':
+                value = value.lower()
+            if key == 'qualities':
+                value = [v.lower() for v in value]
+            sound_descriptor[key] = value
+
+        stmgr.sound_descriptor = sound_descriptor
+        stmgr.last_transcribed_text = stmgr.text
         for num, child in enumerate(stmgr.app.ids['some_slider'].children):
-            child.value = res['resp']['latent_sample'][num]
+            child.value = resp['resp']['latent_sample'][num]
 
         stmgr.app.ids['lab'].text = str(stmgr.sound_descriptor)
+
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_received_descriptor', 'res':args})
     else:
         stmgr.dispatch('on_pipeline_action', {'action':'handle_errors', 'res':args})
@@ -98,10 +105,10 @@ async def tts_transcribe_cb(*args, stmgr=None):
 
 async def sound_gen_cb(*args, stmgr=None):
 
-    res = args[0]
-    logger.debug(f"{resp}")
-    if res['resp']:
-        stmgr.audio = np.array(res['resp'][0])
+    resp = args[0]
+    if resp['resp'] and resp['success']:
+        logger.debug("Received Sound successfully")
+        stmgr.audio = np.array(resp['resp'][0])
         stmgr.last_sound_parameters = stmgr.sound_descriptor
         stmgr.app.ids['lab'].text = "Received Sound "
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_received_audio', 'res':args})

@@ -1,7 +1,6 @@
 from kivy.event import EventDispatcher
 from kivy.app import App
 import common.log as log
-from dummy_ws_requests import *
 from functools import *
 from common.state.statecb import *
 from .StateEnum import StateEnum
@@ -62,13 +61,11 @@ class StateManager(EventDispatcher):
             asyncio.ensure_future(self.tts.run())
             asyncio.ensure_future(self.sg.run())
         except:
-            print("Problem loading model")
+            logger.debug(f"Problem loading model")
         # self.tts = ws.TTSClient(host=self.config.host, port=self.config.base_port + 1)
         # self.sg = ws.SGClient(host=self.config.host, port=self.config.base_port + 2)
 
     async def _callback(self, f, callback=None, stmgr=None):
-        print("doing callback ")
-        print(stmgr)
         return await callback(await f(), stmgr=stmgr) if callback else await f(stmgr=stmgr)
 
     def make_call(self, _source):
@@ -132,7 +129,6 @@ class StateManager(EventDispatcher):
             for in_dev in input_list:
                 if dev_hint == in_dev.get("name", None):
                     self.microphone_hint = in_dev.get("id")
-                    print("Set hint to ", self.microphone_hint)
                     self.audio.input_idx = in_dev.get("id")
                     self.devices["in"] = in_dev
 
@@ -187,45 +183,23 @@ class StateManager(EventDispatcher):
 
     async def setup_models(self):
         await self.stt.setup_model()
-        # await asyncio.gather(dummy_stt_startup(), dummy_tts_startup(), dummy_stt_startup())
-
-    # 'setup??? '
-    # 'user_action_toggle_record' -> self.state = StateEnum.Recording -> stt_start -> start_recording_cb
-    # 'pipeline_action_started_recording_failed' -> self.state = StateEnum.Playing_Idle -> play_idle_cb
-    # 'user_action_toggle_record' -> self.state = StateEnum.New_Text -> stt_stop -> stop_recording_cb
-    # 'pipeline_action_received_text' -> self.state = StateEnum.Playing_Idle -> play_idle_cb
-    #
-    # 'user_action_generate' -> self.state = StateEnum.Inferring_Pipeline -> infer_pipeline()
-    # 'pipeline_action_start_tts' -> self.state = StateEnum.New_Descriptor_Generation -> tts_transcribe -> tts_transcribe_cb
-    # 'pipeline_action_received_tts' -> self.state = StateEnum.Inferring_Pipeline -> infer_pipeline()
-    # 'pipeline_action_start_sg' -> self.state = StateEnum.New_Sound_Generation -> sg_generate -> sg_callback
-    # 'pipeline_action_received_audio' -> self.state = StateEnum.Preprocessing -> preprocessing -> preprocessing_cb
-    # 'pipeline_action_finished_preprocessing' -> self.state = StateEnum.Playing_Idle -> play_idle_cb
 
     def get_state_action_callbacks(self):
-        print("********************************")
-        print(dir(App.get_running_app()))
         self.devices = App.get_running_app().devices
         self.midi_devices = App.get_running_app().midi_devices
         self.csound = App.get_running_app().csound
         self.app = App.get_running_app().root.get_screen("graphics")
-        # print(dir(self.app.root.get_screen("graphics")))
-        # print(self.app.root.get_screen("graphics").ids)
         self.root_note = 60
-        print("********************************")
 
         self.enter_state_callbacks = {
             StateEnum.Update: "",
             StateEnum.Playing_Idle: {
                 'user_action_toggle_record': ActionManager(f=self.stt.start, args='microphone_hint', cb=start_recording_cb, next_state=StateEnum.Recording),
-                # 'user_action_toggle_record': ActionManager(f=self.stt.start, args='microphone_hint', cb=start_recording_cb),
                 'user_action_generate': ActionManager(f=infer_pipeline, next_state=StateEnum.Inferring_Pipeline),
-                # 'pipeline_action_started_recording': ActionManager(next_state=StateEnum.Recording),
             },
             StateEnum.Recording: {
                 'pipeline_action_started_recording_failed': ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle),
                 'user_action_toggle_record': ActionManager(f=self.stt.stop, cb=stop_recording_cb, next_state=StateEnum.New_Text),
-                # 'pipeline_action_stop_recording': ActionManager(next_state=StateEnum.Playing_Idle),
             },
             StateEnum.New_Text:{
                 'pipeline_action_received_text': ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle)
