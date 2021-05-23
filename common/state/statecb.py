@@ -67,18 +67,7 @@ async def infer_pipeline(stmgr, *args):
 
 async def tts_transcribe_cb(*args, stmgr=None):
 
-    ### THIS SHOULDN'T BE NEEDED
-    ## BUT FOR NOW IT'S A WORKAROUND
-    if platform == "linux" or platform == "linux2":
-        resp = args[0]
-    elif platform == "darwin":
-        resp = {'resp': args[0]}
-    # OS X
-    elif platform == "win32" or platform == "win64":
-        resp = args[0]
-    # Windows...
-    else:
-        resp = args[0]
+    resp = args[0]
 
     logger.debug(f"{resp}")
     if resp['resp']:
