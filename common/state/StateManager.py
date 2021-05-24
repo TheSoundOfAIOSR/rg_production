@@ -5,7 +5,6 @@ from functools import *
 from common.state.statecb import *
 from .StateEnum import StateEnum
 import common.clients.wsclient as ws
-# from common.state.StateEnum import StateEnum
 
 logger = log.setup_logger()
 
@@ -44,10 +43,10 @@ class StateManager(EventDispatcher):
         self.audio = None
         self.error_handler = ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle)
         self.midi_devices = None
-        self.root_note = None
+        self.root_note = 60
         self.play_note = None
         self.csound = None
-        self.level = 16
+        self.level = self.root_note - 24 # false by default
 
         """
         WS Clients placeholders
@@ -110,9 +109,9 @@ class StateManager(EventDispatcher):
 
     def on_switch(self, instance, value):
         if value is True:
-            self.level = 40
+            self.level = self.root_note
         else:
-            self.level = 16
+            self.level = self.root_note - 24
 
     def on_keyboard_press(self, ind):
         self.play_note = self.level + ind
@@ -189,7 +188,6 @@ class StateManager(EventDispatcher):
         self.midi_devices = App.get_running_app().midi_devices
         self.csound = App.get_running_app().csound
         self.app = App.get_running_app().root.get_screen("graphics")
-        self.root_note = 60
 
         self.enter_state_callbacks = {
             StateEnum.Update: "",

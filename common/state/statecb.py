@@ -74,6 +74,9 @@ async def tts_transcribe_cb(*args, stmgr=None):
 
         sound_descriptor = {}
         for key, value in resp['resp'].items():
+            if key == 'pitch':
+                stmgr.root_note = value 
+                stmgr.csound.root = value 
             if key == 'source':
                 value = value.lower()
             if key == 'qualities':
@@ -108,7 +111,7 @@ async def setup_preprocessing(*args, stmgr=None):
 
 
     folder = stmgr.csound.audio_dir.as_posix()
-    preprocess(folder=folder, audio=stmgr.audio, root=60, shifts=48)
+    preprocess(folder=folder, audio=stmgr.audio, root=stmgr.root_note, shifts=48)
     stmgr.app.ids['record'].disabled = False
     logger.debug(f"Finished preprocessing")
     stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_finished_preprocessing', 'res': args})
