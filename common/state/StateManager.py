@@ -185,6 +185,7 @@ class StateManager(EventDispatcher):
 
     def get_state_action_callbacks(self):
         self.devices = App.get_running_app().devices
+        self.audio = App.get_running_app().audio
         self.midi_devices = App.get_running_app().midi_devices
         self.csound = App.get_running_app().csound
         self.app = App.get_running_app().root.get_screen("graphics")
