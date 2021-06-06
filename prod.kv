@@ -4,214 +4,368 @@
     playing_midi: False
 
     canvas.before:
+        Color:
+            rgba: 0, 0, 0, 0
         Rectangle:
             pos: self.pos
             size: self.size
-            source: 'assets/background.png'
-
-    Button:
-        size: dp(100), dp(100)
-        size_hint: None, None
-        pos: dp(681), dp(290)
-        text: 'Goto settings'
-        on_press:
-            root.manager.current = 'settings'
-            root.manager.transition.direction = 'left'
-
-    ToggleButton:
-        size: dp(100), dp(100)
-        size_hint: None, None
-        pos: dp(20), dp(480)
-        border: (0, 0, 0, 0)
-        id: record
-        on_press: app.sm.dispatch('on_pipeline_action', {'action': 'user_action_toggle_record'})
-        background_normal: 'assets/record_off.png'
-        background_down: 'assets/record_on.png'
-    
-    SliderLayout:
-        id: some_slider
-        sliders: 16
-        pos: dp(150), dp(450)
-        size: dp(500), dp(150)
-        size_hint: None, None
-
-    LabelLayout:
-        id: some_label
-        labels: 16
-        pos: dp(150), dp(430)
-        size: dp(200), dp(100)
-        size_hint: None, None
-
-    Button:
-        id: generate
-        text: 'Generate'
-        pos: dp(680), dp(480)
-        size: dp(100), dp(100)
-        size_hint: None, None
-        on_press: app.sm.dispatch('on_pipeline_action', {'action': 'user_action_generate'})
+            #source: 'assets/background.png'
 
     BoxLayout:
-        size_hint: 1, 0.05
-        pos_hint: {'top':0.75}
+        size_hint: 1, 0.3
+        pos_hint: {'top':1}
+        orientation: "horizontal"
+        padding: 20
+        spacing: 20
+
+        BoxLayout:
+            size_hint: 0.2, 1
+            canvas:
+                Color:
+                    rgb: 0, 1, 0
+                Rectangle:
+                    size: self.size
+                    pos:self.pos
+            ToggleButton:
+                #size: dp(100), dp(100)
+                #size_hint: None, None
+                #pos: dp(20), dp(480)
+                #border: (0, 0, 0, 0)
+                id: record
+                text: 'record'
+                on_press: app.sm.dispatch('on_pipeline_action', {'action': 'user_action_toggle_record'})
+                #background_normal: 'assets/record_off.png'
+                #background_down: 'assets/record_on.png'
+
+        BoxLayout:
+            size_hint: 0.7, 1
+            canvas:
+                Color:
+                    rgb: 0, 0, 0
+                Rectangle:
+                    size: self.size
+                    pos:self.pos
+            SliderLayout:
+                id: some_slider
+                sliders: 16
+                #pos: dp(150), dp(450)
+                #size: dp(500), dp(150)
+                size_hint: 1, 1
+
+        BoxLayout:
+            size_hint: 0.2, 1
+            canvas:
+                Color:
+                    rgb: 0, 0, 1
+                Rectangle:
+                    size: self.size
+                    pos:self.pos
+            Button:
+                id: generate
+                text: 'generate'
+                #pos: dp(680), dp(480)
+                #size: dp(100), dp(100)
+                #size_hint: None, None
+                on_press: app.sm.dispatch('on_pipeline_action', {'action': 'user_action_generate'})
+
+    BoxLayout:
+        size_hint: 0.95, 0.05
+        pos_hint: {'top':0.7, 'center_x': .5}
+        canvas:
+            Color:
+                rgb: 0.25, 0.25, 0.25
+            Rectangle:
+                size: self.size
+                pos:self.pos
         Label:
             id: lab
             text: ""
             font_size: sp(18)
 
-    Button:
-        id: play
-        text: 'play'
-        pos: dp(20),dp(340)
-        size: dp(100), dp(50)
-        size_hint: None, None
-        on_press:app.sm.dispatch('on_sampler_gui_action', 'play_sample')
+    BoxLayout:
+        size_hint: 1, 0.2
+        pos_hint: {'top':0.65}
+        orientation: "horizontal"
+        padding: 20
+        spacing: 20
 
-    Button:
-        id: playM
-        text: 'Play Midi'
-        pos: dp(20),dp(290)
-        size: dp(100), dp(50)
-        size_hint: None, None
-        on_press: app.sm.dispatch('on_sampler_gui_action', 'midi_loaded')
+        BoxLayout:
+            size_hint: 0.2, 1
+            canvas:
+                Color:
+                    rgb: 0, 1, 0
+                Rectangle:
+                    size: self.size
+                    pos:self.pos
+            Button:
+                id: play
+                text: 'play'
+                #pos: dp(20),dp(340)
+                #size: dp(100), dp(50)
+                #size_hint: None, None
+                on_press:app.sm.dispatch('on_sampler_gui_action', 'play_sample')
 
-    Image:
-        source: ''
-        pos: dp(150), dp(280)
-        size: self.texture_size
-        size_hint: None, None
+        BoxLayout:
+            size_hint: 0.7, 1
+            canvas:
+                Color:
+                    rgb: 0, 0, 0
+                Rectangle:
+                    size: self.size
+                    pos:self.pos
+            Image:
+                source: 'assets/soundwave.png'
+                #pos: dp(150), dp(280)
+                #size: self.texture_size
+                #size_hint: None, None
 
-    Slider:
-        id: volume_slider
-        orientation: "vertical"
-        min: 0
-        max: 1
-        value: 0.8
-        on_touch_move: app.csound.set_master_volume(self.value)
-        on_touch_down: app.csound.set_master_volume(self.value)
-        pos: dp(60), dp(80)
-        size: dp(10), dp(200)
-        size_hint: None, None
+        BoxLayout:
+            size_hint: 0.2, 1
+            canvas:
+                Color:
+                    rgb: 0, 0, 1
+                Rectangle:
+                    size: self.size
+                    pos:self.pos
+            Button:
+                id: playM
+                text: 'play Midi'
+                #pos: dp(20),dp(290)
+                #size: dp(100), dp(50)
+                #size_hint: None, None
+                on_press: app.sm.dispatch('on_sampler_gui_action', 'midi_loaded')
 
-    Label:
-        text: "Volume"
-        font_size: sp(15)
-        color: 1, 1, 1, 1
-        pos: dp(12), dp(0)
-        size_hint: None, None
+    BoxLayout:
+        size_hint: 1, 0.45
+        pos_hint: {'top':0.45}
+        orientation: "horizontal"
+        padding: 20
+        spacing: 20
 
-    Slider:
-        id: pan_slider
-        orientation: "vertical"
-        min: 0
-        max: 1
-        value: 0.5
-        on_touch_move: app.csound.set_panning(self.value)
-        on_touch_down: app.csound.set_panning(self.value)
-        pos: dp(140), dp(80)
-        size: dp(10), dp(200)
-        size_hint: None, None
+        BoxLayout:
+            size_hint: 0.2, 1
+            orientation: "vertical"
 
-    Label:
-        text: "Pan"
-        font_size: sp(15)
-        color: 1, 1, 1, 1
-        pos: dp(100), dp(0)
-        size_hint: None, None
+            BoxLayout:
+                size_hint: 1, 0.8
+                orientation: "horizontal"
+                canvas:
+                    Color:
+                        rgb: 0, 1, 0
+                    Rectangle:
+                        size: self.size
+                        pos:self.pos
+                Slider:
+                    id: volume_slider
+                    orientation: "vertical"
+                    min: 0
+                    max: 1
+                    value: 0.8
+                    on_touch_move: app.csound.set_master_volume(self.value)
+                    on_touch_down: app.csound.set_master_volume(self.value)
+                    #pos: dp(60), dp(80)
+                    #size: dp(10), dp(200)
+                    #size_hint: None, None
+                Slider:
+                    id: pan_slider
+                    orientation: "vertical"
+                    min: 0
+                    max: 1
+                    value: 0.5
+                    on_touch_move: app.csound.set_panning(self.value)
+                    on_touch_down: app.csound.set_panning(self.value)
+                    #pos: dp(140), dp(80)
+                    #size: dp(10), dp(200)
+                    #size_hint: None, None
 
-    KeyboardWidget:
-        id: some_keys
-        keys: 14
-        pos: dp(220), dp(50)
-        size: dp(180), dp(200)
-        size_hint: None, None
+            BoxLayout:
+                size_hint: 1, 0.1
+                orientation: "horizontal"
+                canvas:
+                    Color:
+                        rgb: 0, 0, 1
+                    Rectangle:
+                        size: self.size
+                        pos:self.pos
+                Label:
+                    text: str(round(volume_slider.value,2))
+                    font_size: sp(15)
+                    color: 1, 1, 1, 1
+                    #pos: dp(12), dp(0)
+                    #size_hint: None, None
+                Label:
+                    text: str(round(pan_slider.value,2))
+                    font_size: sp(15)
+                    color: 1, 1, 1, 1
+                    #pos: dp(100), dp(0)
+                    #size_hint: None, None
 
-    Label:
-        text: "Switch piano octave"
-        font_size: sp(12)
-        color: 1, 1, 1, 1
-        pos: dp(675), dp(180)
-        size_hint: None, None
+            BoxLayout:
+                size_hint: 1, 0.1
+                orientation: "horizontal"
+                canvas:
+                    Color:
+                        rgb: 0, 0, 1
+                    Rectangle:
+                        size: self.size
+                        pos:self.pos
+                Label:
+                    text: "Vol"
+                    font_size: sp(15)
+                    color: 1, 1, 1, 1
+                    #pos: dp(12), dp(0)
+                    #size_hint: None, None
+                Label:
+                    text: "Pan"
+                    font_size: sp(15)
+                    color: 1, 1, 1, 1
+                    #pos: dp(100), dp(0)
+                    #size_hint: None, None
 
-    Switch:
-        id: switch
-        pos: dp(680), dp(200)
-        size_hint: None, None
-        on_active: app.sm.dispatch('on_switch', self, self.active)
+        BoxLayout:
+            size_hint: 0.7, 1
+            canvas:
+                Color:
+                    rgb: 0, 0, 0
+                Rectangle:
+                    size: self.size
+                    pos:self.pos
+            KeyboardWidget:
+                id: some_keys
+                keys: 14
+                #pos: dp(220), dp(50)
+                #size: dp(200), dp(220)
+                #size_hint: None, None
+
+        BoxLayout:
+            size_hint: 0.2, 1
+            orientation: "vertical"
+            canvas:
+                Color:
+                    rgb: 0, 0, 0
+                Rectangle:
+                    size: self.size
+                    pos:self.pos
+
+            Switch:
+                id: switch
+                pos_hint: {'top':1}
+                #pos: dp(680), dp(200)
+                #size_hint: None, None
+                on_active: app.sm.dispatch('on_switch', self, self.active)
+
+            Label:
+                text: "Switch piano octave"
+                font_size: sp(12)
+                color: 1, 1, 1, 1
+                #pos: dp(675), dp(180)
+                #size_hint: None, None
+
+            Button:
+                #size: dp(100), dp(100)
+                #size_hint: None, None
+                #pos: dp(681), dp(290)
+                text: 'Goto settings'
+                on_press:
+                    root.manager.current = 'settings'
+                    root.manager.transition.direction = 'left'
 
 <Settings>:
 
-    canvas.before:
-        Rectangle:
-            pos: self.pos
-            size: self.size
-            source: 'assets/background.png'
+    BoxLayout:
+        size_hint: 1, 0.5
+        pos_hint: {'top':1}
+        orientation: "horizontal"
+        padding: 20
+        spacing: 20
 
-    Button:
-        size: dp(100), dp(100)
-        size_hint: None, None
-        pos: dp(350), dp(80)
-        text: 'Back to menu'
-        on_press:
-            root.manager.current = 'graphics'
-            root.manager.transition.direction = 'right'
+        canvas:
+            Color:
+                rgb: 0, 0, 0
+            Rectangle:
+                size: self.size
+                pos:self.pos
 
-    Button:
-        id: export
-        text: 'Export'
-        pos: dp(350), dp(200)
-        size: dp(100), dp(100)
-        size_hint: None, None
-        on_press: lab.text = "Exporting"
+        GridLayout:
+            rows: 6
+            #pos: dp(100), dp(380)
+            #size: dp(600), dp(200)
+            #size_hint: None, None
+            Spinner:
+                name: "input"
+                text: 'Audio Input'
+                values: [in_dev["name"] for in_dev in app.devices["devices"]["input_list"]]
+                on_text:
+                    print(f"The spinner {self} has text {self.text}")
+                    app.sm.dispatch('on_update_io', {"type":"input", "hint":self.text})
 
-    GridLayout:
-        rows: 6
-        pos: dp(100), dp(380)
-        size: dp(600), dp(200)
-        size_hint: None, None
-        Spinner:
-            name: "input"
-            text: 'Audio Input'
-            values: [in_dev["name"] for in_dev in app.devices["devices"]["input_list"]]
-            on_text:
-                print(f"The spinner {self} has text {self.text}")
-                app.sm.dispatch('on_update_io', {"type":"input", "hint":self.text})
+            Spinner:
+                name: "output"
+                text: 'Audio Output'
+                values: [out_dev["name"] for out_dev in app.devices["devices"]["output_list"]]
+                on_text:
+                    print(f"The spinner {self} has text {self.text}")
+                    app.sm.dispatch('on_update_io', {"type":"output", "hint":self.text})
 
-        Spinner:
-            name: "output"
-            text: 'Audio Output'
-            values: [out_dev["name"] for out_dev in app.devices["devices"]["output_list"]]
-            on_text:
-                print(f"The spinner {self} has text {self.text}")
-                app.sm.dispatch('on_update_io', {"type":"output", "hint":self.text})
+            Spinner:
+                name: "midi_input"
+                text: 'Midi Input'
+                values: [midi_in for midi_in in app.midi_devices["input"]]
+                on_text:
+                    print(f"The spinner {self} has text {self.text}")
+                    app.sm.dispatch('on_update_io', {"type":"midi_input", "hint":self.text})
 
-        Spinner:
-            name: "midi_input"
-            text: 'Midi Input'
-            values: [midi_in for midi_in in app.midi_devices["input"]]
-            on_text:
-                print(f"The spinner {self} has text {self.text}")
-                app.sm.dispatch('on_update_io', {"type":"midi_input", "hint":self.text})
+            Spinner:
+                name: "hwd_buffer"
+                text: 'Hardware Buffer'
+                values: ['1024', '2048', '4096', '8192', '16384']
+                on_text:
+                    print(f"The spinner {self} has text {self.text}")
+                    app.sm.dispatch('on_update_io', {"type":"hwd_buffer", "hint":self.text})
 
-        Spinner:
-            name: "hwd_buffer"
-            text: 'Hardware Buffer'
-            values: ['1024', '2048', '4096', '8192', '16384']
-            on_text:
-                print(f"The spinner {self} has text {self.text}")
-                app.sm.dispatch('on_update_io', {"type":"hwd_buffer", "hint":self.text})
+            Spinner:
+                name: "sfw_buffer"
+                text: 'Software Buffer'
+                values: ['64', '256', '512', '1024', '2048', '4096']
+                on_text:
+                    print(f"The spinner {self} has text {self.text}")
+                    app.sm.dispatch('on_update_io', {"type":"sfw_buffer", "hint":self.text})
 
-        Spinner:
-            name: "sfw_buffer"
-            text: 'Software Buffer'
-            values: ['64', '256', '512', '1024', '2048', '4096']
-            on_text:
-                print(f"The spinner {self} has text {self.text}")
-                app.sm.dispatch('on_update_io', {"type":"sfw_buffer", "hint":self.text})
+            Spinner:
+                name: "samp_rate"
+                text: 'Sample Rate'
+                values: ['44100', '48000']
+                on_text:
+                    print(f"The spinner {self} has text {self.text}")
+                    app.sm.dispatch('on_update_io', {"type":"samp_rate", "hint":self.text})
 
-        Spinner:
-            name: "samp_rate"
-            text: 'Sample Rate'
-            values: ['44100', '48000']
-            on_text:
-                print(f"The spinner {self} has text {self.text}")
-                app.sm.dispatch('on_update_io', {"type":"samp_rate", "hint":self.text})
+    BoxLayout:
+        size_hint: 1, 0.5
+        pos_hint: {'top':0.5}
+        orientation: "vertical"
+        padding: 20
+        spacing: 20
+
+        canvas:
+            Color:
+                rgb: 0, 0, 0
+            Rectangle:
+                size: self.size
+                pos:self.pos
+        Button:
+            #size: dp(100), dp(100)
+            size_hint: 0.2, 1
+            pos_hint: {'center_x': .5}
+            #pos: dp(350), dp(80)
+            text: 'Back to menu'
+            on_press:
+                root.manager.current = 'graphics'
+                root.manager.transition.direction = 'right'
+        Button:
+            id: export
+            text: 'Export'
+            #pos: dp(350), dp(200)
+            #size: dp(100), dp(100)
+            size_hint: 0.2, 1
+            pos_hint: {'center_x': .5}
+            on_press: lab.text = "Exporting"
