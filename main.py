@@ -151,7 +151,7 @@ async def setup():
     csound.start_perf_thread()
 
     await sm.setup_models()
-    await ProdApp().startup(sm, csound, config)S
+    await ProdApp().startup(sm, csound, config)
     return
 
 if __name__ == "__main__":
@@ -162,7 +162,6 @@ if __name__ == "__main__":
         loop.run_until_complete(setup())
     except KeyboardInterrupt:
         print("closing loop")
-        # loop.close()
     print("Done setting up (main)")
 
     loop.close()
