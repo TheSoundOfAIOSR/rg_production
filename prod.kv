@@ -12,11 +12,15 @@
             #source: 'assets/background.png'
 
     BoxLayout:
-        size_hint: 1, 0.3
-        pos_hint: {'top':0.8}
+        size_hint: 0.6, 0.05
+        pos_hint: {'top':0.67, 'right':0.8}
         orientation: "horizontal"
-        padding: 20
-        spacing: 20
+        canvas:
+            Color:
+                rgb: 1, 0, 0
+            Rectangle:
+                size: self.size
+                pos:self.pos
         Slider:
             id: play_start
             orientation: "horizontal"
@@ -26,6 +30,16 @@
             on_touch_move: app.csound.set_play_start(self.value)
             on_touch_down: app.csound.set_play_start(self.value)
 
+    BoxLayout:
+        size_hint: 0.6, 0.05
+        pos_hint: {'top':0.48, 'right':0.8}
+        orientation: "horizontal"
+        canvas:
+            Color:
+                rgb: 1, 1, 0
+            Rectangle:
+                size: self.size
+                pos:self.pos
         Slider:
             id: play_end
             orientation: "horizontal"
