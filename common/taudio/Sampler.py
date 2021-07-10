@@ -48,6 +48,9 @@ class CsoundSampler:
 
   <CsOptions>
    -odac{self.output}
+   -b {self.sw_buf}
+   -B {self.hw_buf}
+   -+rtmidi={self.midi_api}
    --midi-key=5 
    --midi-velocity-amp=4
   </CsOptions>
@@ -133,15 +136,12 @@ class CsoundSampler:
         """
         sets all the appropriate csound options, based on the variable values:
         sample rate
-        software buffer size
-        hardware buffe size
-        real time midi api
         midi device (if any is used)
         """
         self.cs.sr = self.samp_rate
-        self.cs.setOption(f"-b {self.sw_buf}")
-        self.cs.setOption(f"-B {self.hw_buf}")
-        self.cs.setOption(f"-+rtmidi={self.midi_api}")
+        # self.cs.setOption(f"-b {self.sw_buf}")
+        # self.cs.setOption(f"-B {self.hw_buf}")
+        # self.cs.setOption(f"-+rtmidi={self.midi_api}")
         if (self.midi_api != "NULL"):
             self.cs.setOption(f"--midi-device={self.midi_device}")
 
