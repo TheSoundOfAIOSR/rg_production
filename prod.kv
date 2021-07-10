@@ -5,7 +5,7 @@
 
     canvas.before:
         Color:
-            rgba: 0.30196, 0.30196, 0.30196, 1
+            rgba: 0.1294117647, 0.1294117647, 0.1294117647, 1
         Rectangle:
             pos: self.pos
             size: self.size
@@ -15,12 +15,6 @@
         size_hint: 0.6, 0.05
         pos_hint: {'top':0.67, 'right':0.8}
         orientation: "horizontal"
-        canvas:
-            Color:
-                rgb: 1, 0, 0
-            Rectangle:
-                size: self.size
-                pos:self.pos
         Slider:
             id: play_start
             orientation: "horizontal"
@@ -64,8 +58,8 @@
                 id: generate
                 #text: 'generate'
                 on_press: app.sm.dispatch('on_pipeline_action', {'action': 'user_action_generate'})
-                background_normal: 'assets/GENERATE.png'
-                background_down: 'assets/GENERATE2.png'
+                background_normal: 'assets/generate_off.png'
+                background_down: 'assets/generate_on.png'
 
     BoxLayout:
         size_hint: 0.95, 0.05
@@ -83,35 +77,29 @@
         spacing: 20
 
         BoxLayout:
-            size_hint: 0.2, 1
+            size_hint: 0.3, 1
             Button:
                 border: (0, 0, 0, 0)
                 id: play
                 #text: 'play'
                 on_press:app.sm.dispatch('on_sampler_gui_action', 'play_sample')
-                background_normal: 'assets/PLAYY.png'
-                background_down: 'assets/Play.png'
+                background_normal: 'assets/play_off.png'
+                background_down: 'assets/play_on.png'
 
         BoxLayout:
-            canvas:
-                Color:
-                    rgb: 0, 1, 0, 0.2
-                Rectangle:
-                    size: self.size
-                    pos:self.pos
             Image:
                 source: 'assets/plot.png'
 
 
         BoxLayout:
-            size_hint: 0.2, 1
+            size_hint: 0.3, 1
             Button:
                 border: (0, 0, 0, 0)
                 id: playM
                 #text: 'play Midi'
                 on_press: app.sm.dispatch('on_sampler_gui_action', 'midi_loaded')
-                background_normal: 'assets/PLAYMIDI.png'
-                background_down: 'assets/PLAYMIDI2.png'
+                background_normal: 'assets/playMidi_off.png'
+                background_down: 'assets/playMidi_on.png'
 
     BoxLayout:
         size_hint: 1, 0.45
@@ -177,15 +165,16 @@
         BoxLayout:
             size_hint: 0.2, 1
             orientation: "vertical"
-            Switch:
-                id: switch
-                pos_hint: {'top':1}
-                on_active: app.sm.dispatch('on_switch', self, self.active)
+
+            ToggleButton:
+                border: (0, 0, 0, 0)
+                id: octave_switch
+                on_state: app.sm.dispatch('on_switch', self)
+                background_normal: 'assets/octave1.png'
+                background_down: 'assets/octave2.png'
 
             Label:
-                text: "Switch piano octave"
-                font_size: sp(12)
-                color: 1, 1, 1, 1
+                text:''
 
             Button:
                 border: (0, 0, 0, 0)
@@ -193,8 +182,8 @@
                 on_press:
                     root.manager.current = 'settings'
                     root.manager.transition.direction = 'left'
-                background_normal: 'assets/Settings.png'
-                background_down: 'assets/Settings2.png'
+                background_normal: 'assets/settings_off.png'
+                background_down: 'assets/settings_on.png'
 
 <Settings>:
 

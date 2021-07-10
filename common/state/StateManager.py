@@ -107,8 +107,9 @@ class StateManager(EventDispatcher):
         self.sampler_gui_action = args[0]
 
 
-    def on_switch(self, instance, value):
-        if value is True:
+    def on_switch(self, instance):
+        print(instance.state)
+        if instance.state == "down":
             self.level = self.root_note
         else:
             self.level = self.root_note - 24
