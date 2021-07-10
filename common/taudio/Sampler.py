@@ -185,7 +185,7 @@ class CsoundSampler:
         i 1 = sampler,
         0 = start time,
         1 = duration,
-        1 = sample read speed
+        1 = volume
         40 = midi note to play (sample)
         """
         dur = self.duration - self.start_position
