@@ -67,7 +67,7 @@ class CsoundSampler:
   gkPan chnexport "pan", 1, 2, 0.5, 0, 1
   gkStart init 0.5
   gkStart chnexport "startpos", 1, 2, 0, 0, 1
-    
+
     instr 1 ; Sampler
     Sname = "{self.sample_path.as_posix()}" 
     iNum notnum
