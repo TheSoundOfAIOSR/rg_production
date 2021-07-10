@@ -111,7 +111,7 @@ async def setup_preprocessing(*args, stmgr=None):
 
 
     folder = stmgr.csound.audio_dir.as_posix()
-    preprocess(folder=folder, audio=stmgr.audio, root=stmgr.root_note, shifts=48)
+    preprocess(csound=stmgr.csound,folder=folder, audio=stmgr.audio, root=stmgr.root_note, shifts=48)
     stmgr.app.ids['record'].disabled = False
     logger.debug(f"Finished preprocessing")
     stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_finished_preprocessing', 'res': args})

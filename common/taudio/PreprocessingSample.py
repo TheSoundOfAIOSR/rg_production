@@ -35,7 +35,7 @@ def utility_pitchshift_and_normalize(audio, target_sr, n_steps, root, folder):
     logger.debug("==============================")
 
 
-def preprocess(folder, audio=None, filename=None, root=60, shifts=48):
+def preprocess(csound, folder, audio=None, filename=None, root=60, shifts=48):
     """
     Pitch shift of the audio file given as input and save in in the folder given as input
 
@@ -51,7 +51,8 @@ def preprocess(folder, audio=None, filename=None, root=60, shifts=48):
     logger.debug(f"target_sr = {target_sr}")
     # audio, orig_sr = librosa.load(filename)
     audio = librosa.resample(audio, 16000, target_sr)
-
+    csound.duration = len(audio)/target_sr
+    
     logger.debug(f"shifting pitch")
 
     folder = pl.Path(folder).absolute()
