@@ -67,7 +67,7 @@ class CsoundSampler:
   gkVol chnexport "vol", 1, 2, 1, 0, 1
 
   gkPan init 0.5
-  gkPan chnexport "pan", 1, 2, 1, 0, 1
+  gkPan chnexport "pan", 1, 2, 0.5, 0, 1
 
     instr 1 ; Sampler
 
