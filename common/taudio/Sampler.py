@@ -21,6 +21,8 @@ class CsoundSampler:
         self.samp_rate = target_sr
         self.sw_buf = 1024
         self.hw_buf = 2048
+        self.start_position = 0
+        self.duration = 3
         self.root = root_note
         self.midi_api = "NULL"
         self.midi_device = 0
@@ -43,86 +45,67 @@ class CsoundSampler:
     def create_csd(self):
 
         csd = f""" 
-
   <CsoundSynthesizer>
-
   <CsOptions>
    -odac{self.output}
+   -b {self.sw_buf}
+   -B {self.hw_buf}
+   -+rtmidi={self.midi_api}
    --midi-key=5 
    --midi-velocity-amp=4
   </CsOptions>
-
   <CsInstruments>
   
   ksmps = 32
   nchnls = 2
   0dbfs = 1.0
-
   massign 0, 1
   
   gkVol init 0.9
   gkVol chnexport "vol", 1, 2, 1, 0, 1
-
   gkPan init 0.5
-  gkPan chnexport "pan", 1, 2, 1, 0, 1
-
+  gkPan chnexport "pan", 1, 2, 0.5, 0, 1
+  gkStart init 0.5
+  gkStart chnexport "startpos", 1, 2, 0, 0, 1
+    
     instr 1 ; Sampler
-
     Sname = "{self.sample_path.as_posix()}" 
-
     iNum notnum
     iNum = p5
     {self.string_pitch_to_file()}
-
-
     ivol = p4
     ipb = 1
     inchs = filenchnls(Sname)
-
     kPanRight = sqrt(1 - gkPan)
     kPanLeft = sqrt(gkPan)
     
+    iStart = i(gkStart) 
     
     printf_i "Audiofile '%s' ", 1, Sname 
     
     if inchs == 1 then
-
-    aLeft diskin2 Sname, ipb
+    aLeft diskin2 Sname, ipb, iStart, 1
     
     aL = aLeft*p4
     aR = aLeft*p4
-
     else
-
-    aLeft, aRight diskin2 Sname, ipb
-
+    aLeft, aRight diskin2 Sname, ipb, iStart, 1
     aL =  aLeft*p4
     aR = aRight*p4
-
     endif
-
     aL *= gkVol
     aR *= gkVol
-
     aL *= kPanLeft
     aR *= kPanRight
-
     aEnv madsr 0.05, p3-0.05, 1, 0.05
     xtratim 0.05
-
     outs aL,aR
-
     endin
     
-
   </CsInstruments>
-
   <CsScore>
-
   f 0 36000    ; 1 hour long empty score
-
   </CsScore>
-
   </CsoundSynthesizer> 
   
   """
@@ -133,15 +116,12 @@ class CsoundSampler:
         """
         sets all the appropriate csound options, based on the variable values:
         sample rate
-        software buffer size
-        hardware buffe size
-        real time midi api
         midi device (if any is used)
         """
         self.cs.sr = self.samp_rate
-        self.cs.setOption(f"-b {self.sw_buf}")
-        self.cs.setOption(f"-B {self.hw_buf}")
-        self.cs.setOption(f"-+rtmidi={self.midi_api}")
+        # self.cs.setOption(f"-b {self.sw_buf}")
+        # self.cs.setOption(f"-B {self.hw_buf}")
+        # self.cs.setOption(f"-+rtmidi={self.midi_api}")
         if (self.midi_api != "NULL"):
             self.cs.setOption(f"--midi-device={self.midi_device}")
 
@@ -201,7 +181,6 @@ class CsoundSampler:
     def play_sample(self, pitch=root_note):
         """
         Play a note as a single Csound score note given a MIDI pitch
-
         sco = "i 1 0 1 1 40" where
         i 1 = sampler,
         0 = start time,
@@ -209,7 +188,8 @@ class CsoundSampler:
         1 = sample read speed
         40 = midi note to play (sample)
         """
-        sco = f"i 1 0 1 1 {pitch}"
+        dur = self.duration - self.start_position
+        sco = f"i 1 0 {dur} 1 {pitch}"
         self.cs.readScore(sco)
 
     def cleanup(self):
@@ -228,6 +208,12 @@ class CsoundSampler:
 
     def set_panning(self, value=0.5):
         self.cs.setControlChannel("pan", value)
+    
+    def set_playstart(self, value=0):
+        startsec = value * self.duration
+        self.cs.setControlChannel("startpos", startsec)
+        if value != self.start_position:
+            self.start_position = startsec
 
     def set_root(self, r=60):
         self.root = r
