@@ -21,6 +21,8 @@ class CsoundSampler:
         self.samp_rate = target_sr
         self.sw_buf = 1024
         self.hw_buf = 2048
+        self.start_position = 0
+        self.duration = 3
         self.root = root_note
         self.midi_api = "NULL"
         self.midi_device = 0
@@ -68,6 +70,9 @@ class CsoundSampler:
 
   gkPan init 0.5
   gkPan chnexport "pan", 1, 2, 0.5, 0, 1
+
+  gkStart init 0.5
+  gkStart chnexport "startpos", 1, 2, 0, 0, 1
 
     instr 1 ; Sampler
 
@@ -209,7 +214,7 @@ class CsoundSampler:
         1 = sample read speed
         40 = midi note to play (sample)
         """
-        sco = f"i 1 0 1 1 {pitch}"
+        sco = f"i 1 0 {self.duration} 1 {pitch}"
         self.cs.readScore(sco)
 
     def cleanup(self):
@@ -228,6 +233,10 @@ class CsoundSampler:
 
     def set_panning(self, value=0.5):
         self.cs.setControlChannel("pan", value)
+    
+    def set_playstart(self, value=0):
+        self.cs.setControlChannel("startpos", value)
+        self.cs.start_position = value 
 
     def set_root(self, r=60):
         self.root = r
