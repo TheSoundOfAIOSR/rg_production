@@ -1,3 +1,5 @@
+import os
+os.environ['KIVY_NO_ARGS'] = '1'
 import sys
 import asyncio
 
@@ -20,10 +22,14 @@ from common.config import Config as cfg
 import common.log as log
 import common.clients
 import functools
+import argparse
+import common.clients.wsclient as ws
+
+parser = argparse.ArgumentParser(description="Production startup")
+parser.add_argument('--debug', dest='debug', action='store_true', required=False)
 
 logger = log.setup_logger()
 
-import common.clients.wsclient as ws
 
 
 class ProdApp(App):
@@ -138,7 +144,8 @@ class ProdApp(App):
             # when canceled, print that it finished
             logger.debug("Done wasting time")
 
-async def setup():
+async def setup(debug):
+
     stt = ws.STTClient(host="localhost", port=8786, module="stt")
     tts = ws.STTClient(host="localhost", port=8787, module="tts")
     sg = ws.STTClient(host="localhost", port=8080, module="sg")
@@ -150,18 +157,19 @@ async def setup():
     csound.compile_and_start()
     csound.start_perf_thread()
 
-    await sm.setup_models()
+    if not debug:
+        await sm.setup_models()
     await ProdApp().startup(sm, csound, config)
     return
 
 if __name__ == "__main__":
+    args = parser.parse_args()
 
     loop = asyncio.get_event_loop()
 
     try:
-        loop.run_until_complete(setup())
+        loop.run_until_complete(setup(args.debug))
     except KeyboardInterrupt:
         print("closing loop")
-    print("Done setting up (main)")
 
     loop.close()
