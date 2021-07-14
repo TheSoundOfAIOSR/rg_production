@@ -12,12 +12,14 @@ from common.state.StateManager import StateManager, StateEnum
 from kivy.uix.screenmanager import ScreenManager, Screen
 from common.customw.basic import *
 from common.customw.widget_layout import *
+import common.clients.wsclient as ws
 from common.taudio.AudioInterface import AudioInterface
 from common.taudio.MidiInterface import MidiInterface
 from common.taudio.Sampler import CsoundSampler
 from common.config import Config as cfg
 import common.log as log
 import common.clients
+import functools
 
 logger = log.setup_logger()
 
@@ -30,14 +32,13 @@ class ProdApp(App):
         self.other_task = None
         self.appStatus = None
         self.midi_file = None
-        self.config = cfg.load_config()
+        self.config = None
         self.midi = MidiInterface()
         self.audio = AudioInterface()
-        self.csound = CsoundSampler(self.config.audio_dir, self.config.sample_path)
+        self.csound = None
         self.midi_devices = self.midi.devices
         self.devices = self.audio.devices
         self.output_idx = 0
-        self.csound.set_output(output=self.output_idx)
         self.midi_input_idx = 0
         self.playing_midi = False
 
@@ -57,11 +58,13 @@ class ProdApp(App):
         self.appStatus = event
         logger.debug(f"Set appStatus to {self.appStatus}")
 
-    def startup(self):
+    def startup(self, sm, csound, config):
         """
         Runs both methods asynchronously and then block until they are finished
         """
-        self.sm = StateManager()
+        self.sm = sm
+        self.config = config
+        self.csound = csound
         self.sampler_loop = asyncio.ensure_future(self.main_loop())
 
         async def run_wrapper():
@@ -75,16 +78,14 @@ class ProdApp(App):
     async def main_loop(self):
         await asyncio.sleep(5)  # This is so we give the models time to startup
 
-        try:
-            await self.sm.stt.setup_model()
-        except:
-            print("Error starting up stt model")
+        # try:
+        #     await self.sm.stt.setup_model()
+        # except:
+        #     print("Error starting up stt model")
 
         self.sm.get_state_action_callbacks()
 
-        self.csound.set_options
-        self.csound.compile_and_start()
-        self.csound.start_perf_thread()
+        # self.csound.set_options
 
         """
         This is the main loop which the application will run inside of.
@@ -137,8 +138,30 @@ class ProdApp(App):
             # when canceled, print that it finished
             logger.debug("Done wasting time")
 
+async def setup():
+    stt = ws.STTClient(host="localhost", port=8786, module="stt")
+    tts = ws.STTClient(host="localhost", port=8787, module="tts")
+    sg = ws.STTClient(host="localhost", port=8080, module="sg")
+
+    sm = StateManager(stt, tts, sg)
+    config = cfg.load_config()
+    csound = CsoundSampler(config.audio_dir, config.sample_path)
+    csound.set_output(output=0)
+    csound.compile_and_start()
+    csound.start_perf_thread()
+
+    await sm.setup_models()
+    await ProdApp().startup(sm, csound, config)
+    return
 
 if __name__ == "__main__":
+
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(ProdApp().startup())
+
+    try:
+        loop.run_until_complete(setup())
+    except KeyboardInterrupt:
+        print("closing loop")
+    print("Done setting up (main)")
+
     loop.close()
