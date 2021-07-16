@@ -25,6 +25,10 @@ import functools
 import argparse
 import common.clients.wsclient as ws
 
+import matplotlib.pyplot as plt
+import numpy as np
+import soundfile as sf
+
 parser = argparse.ArgumentParser(description="Production startup")
 parser.add_argument('--debug', dest='debug', action='store_true', required=False)
 
@@ -80,6 +84,22 @@ class ProdApp(App):
             self.sampler_loop.cancel()
 
         return asyncio.gather(run_wrapper(), self.sampler_loop)
+
+    # def wavfunc(self, note):  # as soon as Generate is pressed, trigger this function. note is generated wav
+    #     data, samplerate = sf.read(note.wav, dtype='float32')  # dtype change to avoid error
+    #     times = np.arange(len(data)) / float(samplerate)   # avoid soundfile and work with available libs?
+    #
+    #     my_dpi = 96  # find a way to get dpi of current screen
+    #     plt.figure(figsize=(920 / my_dpi, 171 / my_dpi), dpi=my_dpi)  # independent pixel sizes
+    #
+    #     plt.gca().set_axis_off()
+    #     plt.margins(0, 0)
+    #     plt.subplots_adjust(top=1, bottom=0, right=1, left=0, hspace=0, wspace=0)
+    #
+    #     plt.plot(data, color='white')
+    #
+    #     plt.savefig(r'rg production\assets\plot.png', transparent=True, dpi=my_dpi,
+    #                 bbox_inches='tight', pad_inches=0)
 
     async def main_loop(self):
         await asyncio.sleep(5)  # This is so we give the models time to startup
