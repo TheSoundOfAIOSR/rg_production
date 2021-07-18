@@ -3,7 +3,10 @@ from kivy.core.window import Window
 from kivy.uix.label import Label
 from kivy.properties import StringProperty, ObjectProperty
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.popup import Popup
+from kivy.uix.floatlayout import FloatLayout
 from kivy.app import App
+import os
 
 
 class Graphics(Screen):
@@ -23,5 +26,28 @@ class Graphics(Screen):
         self.midi_file = self.app.midi_file = file_path.decode()
         self.app.set_msg_txt(f"{self.midi_file} - has been loaded")
 
+
+class SaveDialog(FloatLayout):
+    save = ObjectProperty(None)
+    text_input = ObjectProperty(None)
+    cancel = ObjectProperty(None)
+
+
 class Settings(Screen):
-    pass
+    savefile = ObjectProperty(None)
+    text_input = ObjectProperty(None)
+
+    def dismiss_popup(self):
+        self._popup.dismiss()
+
+    def show_save(self):
+        content = SaveDialog(save=self.save, cancel=self.dismiss_popup)
+        self._popup = Popup(title="Save file", content=content,
+                            size_hint=(0.9, 0.9))
+        self._popup.open()
+
+    def save(self, path, filename):  # TODO Rewrite this to save generated wav file
+        with open(os.path.join(path, filename), 'w') as stream:
+            stream.write(self.text_input.text)
+
+        self.dismiss_popup()

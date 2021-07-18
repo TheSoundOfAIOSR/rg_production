@@ -180,7 +180,7 @@
             Button:
                 border: (0, 0, 0, 0)
                 #text: 'Goto settings'
-                on_press:
+                on_release:
                     root.manager.current = 'settings'
                     root.manager.transition.direction = 'left'
                 background_normal: 'assets/settings_off.png'
@@ -277,7 +277,7 @@
             size_hint: 0.2, 1
             pos_hint: {'center_x': .5}
             text: 'Back to menu'
-            on_press:
+            on_release:
                 root.manager.current = 'graphics'
                 root.manager.transition.direction = 'right'
         Button:
@@ -285,4 +285,31 @@
             text: 'Export'
             size_hint: 0.2, 1
             pos_hint: {'center_x': .5}
-            on_press: lab.text = "Exporting"
+            on_release: root.show_save()
+
+<SaveDialog>:
+    text_input: text_input
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserIconView:
+            id: filechooser
+            on_selection: text_input.text = self.selection and self.selection[0] or ''
+
+        TextInput:
+            id: text_input
+            size_hint_y: None
+            height: 30
+            multiline: False
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+
+            Button:
+                text: "Save"
+                on_release: root.save(filechooser.path, text_input.text)
