@@ -40,7 +40,7 @@ class LabelLayout(BoxLayout):
 
     def build_labels(self, _):
         for i in range(self.labels):
-            self.add_widget(Label(text=""))
+            self.add_widget(Label(text="0.5", font_size="12sp"))
 
 
 class KeyboardWidget(BoxLayout):
