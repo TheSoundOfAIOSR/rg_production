@@ -69,7 +69,7 @@ class KeyboardWidget(BoxLayout):
                                       size_hint=(1/white_key_width, 1), # here
                                       pos_hint={"x": i/white_key_width, "top": 1}) # here
             octave_widget.add_widget(white_key_widget)
-            if i in [1, 2, 4, 5, 6, 8, 9, 11, 12, 13]:
+            if i in [1, 2, 3, 5, 6, 8, 9, 10, 12, 13]:
                 black_key_widget = (Button(background_normal='assets/key_up.png',
                                            background_down='assets/key_down.png',
                                            background_color=(0.3, 0.3, 0.3, 1),
