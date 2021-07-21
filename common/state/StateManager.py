@@ -42,6 +42,7 @@ class StateManager(EventDispatcher):
         self.app = None #App.get_running_app()
         self.enter_state_callbacks = None
         self.audio = None
+        self.audition_audio = None
         self.error_handler = ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle)
         self.midi_devices = None
         self.root_note = 40

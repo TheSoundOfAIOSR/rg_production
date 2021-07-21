@@ -98,6 +98,7 @@ async def tts_transcribe_cb(*args, stmgr=None):
 async def sound_gen_cb(*args, stmgr=None):
 
     resp = args[0]
+
     if resp['resp'] and resp['success']:
         logger.debug("Received Sound successfully")
         stmgr.audio = np.array(resp['resp'][0])
