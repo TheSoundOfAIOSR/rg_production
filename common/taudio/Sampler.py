@@ -210,8 +210,12 @@ class CsoundSampler:
         self.cs.setControlChannel("pan", value)
     
     def set_playstart(self, value=0):
-        startsec = value * self.duration
-        self.cs.setControlChannel("startpos", startsec)
+        # print(1-value)
+        # print(value, self.duration)
+        startsec = (1-value) * self.duration
+        # startsec = value * self.duration
+        # print(startsec)
+        self.cs.setControlChannel("endpos", startsec)
         if value != self.start_position:
             self.start_position = startsec
 
