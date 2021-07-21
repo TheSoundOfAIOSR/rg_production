@@ -107,7 +107,6 @@ class StateManager(EventDispatcher):
         self.play_note = self.level + ind
         self.sampler_gui_action = 'play_note'
 
-
     def on_update_io(self, *args):
         arg = args[0]
         type = arg['type']
@@ -193,29 +192,9 @@ class StateManager(EventDispatcher):
         return
 
     async def setup_models(self):
-
-        # loop = asyncio.get_running_loop()
-
-
-        # task = loop.create_task(self.setup_model(self.stt))
-        # task = loop.create_task(self.setup_model(self.tts))
-        # task = loop.create_task(self.setup_model(self.sg))
-
         setup = asyncio.gather(*[self.setup_model(x) for x in [self.stt, self.tts, self.sg]])
 
-        # loop.run_until_complete(setup)
         await setup
-        # print("in setup_models")
-        # attempts = 0
-        # while True:
-        #     if self.stt.setup and self.tts.setup and self.sg.setup:
-        #         break
-        #     await asyncio.sleep(5)
-        #     if attempts % 2 == 0:
-        #         print(f"Waiting for servers to start. Attempt {attempts}")
-        #     attempts+=1
-        # print("Done loading all modules")
-
 
     def get_state_action_callbacks(self):
         self.devices = App.get_running_app().devices
