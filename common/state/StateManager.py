@@ -44,10 +44,10 @@ class StateManager(EventDispatcher):
         self.audio = None
         self.error_handler = ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle)
         self.midi_devices = None
-        self.root_note = 60
+        self.root_note = 40
         self.play_note = None
         self.csound = None
-        self.level = self.root_note - 24 # false by default
+        self.level = self.root_note # false by default
 
         self.stt = stt
         self.tts = tts
@@ -97,14 +97,15 @@ class StateManager(EventDispatcher):
 
 
     def on_switch(self, instance):
-        print(instance.state)
         if instance.state == "down":
-            self.level = self.root_note
+            self.level = self.root_note + 24
         else:
-            self.level = self.root_note - 24
+            self.level = self.root_note
 
     def on_keyboard_press(self, ind):
+
         self.play_note = self.level + ind
+
         self.sampler_gui_action = 'play_note'
 
     def on_update_io(self, *args):

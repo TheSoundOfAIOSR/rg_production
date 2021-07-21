@@ -219,7 +219,7 @@ class CsoundSampler:
         if value != self.start_position:
             self.start_position = startsec
 
-    def set_root(self, r=60):
+    def set_root(self, r=40):
         self.root = r
 
     def string_pitch_to_file(self):
@@ -232,7 +232,7 @@ class CsoundSampler:
       Sname = "{(self.audio_dir / pl.Path(str(self.root))).as_posix()}.wav"
       """
 
-        for i in range(self.root - 24, self.root + 25):
+        for i in range(self.root, self.root + 48):
             note = i
             s += f"""
         elseif iNum == {note} then
