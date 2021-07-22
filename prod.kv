@@ -94,10 +94,18 @@
             orientation: "vertical"
             spacing: 5
 
-            Button:
-                id: play
-                text: 'Play'
-                on_press:app.sm.dispatch('on_sampler_gui_action', 'play_sample')
+            BoxLayout:
+                orientation: "horizontal"
+                spacing: 5
+                Button:
+                    id: audition
+                    text: 'Audition'
+                    on_press:app.sm.dispatch('on_sampler_gui_action', 'play_sample')
+
+                Button:
+                    id: play
+                    text: 'Play'
+                    on_press:app.sm.dispatch('on_sampler_gui_action', 'play_sample')
 
             Button:
                 id: playM
