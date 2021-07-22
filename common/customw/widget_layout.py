@@ -25,16 +25,15 @@ class SliderLayout(BoxLayout):
     def build_sliders(self, _):
         app = App.get_running_app().root.get_screen("graphics")
 
+        labels = ["brightness", "darkness", "etc", "asdf"] * 4
         slider_ids = {}
 
         for i in range(self.sliders):
             s = Slider(orientation="vertical", min=-7, max=7)
-            slider_ids[s.uid] = "a"*(i+1)
+            slider_ids[s.uid] = labels[i]
             self.add_widget(s)
 
         app.slider_map = slider_ids
-
-
 
 class LabelLayout(BoxLayout):
     '''
