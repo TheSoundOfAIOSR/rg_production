@@ -23,8 +23,17 @@ class SliderLayout(BoxLayout):
         Clock.schedule_once(self.build_sliders)
 
     def build_sliders(self, _):
+        app = App.get_running_app().root.get_screen("graphics")
+
+        slider_ids = {}
+
         for i in range(self.sliders):
-            self.add_widget(Slider(orientation="vertical", min=-7, max=7))
+            s = Slider(orientation="vertical", min=-7, max=7)
+            slider_ids[s.uid] = "a"*(i+1)
+            self.add_widget(s)
+
+        app.slider_map = slider_ids
+
 
 
 class LabelLayout(BoxLayout):

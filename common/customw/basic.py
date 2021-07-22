@@ -16,6 +16,7 @@ class Graphics(Screen):
 
     def __init__(self, **kwargs):
         Window.bind(on_dropfile=self._on_file_drop)
+        Window.bind(mouse_pos=self.mouse_pos)
         super(Graphics, self).__init__(**kwargs)
         self.app = App.get_running_app()
 
@@ -25,6 +26,17 @@ class Graphics(Screen):
         """
         self.midi_file = self.app.midi_file = file_path.decode()
         self.app.set_msg_txt(f"{self.midi_file} - has been loaded")
+
+    def mouse_pos(self, window, pos):
+        collide = False
+        for slider in self.app.get_running_app().root.get_screen("graphics").ids['some_slider'].children:
+            if slider.collide_point(*pos):
+                collide = True
+                mapping = self.app.get_running_app().root.get_screen("graphics").slider_map[slider.uid]
+                self.app.get_running_app().root.get_screen("graphics").ids['latent_space_label'].text = f"Latent Space Sample: {mapping}"
+
+        if not collide:
+            self.app.get_running_app().root.get_screen("graphics").ids['latent_space_label'].text = f"Latent Space Sample"
 
 
 class SaveDialog(FloatLayout):
