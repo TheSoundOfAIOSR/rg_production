@@ -8,6 +8,11 @@ import common.log as log
 import pathlib as pl
 import multiprocessing as mp
 
+import matplotlib.pyplot as plt
+import numpy as np
+import soundfile as sf
+
+
 logger = log.setup_logger()
 config = Config.load_config()
 
@@ -34,6 +39,29 @@ def utility_pitchshift_and_normalize(audio, target_sr, n_steps, root, folder):
     logger.debug(f"Creating: {new_filename}")
     logger.debug("==============================")
 
+def wavfunc(audio):  # as soon as Generate is pressed, trigger this function. note is generated wav
+    # data, samplerate = sf.read(note.wav, dtype='float32')  # dtype change to avoid error
+    # times = np.arange(len(audio)) / float(samplerate)   # avoid soundfile and work with available libs?
+    logger.debug(f"in wavfunc 1")
+    plt.figure(figsize=(15,3), dpi=96)
+
+    plt.gca().set_axis_off()
+    plt.margins(0, 0)
+    plt.subplots_adjust(top=1, bottom=0, right=1, left=0, hspace=0, wspace=0)
+    logger.debug(f"in wavfunc 2")
+
+    plt.plot(audio, color='white')
+    logger.debug(f"in wavfunc 3")
+
+    # TODO Pass path
+    import os
+    # os.path.join()
+    path = pl.Path('assets\\plot.png').absolute()
+    print(path)
+    print(os.path.exists(path))
+    plt.savefig(path, transparent=True, dpi=96,
+                bbox_inches='tight', pad_inches=0)
+    logger.debug(f"in wavfunc 4")
 
 def preprocess(csound, folder, audio=None, filename=None, root=60, shifts=48):
     """
@@ -51,6 +79,7 @@ def preprocess(csound, folder, audio=None, filename=None, root=60, shifts=48):
     logger.debug(f"target_sr = {target_sr}")
     # audio, orig_sr = librosa.load(filename)
     audio = librosa.resample(audio, 16000, target_sr)
+    wavfunc(audio)
     csound.duration = len(audio)/target_sr
     
     logger.debug(f"shifting pitch")
