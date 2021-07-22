@@ -114,6 +114,7 @@
 
             BoxLayout:
                 size_hint: 1, 0.7
+                padding: 20
                 canvas:
                     Color:
                         rgba: 1, 0, 0, 0
@@ -121,10 +122,11 @@
                         pos: self.pos
                         size: self.size
                 Image:
-                    size_hint: 1, 0.9
+                    size_hint: self.image_ratio, 1
                     pos_hint: {'bottom':1, 'left': 1}
                     source: 'assets/plot.png'
                     allow_stretch: True
+                    keep_ratio: False
 
             BoxLayout:
                 size_hint: 1, 0.3

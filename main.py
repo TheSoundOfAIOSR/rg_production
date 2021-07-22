@@ -8,7 +8,7 @@ from kivy.uix.widget import Widget
 from kivy.clock import Clock
 from kivy.config import Config
 
-#Config.set('graphics', 'resizable', False)
+#Config.set('graphics', 'fullscreen', 'auto')
 
 from common.state.StateManager import StateManager, StateEnum
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -91,6 +91,8 @@ class ProdApp(App):
     #
     #     my_dpi = 96  # find a way to get dpi of current screen
     #     plt.figure(figsize=(920 / my_dpi, 171 / my_dpi), dpi=my_dpi)  # independent pixel sizes
+    #      or
+    #     plt.figure(figsize=(920, 171))
     #
     #     plt.gca().set_axis_off()
     #     plt.margins(0, 0)
