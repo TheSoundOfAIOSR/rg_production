@@ -89,10 +89,7 @@ class ProdApp(App):
     #     data, samplerate = sf.read(note.wav, dtype='float32')  # dtype change to avoid error
     #     times = np.arange(len(data)) / float(samplerate)   # avoid soundfile and work with available libs?
     #
-    #     my_dpi = 96  # find a way to get dpi of current screen
-    #     plt.figure(figsize=(920 / my_dpi, 171 / my_dpi), dpi=my_dpi)  # independent pixel sizes
-    #      or
-    #     plt.figure(figsize=(920, 171))
+    #     plt.figure(figsize=(15,3), dpi=96)
     #
     #     plt.gca().set_axis_off()
     #     plt.margins(0, 0)
@@ -100,7 +97,7 @@ class ProdApp(App):
     #
     #     plt.plot(data, color='white')
     #
-    #     plt.savefig(r'rg production\assets\plot.png', transparent=True, dpi=my_dpi,
+    #     plt.savefig(r'\assets\plot.png', transparent=True, dpi=96,
     #                 bbox_inches='tight', pad_inches=0)
 
     async def main_loop(self):
