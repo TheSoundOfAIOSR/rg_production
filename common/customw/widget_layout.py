@@ -31,9 +31,16 @@ class SliderLayout(BoxLayout):
         for i in range(self.sliders):
             s = Slider(orientation="vertical", min=-7, max=7)
             slider_ids[s.uid] = labels[i]
+            s.bind(on_touch_down=partial(self.on_key_pressed, s),
+                                  on_touch_up=partial(self.on_key_pressed, s),
+                                    on_touch_move=partial(self.on_key_pressed, s),
+                   )
             self.add_widget(s)
 
         app.slider_map = slider_ids
+
+    def on_key_pressed(self, _, __, s):
+        print(s)
 
 class LabelLayout(BoxLayout):
     '''
@@ -44,7 +51,7 @@ class LabelLayout(BoxLayout):
 
     def __init__(self, **kwargs):
         super(LabelLayout, self).__init__(**kwargs)
-        Clock.schedule_once(self.build_labels)
+        # Clock.schedule_once(self.build_labels)
 
     def build_labels(self, _):
         for i in range(self.labels):
