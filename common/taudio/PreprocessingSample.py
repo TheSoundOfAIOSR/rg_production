@@ -6,13 +6,14 @@ from common.config import Config
 import common.log as log
 import pathlib as pl
 import multiprocessing as mp
-
+from kivy.app import App
 import matplotlib.pyplot as plt
 
 logger = log.setup_logger()
 config = Config.load_config()
 
 target_sr = config.sampling_rate
+app = App.get_running_app
 
 def utility_pitchshift_and_normalize(audio, target_sr, n_steps, root, folder):
     """
@@ -57,7 +58,7 @@ def wavfunc(audio):  # as soon as Generate is pressed, trigger this function. no
     print(os.path.exists(path))
     plt.savefig(path, transparent=True, dpi=96,
                 bbox_inches='tight', pad_inches=0)
-    #self.app.get_running_app().root.get_screen("graphics").ids.plot.reload()
+    app.get_running_app().root.get_screen("graphics").ids.plot.reload()
     logger.debug(f"in wavfunc 4")
 
 def preprocess(csound, folder, audio=None, filename=None, root=60, shifts=48):
