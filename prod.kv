@@ -59,12 +59,7 @@
                     id: some_slider
                     sliders: 16
 
-            BoxLayout:
-                size_hint: 1, 0.2
-                pos_hint: {'center_x': .5, 'center_y': .4}
-                LabelLayout:
-                    id: some_label
-                    labels: 16
+
 
 
     BoxLayout:
@@ -131,6 +126,7 @@
                         pos: self.pos
                         size: self.size
                 Image:
+                    id: plot
                     size_hint: self.image_ratio, 1
                     pos_hint: {'bottom':1, 'left': 1}
                     source: 'assets/plot.png'

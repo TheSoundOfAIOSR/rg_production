@@ -1,7 +1,6 @@
 import sys
 
 import librosa
-import numpy as np
 from scipy.io.wavfile import write
 from common.config import Config
 import common.log as log
@@ -9,9 +8,6 @@ import pathlib as pl
 import multiprocessing as mp
 
 import matplotlib.pyplot as plt
-import numpy as np
-import soundfile as sf
-
 
 logger = log.setup_logger()
 config = Config.load_config()
@@ -61,6 +57,7 @@ def wavfunc(audio):  # as soon as Generate is pressed, trigger this function. no
     print(os.path.exists(path))
     plt.savefig(path, transparent=True, dpi=96,
                 bbox_inches='tight', pad_inches=0)
+    #self.app.get_running_app().root.get_screen("graphics").ids.plot.reload()
     logger.debug(f"in wavfunc 4")
 
 def preprocess(csound, folder, audio=None, filename=None, root=60, shifts=48):

@@ -1,4 +1,3 @@
-from kivy.uix.widget import Widget
 from kivy.core.window import Window
 from kivy.uix.label import Label
 from kivy.properties import StringProperty, ObjectProperty
@@ -6,6 +5,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
 from kivy.uix.floatlayout import FloatLayout
 from kivy.app import App
+#from common.taudio.PreprocessingSample import audio
 import os
 
 
@@ -59,7 +59,9 @@ class Settings(Screen):
         self._popup.open()
 
     def save(self, path, filename):  # TODO Rewrite this to save generated wav file
+        # with open(os.path.join(path, filename), 'w') as stream:
+        #     stream.write(self.text_input.text)
         with open(os.path.join(path, filename), 'w') as stream:
-            stream.write(self.text_input.text)
+            stream.write(audio.wav)
 
         self.dismiss_popup()
