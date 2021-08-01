@@ -1,7 +1,8 @@
 kivy==2.0.0
 sounddevice==0.4.1
-python-rtmidi==1.4.7
+# python-rtmidi==1.4.7
 librosa
 numpy
 rgws
 ctcsound
+matplotlib
