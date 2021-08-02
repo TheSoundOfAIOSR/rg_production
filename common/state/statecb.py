@@ -28,6 +28,9 @@ async def stop_recording_cb(*args, stmgr=None):
 
     resp = args[0]
     logger.debug(f"{resp}")
+
+    # {'resp': True}
+    # {'resp': "some text" }
     if resp['resp']:
         # stmgr.text = resp['resp'].lower()
         stmgr.text = "give me a warm guitar sound"
@@ -46,7 +49,11 @@ async def infer_pipeline(stmgr, *args):
     stmgr.app.ids['record'].disabled = True
     stmgr.app.ids['generate'].disabled = True
     if stmgr.sound_descriptor:
-        latent_sample = [slider.value for slider in stmgr.app.ids['some_slider'].children]
+        # print(stmgr.app.ids['some_slider'].children)
+        sliders = [box.children[1] for box in stmgr.app.ids['some_slider'].children]
+        print(sliders)
+        latent_sample = [slider.value for slider in sliders]
+        print(latent_sample)
         stmgr.sound_descriptor['latent_sample'] = latent_sample
 
     """ 
@@ -87,7 +94,9 @@ async def tts_transcribe_cb(*args, stmgr=None):
         stmgr.sound_descriptor = sound_descriptor
         stmgr.last_transcribed_text = stmgr.text
         for num, child in enumerate(stmgr.app.ids['some_slider'].children):
-            child.value = resp['resp']['latent_sample'][num]
+            val = resp['resp']['latent_sample'][num]
+            child.children[1].value = val
+            child.children[0].text = str(val)
 
         stmgr.app.ids['lab'].text = str(stmgr.sound_descriptor)
 
@@ -121,7 +130,8 @@ async def setup_preprocessing(*args, stmgr=None):
 
 async def play_idle_cb(*args, stmgr=None):
     # reinitialize record button,
-    stmgr.app.ids['record'].state= 'normal'
+    # print(stmgr.app.ids)
+    # stmgr.app.ids['record'].state= 'normal'
     stmgr.app.ids['record'].disabled = False
     stmgr.app.ids['generate'].disabled = False
 

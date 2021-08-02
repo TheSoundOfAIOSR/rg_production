@@ -170,54 +170,15 @@ class StateManager(EventDispatcher):
             self.csound.start_perf_thread()
             print("sample rate has been set to " + dev_hint)
 
-    async def setup_model(self, ws):
-
-        while True:
-            active_conn = asyncio.create_task(ws.run())
-            active_conn.add_done_callback(ws.handle_task_result)
-
-            await asyncio.sleep(1)
-            ready = asyncio.create_task(ws.status())
-            ready.add_done_callback(ws.handle_task_result)
-
-            # Check if each server is initialized, then return
-            if ws.setup:
-                print(f"Done loading {ws.module}")
-                if ws.module == "stt":
-                    print("Setting up stt")
-                    await ws.setup_model()
-                break
-            else:
-                await asyncio.sleep(5)
-
-        return
-
     async def setup_models(self):
 
-        # loop = asyncio.get_running_loop()
+        setup = asyncio.gather(*[server.startup() for server in [self.stt, self.tts, self.sg]])
 
-
-        # task = loop.create_task(self.setup_model(self.stt))
-        # task = loop.create_task(self.setup_model(self.tts))
-        # task = loop.create_task(self.setup_model(self.sg))
-
-        setup = asyncio.gather(*[self.setup_model(x) for x in [self.stt, self.tts, self.sg]])
-
-        # loop.run_until_complete(setup)
         await setup
-        # print("in setup_models")
-        # attempts = 0
-        # while True:
-        #     if self.stt.setup and self.tts.setup and self.sg.setup:
-        #         break
-        #     await asyncio.sleep(5)
-        #     if attempts % 2 == 0:
-        #         print(f"Waiting for servers to start. Attempt {attempts}")
-        #     attempts+=1
-        # print("Done loading all modules")
 
 
     def get_state_action_callbacks(self):
+
         self.devices = App.get_running_app().devices
         self.audio = App.get_running_app().audio
         self.midi_devices = App.get_running_app().midi_devices
