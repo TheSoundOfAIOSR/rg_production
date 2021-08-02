@@ -51,7 +51,6 @@ class SliderLayout(BoxLayout):
         app = App.get_running_app().root.get_screen("graphics")
         app.label_map[instance.uid].text = str(round(value, 3))
 
-
 class LabelLayout(BoxLayout):
     '''
     LabelLayout is a widget being used to make multiple labels to label above sliders
