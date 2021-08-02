@@ -5,7 +5,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
 from kivy.uix.floatlayout import FloatLayout
 from kivy.app import App
-#from common.taudio.PreprocessingSample import audio
+#from common.state.StateManager import audio
 import os
 
 
@@ -62,6 +62,7 @@ class Settings(Screen):
         # with open(os.path.join(path, filename), 'w') as stream:
         #     stream.write(self.text_input.text)
         with open(os.path.join(path, filename), 'w') as stream:
-            stream.write(audio.wav)
+            stream.write(audio)
+            stream.close()
 
         self.dismiss_popup()
