@@ -175,6 +175,7 @@ class StateManager(EventDispatcher):
         setup = asyncio.gather(*[server.startup() for server in [self.stt, self.tts, self.sg]])
 
         await setup
+        return
 
 
     def get_state_action_callbacks(self):
