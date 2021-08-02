@@ -177,7 +177,6 @@ class StateManager(EventDispatcher):
         await setup
         return
 
-
     def get_state_action_callbacks(self):
 
         self.devices = App.get_running_app().devices
