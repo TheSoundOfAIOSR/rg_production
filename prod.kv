@@ -18,7 +18,7 @@
         spacing: 10
 
         BoxLayout:
-            size_hint: 0.4, 1
+            size_hint: 0.2, 1
             orientation: "vertical"
             spacing: 5
 
@@ -53,14 +53,36 @@
 
             BoxLayout:
                 size_hint: 1, 1
+                orientation: "horizontal"
                 padding: 5
+                spacing: 5
                 pos_hint: {'center_x': .5, 'center_y': .5}
-                SliderLayout:
-                    id: some_slider
-                    sliders: 16
 
+                BoxLayout:
+                    size_hint: 0.3, 1
+                    padding: 5
+                    canvas:
+                        Color:
+                            rgba: 1, 1, 1, 0.8
+                        Line:
+                            width: 1
+                            rectangle: self.x, self.y, self.width, self.height
+                    SliderLayout:
+                        id: some_slider
+                        sliders: 5
 
-
+                BoxLayout:
+                    size_hint: 0.7, 1
+                    padding: 5
+                    canvas:
+                        Color:
+                            rgba: 1, 1, 1, 0.8
+                        Line:
+                            width: 1
+                            rectangle: self.x, self.y, self.width, self.height
+                    SliderLayout:
+                        id: some_slider1
+                        sliders: 11
 
     BoxLayout:
         size_hint: 0.95, 0.05
