@@ -27,8 +27,8 @@ class SliderLayout(BoxLayout):
     def build_sliders(self, _):
 
         app = App.get_running_app().root.get_screen("graphics")
-
-        variable = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"]
+        labels = {5: ["l1", "l2", "l3", "l4", "l5"],
+                  11: ["h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "h10", "h11"]}
         slider_ids = {}
         label_map = {}
 
@@ -40,17 +40,27 @@ class SliderLayout(BoxLayout):
             l = Label(text=str(s.value), font_size="12sp", size_hint=(1, 0.2))
             b.add_widget(l)
             b.children[0].bind()
-            slider_ids[b.uid] = variable[i]
+
+            slider_ids[b.uid] = labels[self.sliders][i]
             label_map[s.uid] = l
+
             self.add_widget(b)
 
-        app.slider_map = slider_ids
-        app.label_map = label_map
-        print(slider_ids)
+        if self.sliders > 5:
+            app.heuristic_slider_ids = slider_ids
+            app.heuristic_label_map = label_map
+        else:
+            app.latent_slider_ids = slider_ids
+            app.latent_label_map = label_map
+
+
 
     def on_slider_change(self, instance, value):
         app = App.get_running_app().root.get_screen("graphics")
-        app.label_map[instance.uid].text = str(round(value, 3))
+        if instance.uid in app.latent_label_map.keys():
+            app.latent_label_map[instance.uid].text = str(round(value, 3))
+        elif instance.uid in app.heuristic_label_map.keys():
+            app.heuristic_label_map[instance.uid].text = str(round(value, 3))
 
 class LabelLayout(BoxLayout):
     '''
