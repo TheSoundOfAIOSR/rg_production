@@ -172,7 +172,11 @@ class StateManager(EventDispatcher):
 
     async def setup_models(self):
 
-        setup = asyncio.gather(*[server.startup() for server in [self.stt, self.tts, self.sg]])
+        await self.stt.startup()
+        await self.tts.startup()
+        await self.sg.startup()
+
+        # setup = asyncio.gather(*[server.startup() for server in [self.stt, self.tts, self.sg]])
 
         await setup
         return

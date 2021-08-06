@@ -23,7 +23,7 @@ class STTClient(WebsocketClient):
             except:
                 pass
 
-        if self.module == "stt":
+        if self.module == "stt" or self.module == "sg":
             await self.setup_model()
 
     async def _producer(self, websocket):
