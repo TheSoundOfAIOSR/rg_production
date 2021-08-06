@@ -28,7 +28,7 @@ class SliderLayout(BoxLayout):
 
         app = App.get_running_app().root.get_screen("graphics")
 
-        variable = ["1", "2", "3", "4"] * 4
+        variable = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"]
         slider_ids = {}
         label_map = {}
 
@@ -46,6 +46,7 @@ class SliderLayout(BoxLayout):
 
         app.slider_map = slider_ids
         app.label_map = label_map
+        print(slider_ids)
 
     def on_slider_change(self, instance, value):
         app = App.get_running_app().root.get_screen("graphics")
