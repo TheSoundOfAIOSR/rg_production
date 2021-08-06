@@ -28,7 +28,17 @@ class SliderLayout(BoxLayout):
 
         app = App.get_running_app().root.get_screen("graphics")
         labels = {5: ["l1", "l2", "l3", "l4", "l5"],
-                  11: ["h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "h10", "h11"]}
+                  11: ['inharmonicity',
+                         'even_odd',
+                         'sparse_rich',
+                         'attack_rms',
+                         'decay_rms',
+                         'attack_time',
+                         'decay_time',
+                         'bass',
+                         'mid',
+                         'high_mid',
+                         'high']}
         slider_ids = {}
         label_map = {}
 
