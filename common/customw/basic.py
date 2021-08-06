@@ -29,14 +29,15 @@ class Graphics(Screen):
 
     def mouse_pos(self, window, pos):
         collide = False
-        for slider in self.app.get_running_app().root.get_screen("graphics").ids['some_slider'].children:
+
+        for slider in self.app.get_running_app().root.get_screen("graphics").ids['some_slider1'].children:
             if slider.collide_point(*pos):
                 collide = True
-                mapping = self.app.get_running_app().root.get_screen("graphics").slider_map[slider.uid]
-                self.app.get_running_app().root.get_screen("graphics").ids['latent_space_label'].text = f"Latent Space Sample: {mapping}"
+                mapping = self.app.get_running_app().root.get_screen("graphics").heuristic_slider_ids[slider.uid]
+                self.app.get_running_app().root.get_screen("graphics").ids['latent_space_label'].text = f"Heuristic Parameter: {mapping}"
 
         if not collide:
-            self.app.get_running_app().root.get_screen("graphics").ids['latent_space_label'].text = f"Latent Space Sample"
+            self.app.get_running_app().root.get_screen("graphics").ids['latent_space_label'].text = f"Latent space variables"
 
 
 class SaveDialog(FloatLayout):

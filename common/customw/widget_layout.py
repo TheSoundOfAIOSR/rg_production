@@ -53,8 +53,6 @@ class SliderLayout(BoxLayout):
             app.latent_slider_ids = slider_ids
             app.latent_label_map = label_map
 
-
-
     def on_slider_change(self, instance, value):
         app = App.get_running_app().root.get_screen("graphics")
         if instance.uid in app.latent_label_map.keys():
