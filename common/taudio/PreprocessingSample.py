@@ -15,7 +15,7 @@ config = Config.load_config()
 target_sr = config.sampling_rate
 app = App.get_running_app
 
-def utility_pitchshift_and_normalize(audio, target_sr, n_steps, root, folder):
+def utility_pitchshift_and_normalize(audio, target_sr, note, folder):
     """
     Given an audio file as numpy array,
     a target sample rate,
@@ -27,10 +27,10 @@ def utility_pitchshift_and_normalize(audio, target_sr, n_steps, root, folder):
     Normalizes the audio
     Saves it in a file in the format  root+n.wav
     """
-    audio_shifted = librosa.effects.pitch_shift(audio, target_sr, n_steps, bins_per_octave=12)
-    new_filename = f"{root + n_steps}.wav"
+    # audio_shifted = librosa.effects.pitch_shift(audio, target_sr, n_steps, bins_per_octave=12)
+    new_filename = f"{note}.wav"
     new_filepath = folder / pl.Path(new_filename)
-    audio_shifted = audio_shifted.astype("float32")
+    audio_shifted = audio.astype("float32")
     audio_norm = librosa.util.normalize(audio_shifted)
     write(new_filepath, target_sr, audio_norm)
     logger.debug(f"Creating: {new_filename}")
@@ -61,7 +61,7 @@ def wavfunc(audio):  # as soon as Generate is pressed, trigger this function. no
     app.get_running_app().root.get_screen("graphics").ids.plot.reload()
     logger.debug(f"in wavfunc 4")
 
-def preprocess(csound, folder, audio=None, filename=None, root=60, shifts=48):
+def preprocess(csound, folder, audio=None, filename=None, note=60, shifts=48):
     """
     Pitch shift of the audio file given as input and save in in the folder given as input
 
@@ -83,17 +83,17 @@ def preprocess(csound, folder, audio=None, filename=None, root=60, shifts=48):
     logger.debug(f"shifting pitch")
 
     folder = pl.Path(folder).absolute()
+    utility_pitchshift_and_normalize(audio, target_sr, note, folder)
 
-
-    pool = mp.pool.ThreadPool(mp.cpu_count())
-    
-    for n_steps in range(- (shifts//2), 1 + (shifts//2)):
-        pool.apply_async(
-            utility_pitchshift_and_normalize,
-            (audio, target_sr, n_steps, root, folder)
-        )
-    
-    pool.close()
-    pool.join()
+    # pool = mp.pool.ThreadPool(mp.cpu_count())
+    #
+    # for n_steps in range(- (shifts//2), 1 + (shifts//2)):
+    #     pool.apply_async(
+    #         utility_pitchshift_and_normalize,
+    #         (audio, target_sr, n_steps, root, folder)
+    #     )
+    #
+    # pool.close()
+    # pool.join()
 
     logger.debug(f"Audio files saved in folder: {folder}")
