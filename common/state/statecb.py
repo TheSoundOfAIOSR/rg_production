@@ -23,16 +23,16 @@ async def start_recording_cb(*args, stmgr=None):
         logger.info(f"Something unexpected went wrong in STT Start")
         stmgr.dispatch('on_pipeline_action', {'action':'handle_errors', 'res':args})
 
+async def got_one_sample(*args, stmgr=None):
+
+    resp = args[0]
+    print(resp)
 
 async def stop_recording_cb(*args, stmgr=None):
 
     resp = args[0]
     logger.debug(f"{resp}")
-
-    # {'resp': True}
-    # {'resp': "some text" }
     if resp['resp']:
-        # stmgr.text = resp['resp'].lower()
         stmgr.text = "give me a warm guitar sound"
         stmgr.app.ids['lab'].text = stmgr.text
         stmgr.app.ids['generate'].disabled = False
@@ -48,21 +48,34 @@ async def stop_recording_cb(*args, stmgr=None):
 async def infer_pipeline(stmgr, *args):
     stmgr.app.ids['record'].disabled = True
     stmgr.app.ids['generate'].disabled = True
+
     if stmgr.sound_descriptor:
-        # print(stmgr.app.ids['some_slider'].children)
-        sliders = [box.children[1] for box in stmgr.app.ids['some_slider'].children]
-        print(sliders)
-        latent_sample = [slider.value for slider in sliders]
-        print(latent_sample)
+        latent_sliders = [box.children[1] for box in stmgr.app.ids['some_slider'].children]
+        latent_sample = [slider.value for slider in latent_sliders]
+
+        heuristic_sliders = [box.children[1] for box in stmgr.app.ids['some_slider1'].children]
+        heuristic_measures = [slider.value for slider in heuristic_sliders]
+
         stmgr.sound_descriptor['latent_sample'] = latent_sample
+        stmgr.sound_descriptor['heuristic_measures'] = heuristic_measures
 
     """ 
+    
+        if audition audio and no audition audio yet, call sg
+        if audition audio and audition audio, nothing new to infer
+    
         if text is the same as previously inferred text and sound descriptor is not none -> call SG
         
         else if text is different from previously inferred text -> call TTS
         
         else error
     """
+
+    if stmgr.audition_audio and stmgr.audition_audio_sample:
+        stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_received_sound'})
+    # if stmgr.audition_audio and not stmgr.audition_audio_sample:
+    # elif stmgr.audition_audio and stmgr.audition_audio_sample:
+    #     stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_nothing_to_infer'})
     if stmgr.text == stmgr.last_transcribed_text and stmgr.text is not stmgr.sound_descriptor: #both could be none
 
         stmgr.dispatch('on_pipeline_action',  {'action':'pipeline_action_start_sg', 'res':args})
@@ -93,10 +106,10 @@ async def tts_transcribe_cb(*args, stmgr=None):
 
         stmgr.sound_descriptor = sound_descriptor
         stmgr.last_transcribed_text = stmgr.text
-        for num, child in enumerate(stmgr.app.ids['some_slider'].children):
-            val = resp['resp']['latent_sample'][num]
-            child.children[1].value = val
-            child.children[0].text = str(val)
+        # for num, child in enumerate(stmgr.app.ids['some_slider'].children):
+        #     val = resp['resp']['latent_sample'][num]
+        #     child.children[1].value = val
+        #     child.children[0].text = str(val)
 
         stmgr.app.ids['lab'].text = str(stmgr.sound_descriptor)
 
@@ -110,7 +123,12 @@ async def sound_gen_cb(*args, stmgr=None):
     resp = args[0]
     if resp['resp'] and resp['success']:
         logger.debug("Received Sound successfully")
-        stmgr.audio = np.array(resp['resp'][0])
+        if stmgr.audition_audio:
+            stmgr.audition_audio_sample = np.array(resp['resp'][0])
+        else:
+            stmgr.audio = np.array(resp['resp'][0])
+        # update sliders
+
         stmgr.last_sound_parameters = stmgr.sound_descriptor
         stmgr.app.ids['lab'].text = "Received Sound "
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_received_audio', 'res':args})
@@ -118,10 +136,13 @@ async def sound_gen_cb(*args, stmgr=None):
         stmgr.dispatch('on_pipeline_action', {'action':'handle_errors', 'res':args})
 
 async def setup_preprocessing(*args, stmgr=None):
-
-
     folder = stmgr.csound.audio_dir.as_posix()
-    preprocess(csound=stmgr.csound,folder=folder, audio=stmgr.audio, root=stmgr.root_note, shifts=48)
+
+    if stmgr.audition_audio:
+        preprocess(csound=stmgr.csound,folder=folder, audio=stmgr.audition_audio_sample, root=stmgr.root_note, shifts=48)
+    else:
+        for note in stmgr.audio:
+            preprocess(csound=stmgr.csound,folder=folder, audio=stmgr.audio[note], note=note, shifts=48)
     # Call update function here
     stmgr.app.ids['record'].disabled = False
     logger.debug(f"Finished preprocessing")
@@ -129,16 +150,8 @@ async def setup_preprocessing(*args, stmgr=None):
 
 
 async def play_idle_cb(*args, stmgr=None):
-    # reinitialize record button,
-    # print(stmgr.app.ids)
-    # stmgr.app.ids['record'].state= 'normal'
     stmgr.app.ids['record'].disabled = False
     stmgr.app.ids['generate'].disabled = False
-
-    # if stmgr.text is not stmgr.last_transcribed_text or stmgr.sound_descriptor is not stmgr.last_sound_parameters:
-    #     stmgr.app.root.ids['generate'].disabled = False
-    # else:
-    #     stmgr.app.root.ids['generate'].disabled = True
 
 async def finished_model_setup(*args, stmgr=None):
 
