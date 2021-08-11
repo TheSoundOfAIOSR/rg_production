@@ -42,9 +42,13 @@ class StateManager(EventDispatcher):
         self.app = None #App.get_running_app()
         self.enter_state_callbacks = None
         self.audio = None
+        self.samples = {}
+        self.audition_audio = False
+        self.audition_audio_sample = None
         self.error_handler = ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle)
         self.midi_devices = None
-        self.root_note = 60
+        self.root_note = 40
+        self.last_generated_note = None
         self.play_note = None
         self.csound = None
         self.level = self.root_note - 24 # false by default
@@ -56,9 +60,30 @@ class StateManager(EventDispatcher):
     async def _callback(self, f, callback=None, stmgr=None):
         return await callback(await f(), stmgr=stmgr) if callback else await f(stmgr=stmgr)
 
+    def do_sound_gen(self, min, max=None):
+
+        if min and not max:
+            self.active_task = asyncio.create_task(
+                self._callback(partial(self.sg.get_prediction, self.sound_descriptor), callback=got_one_sample, stmgr=self))
+
+            # self.audition_audio = await self.sg.get_prediction(self.sound_descriptor)
+            # self.active_task = asyncio.create_task(
+            #     self._callback(partial(, self.sound_descriptor), callback=sound_gen_cb, stmgr=self))
+        if min and max:
+            pass
+            # for i in range(min, max):
+            #     self.active_task = asyncio.create_task(
+            #         self._callback(partial(self.sg.get_prediction, self.sound_descriptor), callback=sound_gen_cb,
+            #                        stmgr=self))
+
+        else:
+            pass
+            #error
+
     def make_call(self, _source):
         f = _source.f
         cb = _source.cb
+
         # TODO: FIX SOME TIME
         # self.active_task = asyncio.create_task(self._callback(partial(f, vars(self).get(_source.args, [])), callback=cb, stmgr=self))
         if _source.args:
@@ -69,9 +94,14 @@ class StateManager(EventDispatcher):
             self.active_task = asyncio.create_task(
                 self._callback(partial(f), callback=cb, stmgr=self))
 
+
     def on_pipeline_action(self, *args):
-        action = args[0]['action']
-        logger.debug(f"On Pipeline Action - Triggered by {action}")
+        action = args[0].get('action', None)
+
+        logger.debug(f"On Pipeline Action - Triggered by {action} from state {self.state}")
+
+        if action == 'audition_sample':
+            self.audition_audio = True
 
         if not self.enter_state_callbacks:
             _source = self.error_handler
@@ -94,7 +124,6 @@ class StateManager(EventDispatcher):
 
     def on_sampler_gui_action(self, *args):
         self.sampler_gui_action = args[0]
-
 
     def on_switch(self, instance):
         print(instance.state)
@@ -178,7 +207,6 @@ class StateManager(EventDispatcher):
 
         # setup = asyncio.gather(*[server.startup() for server in [self.stt, self.tts, self.sg]])
 
-        await setup
         return
 
     def get_state_action_callbacks(self):
@@ -208,13 +236,17 @@ class StateManager(EventDispatcher):
                                                            next_state=StateEnum.New_Descriptor_Generation),
                 'pipeline_action_start_sg': ActionManager(f=self.sg.get_prediction, args='sound_descriptor', cb=sound_gen_cb,
                                                           next_state=StateEnum.New_Sound_Generation),
+                'pipeline_action_finish_sg': ActionManager(f=setup_preprocessing, next_state=StateEnum.Preprocessing)
             },
             StateEnum.New_Descriptor_Generation: {
                 'pipeline_action_received_descriptor': ActionManager(f=infer_pipeline, next_state=StateEnum.Inferring_Pipeline)
             },
             StateEnum.New_Sound_Generation: {
-                'pipeline_action_received_audio': ActionManager(f=setup_preprocessing,
-                                                                next_state=StateEnum.Preprocessing)
+                'pipeline_action_received_audio': ActionManager(f=infer_pipeline,
+                                                                next_state=StateEnum.Inferring_Pipeline)
+
+                # 'pipeline_action_received_audio': ActionManager(f=setup_preprocessing,
+                #                                                 next_state=StateEnum.Preprocessing)
             },
             StateEnum.Preprocessing:{
                 'pipeline_action_finished_preprocessing': ActionManager(f=play_idle_cb, next_state=StateEnum.Playing_Idle)
