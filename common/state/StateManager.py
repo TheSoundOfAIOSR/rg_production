@@ -51,7 +51,7 @@ class StateManager(EventDispatcher):
         self.last_generated_note = None
         self.play_note = None
         self.csound = None
-        self.level = self.root_note - 24 # false by default
+        self.level = self.root_note # false by default
 
         self.stt = stt
         self.tts = tts
@@ -126,16 +126,14 @@ class StateManager(EventDispatcher):
         self.sampler_gui_action = args[0]
 
     def on_switch(self, instance):
-        print(instance.state)
         if instance.state == "down":
-            self.level = self.root_note
+            self.level = self.root_note + 24
         else:
-            self.level = self.root_note - 24
+            self.level = self.root_note
 
     def on_keyboard_press(self, ind):
         self.play_note = self.level + ind
         self.sampler_gui_action = 'play_note'
-
 
     def on_update_io(self, *args):
         arg = args[0]

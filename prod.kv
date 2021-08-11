@@ -117,12 +117,12 @@
                 Button:
                     id: audition
                     text: 'Audition'
-                    on_press:app.sm.dispatch('on_sampler_gui_action', 'play_sample')
+                    on_press:app.sm.dispatch('on_pipeline_action', {'action':'audition_sample'})
 
                 Button:
                     id: play
                     text: 'Play'
-                    on_press:app.sm.dispatch('on_sampler_gui_action', 'play_sample')
+                    on_press:app.sm.dispatch('on_sampler_gui_action', 'play_audition_sample')
 
             Button:
                 id: playM
@@ -251,7 +251,7 @@
             spacing: 5
 
             ToggleButton:
-                text: 'Octave switch'
+                text: 'Octave Up'
                 id: octave_switch
                 on_state: app.sm.dispatch('on_switch', self)
 

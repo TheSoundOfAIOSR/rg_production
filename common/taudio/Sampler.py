@@ -43,6 +43,9 @@ class CsoundSampler:
     # ==============================
 
     def create_csd(self):
+        print("****************")
+        print(self.sample_path.as_posix())
+        print("****************")
 
         csd = f""" 
   <CsoundSynthesizer>
@@ -232,7 +235,7 @@ class CsoundSampler:
       Sname = "{(self.audio_dir / pl.Path(str(self.root))).as_posix()}.wav"
       """
 
-        for i in range(self.root - 24, self.root + 25):
+        for i in range(self.root, self.root + 48):
             note = i
             s += f"""
         elseif iNum == {note} then
