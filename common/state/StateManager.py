@@ -208,13 +208,25 @@ class StateManager(EventDispatcher):
 
         return
 
-    def get_state_action_callbacks(self):
+    async def get_state_action_callbacks(self):
+
+        while not App.get_running_app().root:
+            logger.debug(f"Waiting")
+            await asyncio.sleep(1)
 
         self.devices = App.get_running_app().devices
         self.audio = App.get_running_app().audio
         self.midi_devices = App.get_running_app().midi_devices
         self.csound = App.get_running_app().csound
         self.app = App.get_running_app().root.get_screen("graphics")
+
+        self.app.ids['octave_switch'].disabled = False
+        self.app.ids['settings'].disabled = False
+        self.app.ids['record'].disabled = False
+        self.app.ids['generate'].disabled = False
+        self.app.ids['audition'].disabled = False
+        self.app.ids['play'].disabled = False
+        self.app.ids['playM'].disabled = False
 
         self.enter_state_callbacks = {
             StateEnum.Update: "",

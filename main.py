@@ -82,16 +82,7 @@ class ProdApp(App):
         return asyncio.gather(run_wrapper(), self.sampler_loop)
 
     async def main_loop(self):
-        await asyncio.sleep(5)  # This is so we give the models time to startup
-
-        # try:
-        #     await self.sm.stt.setup_model()
-        # except:
-        #     print("Error starting up stt model")
-
-        self.sm.get_state_action_callbacks()
-
-        # self.csound.set_options
+        await self.sm.get_state_action_callbacks()
 
         """
         This is the main loop which the application will run inside of.

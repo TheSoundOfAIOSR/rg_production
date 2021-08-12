@@ -25,11 +25,13 @@
             ToggleButton:
                 id: record
                 text: "Record"
+                disabled: True
                 on_press: app.sm.dispatch('on_pipeline_action', {'action': 'user_action_toggle_record'})
 
             Button:
                 id: generate
                 text: 'Generate'
+                disabled: True
                 on_press: app.sm.dispatch('on_pipeline_action', {'action': 'user_action_generate'})
 
         BoxLayout:
@@ -117,16 +119,19 @@
                 Button:
                     id: audition
                     text: 'Audition'
+                    disabled: True
                     on_press:app.sm.dispatch('on_pipeline_action', {'action':'user_action_audition_sample'})
 
                 Button:
                     id: play
                     text: 'Play'
+                    disabled: True
                     on_press:app.sm.dispatch('on_sampler_gui_action', 'play_audition_sample')
 
             Button:
                 id: playM
                 text: 'Play Midi'
+                disabled: True
                 on_press: app.sm.dispatch('on_sampler_gui_action', 'midi_loaded')
 
         BoxLayout:
@@ -253,10 +258,13 @@
             ToggleButton:
                 text: 'Octave Up'
                 id: octave_switch
+                disabled: True
                 on_state: app.sm.dispatch('on_switch', self)
 
             Button:
+                id: settings
                 text: 'Goto settings'
+                disabled: True
                 on_release:
                     root.manager.current = 'settings'
                     root.manager.transition.direction = 'left'
