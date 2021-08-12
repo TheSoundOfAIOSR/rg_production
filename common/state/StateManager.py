@@ -100,7 +100,8 @@ class StateManager(EventDispatcher):
 
         logger.debug(f"On Pipeline Action - Triggered by {action} from state {self.state}")
 
-        if action == 'audition_sample':
+        if action == 'user_action_audition_sample':
+            self.audition_audio_sample = None
             self.audition_audio = True
 
         if not self.enter_state_callbacks:
@@ -219,6 +220,7 @@ class StateManager(EventDispatcher):
             StateEnum.Update: "",
             StateEnum.Playing_Idle: {
                 'user_action_toggle_record': ActionManager(f=self.stt.start, args='microphone_hint', cb=start_recording_cb, next_state=StateEnum.Recording),
+                'user_action_audition_sample': ActionManager(f=infer_pipeline, next_state=StateEnum.Inferring_Pipeline),
                 'user_action_generate': ActionManager(f=infer_pipeline, next_state=StateEnum.Inferring_Pipeline),
             },
             StateEnum.Recording: {

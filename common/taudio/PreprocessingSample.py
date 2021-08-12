@@ -15,7 +15,7 @@ config = Config.load_config()
 target_sr = config.sampling_rate
 app = App.get_running_app
 
-def utility_pitchshift_and_normalize(audio, target_sr, note, folder):
+def utility_pitchshift_and_normalize(audio, target_sr, note, folder, audition):
     """
     Given an audio file as numpy array,
     a target sample rate,
@@ -28,7 +28,7 @@ def utility_pitchshift_and_normalize(audio, target_sr, note, folder):
     Saves it in a file in the format  root+n.wav
     """
     # audio_shifted = librosa.effects.pitch_shift(audio, target_sr, n_steps, bins_per_octave=12)
-    new_filename = f"{note}.wav"
+    new_filename = "audition_sample.wav" if audition else f"{note}.wav"
     new_filepath = folder / pl.Path(new_filename)
     audio_shifted = audio.astype("float32")
     audio_norm = librosa.util.normalize(audio_shifted)
@@ -61,7 +61,7 @@ def wavfunc(audio):  # as soon as Generate is pressed, trigger this function. no
     # app.get_running_app().root.get_screen("graphics").ids.plot.reload()
     logger.debug(f"in wavfunc 4")
 
-def preprocess(csound, folder, audio=None, note=60):
+def preprocess(csound, folder, audio=None, note=60, audition=False):
     """
     Pitch shift of the audio file given as input and save in in the folder given as input
 
@@ -77,13 +77,12 @@ def preprocess(csound, folder, audio=None, note=60):
     logger.debug(f"target_sr = {target_sr}")
     # audio, orig_sr = librosa.load(filename)
     audio = librosa.resample(audio, 16000, target_sr)
-    wavfunc(audio)
     csound.duration = len(audio)/target_sr
     
     logger.debug(f"shifting pitch")
 
     folder = pl.Path(folder).absolute()
-    utility_pitchshift_and_normalize(audio, target_sr, note, folder)
+    utility_pitchshift_and_normalize(audio, target_sr, note, folder, audition)
 
     # pool = mp.pool.ThreadPool(mp.cpu_count())
     #

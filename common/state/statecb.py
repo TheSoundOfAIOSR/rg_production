@@ -23,11 +23,6 @@ async def start_recording_cb(*args, stmgr=None):
         logger.info(f"Something unexpected went wrong in STT Start")
         stmgr.dispatch('on_pipeline_action', {'action':'handle_errors', 'res':args})
 
-async def got_one_sample(*args, stmgr=None):
-
-    resp = args[0]
-    print(resp)
-
 async def stop_recording_cb(*args, stmgr=None):
 
     resp = args[0]
@@ -75,16 +70,17 @@ async def infer_pipeline(stmgr, *args):
         
         else error
     """
-
-    if stmgr.audition_audio and stmgr.audition_audio_sample:
-        stmgr.sound_descriptor['pitch'] = stmgr.root_note-1
+    if stmgr.text is not stmgr.last_transcribed_text and stmgr.text:
+        stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_start_tts', 'res':args})
+    elif stmgr.audition_audio and not type(stmgr.audition_audio_sample) == type(None):
         stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_finish_sg'})
+    elif stmgr.audition_audio and type(stmgr.audition_audio_sample) == type(None):
+        stmgr.sound_descriptor['pitch'] = 52
+        stmgr.dispatch('on_pipeline_action',  {'action':'pipeline_action_start_sg', 'res':args})
     elif stmgr.last_generated_note == stmgr.root_note + 2:
         stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_finish_sg'})
     elif stmgr.text == stmgr.last_transcribed_text and stmgr.text is not stmgr.sound_descriptor: #both could be none
         stmgr.dispatch('on_pipeline_action',  {'action':'pipeline_action_start_sg', 'res':args})
-    elif stmgr.text is not stmgr.last_transcribed_text and stmgr.text:
-        stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_start_tts', 'res':args})
     else:
         stmgr.app.ids['lab'].text = "Nothing new to infer"
         stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_nothing_to_infer'})
@@ -129,6 +125,7 @@ async def sound_gen_cb(*args, stmgr=None):
     if resp['resp'] and resp['success']:
         logger.debug(f"Received Sound successfully for pitch {stmgr.sound_descriptor['pitch']}")
         if stmgr.audition_audio:
+            logger.debug(f"Received audition audio")
             stmgr.audition_audio_sample = np.array(resp['resp'])
         else:
             stmgr.last_generated_note = stmgr.sound_descriptor['pitch']
@@ -147,7 +144,7 @@ async def setup_preprocessing(*args, stmgr=None):
 
     if stmgr.audition_audio:
         logger.debug(f"Audition audio preprocess")
-        preprocess(csound=stmgr.csound,folder=folder, audio=stmgr.audition_audio_sample, root=stmgr.root_note)
+        preprocess(csound=stmgr.csound,folder=folder, audio=stmgr.audition_audio_sample, audition=True)
     else:
         for note in stmgr.samples.keys():
             logger.debug(f"{stmgr.samples[note]}")
