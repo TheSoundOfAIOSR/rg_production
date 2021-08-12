@@ -6,7 +6,7 @@
     "sampling_rate": 44100,
     "record_file": "recordedFile.wav",
     "audio_dir": null,
-    "sample_path": "generated_sample/e2.wav",
+    "sample_path": "generated_sample/audition_sample.wav",
     "saved_devices": {
         "input": 0,
         "output": 1,
