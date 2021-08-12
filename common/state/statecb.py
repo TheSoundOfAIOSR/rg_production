@@ -147,11 +147,11 @@ async def setup_preprocessing(*args, stmgr=None):
 
     if stmgr.audition_audio:
         logger.debug(f"Audition audio preprocess")
-        preprocess(csound=stmgr.csound,folder=folder, audio=stmgr.audition_audio_sample, audition=True)
+        preprocess(csound=stmgr.csound,folder=folder, audio=stmgr.audition_audio_sample, audition=True, stmgr=stmgr)
     else:
         for note in stmgr.samples.keys():
             logger.debug(f"{stmgr.samples[note]}")
-            preprocess(csound=stmgr.csound,folder=folder, audio=stmgr.samples[note], note=note)
+            preprocess(csound=stmgr.csound,folder=folder, audio=stmgr.samples[note], note=note, stmgr=stmgr)
     # Call update function here
     stmgr.app.ids['record'].disabled = False
     logger.debug(f"Finished preprocessing")

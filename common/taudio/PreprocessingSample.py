@@ -36,32 +36,24 @@ def utility_pitchshift_and_normalize(audio, target_sr, note, folder, audition):
     logger.debug(f"Creating: {new_filename}")
     logger.debug("==============================")
 
-def wavfunc(audio):  # as soon as Generate is pressed, trigger this function. note is generated wav
+def wavfunc(audio, stmgr):  # as soon as Generate is pressed, trigger this function. note is generated wav
     # data, samplerate = sf.read(note.wav, dtype='float32')  # dtype change to avoid error
     # times = np.arange(len(audio)) / float(samplerate)   # avoid soundfile and work with available libs?
-    logger.debug(f"in wavfunc 1")
     plt.figure(figsize=(15,3), dpi=96)
 
     plt.gca().set_axis_off()
     plt.margins(0, 0)
     plt.subplots_adjust(top=1, bottom=0, right=1, left=0, hspace=0, wspace=0)
-    logger.debug(f"in wavfunc 2")
 
     plt.plot(audio, color='white')
-    logger.debug(f"in wavfunc 3")
 
     # TODO Pass path
-    import os
-    # os.path.join()
     path = pl.Path('assets\\plot.png').absolute()
-    print(path)
-    print(os.path.exists(path))
     plt.savefig(path, transparent=True, dpi=96,
                 bbox_inches='tight', pad_inches=0)
-    # app.get_running_app().root.get_screen("graphics").ids.plot.reload()
-    logger.debug(f"in wavfunc 4")
+    stmgr.app.ids.plot.reload()
 
-def preprocess(csound, folder, audio=None, note=60, audition=False):
+def preprocess(csound, folder, audio=None, note=60, audition=False, stmgr=None):
     """
     Pitch shift of the audio file given as input and save in in the folder given as input
 
@@ -71,17 +63,14 @@ def preprocess(csound, folder, audio=None, note=60, audition=False):
         root (int, optional): root note of 'filename' sample
         shifts (int, optional): shift to apply. Defaults to 24.
     """
-    logger.debug(f"{audio}")
-    logger.debug(f"loading audio")
-    logger.debug(f"{folder}")
-    logger.debug(f"target_sr = {target_sr}")
-    # audio, orig_sr = librosa.load(filename)
+
     audio = librosa.resample(audio, 16000, target_sr)
     csound.duration = len(audio)/target_sr
-    
-    logger.debug(f"shifting pitch")
 
     folder = pl.Path(folder).absolute()
+    if note == stmgr.root_note:
+        wavfunc(audio, stmgr)
+
     utility_pitchshift_and_normalize(audio, target_sr, note, folder, audition)
 
     # pool = mp.pool.ThreadPool(mp.cpu_count())
