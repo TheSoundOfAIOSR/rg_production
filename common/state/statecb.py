@@ -44,20 +44,20 @@ async def infer_pipeline(stmgr, *args):
     stmgr.app.ids['record'].disabled = True
     stmgr.app.ids['generate'].disabled = True
 
-    if stmgr.sound_descriptor:
-        latent_sliders = [box.children[1] for box in stmgr.app.ids['some_slider'].children]
-        latent_sample = [slider.value for slider in latent_sliders]
+    # if stmgr.sound_descriptor:
+    latent_sliders = [box.children[1] for box in stmgr.app.ids['some_slider'].children]
+    latent_sample = [slider.value for slider in latent_sliders]
 
-        heuristic_sliders = [box.children[1] for box in stmgr.app.ids['some_slider1'].children]
-        heuristic_measures = [slider.value for slider in heuristic_sliders]
+    heuristic_sliders = [box.children[1] for box in stmgr.app.ids['some_slider1'].children]
+    heuristic_measures = [slider.value for slider in heuristic_sliders]
 
-        stmgr.sound_descriptor['latent_sample'] = latent_sample
-        stmgr.sound_descriptor['heuristic_measures'] = heuristic_measures
+    stmgr.sound_descriptor['latent_sample'] = latent_sample
+    stmgr.sound_descriptor['heuristic_measures'] = heuristic_measures
 
-        if stmgr.last_generated_note:
-            stmgr.sound_descriptor['pitch'] = stmgr.last_generated_note+1
-        else:
-            stmgr.sound_descriptor['pitch'] = stmgr.root_note
+    if stmgr.last_generated_note:
+        stmgr.sound_descriptor['pitch'] = stmgr.last_generated_note+1
+    else:
+        stmgr.sound_descriptor['pitch'] = stmgr.root_note
 
     """ 
     
@@ -70,6 +70,9 @@ async def infer_pipeline(stmgr, *args):
         
         else error
     """
+
+    # if stmgr.text == stmgr.last_transcribed_text and not stmgr.sound_descriptor:
+    #     stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_nothing_to_infer'})
     if stmgr.text is not stmgr.last_transcribed_text and stmgr.text:
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_start_tts', 'res':args})
     elif stmgr.audition_audio and not type(stmgr.audition_audio_sample) == type(None):
@@ -153,6 +156,7 @@ async def setup_preprocessing(*args, stmgr=None):
     stmgr.app.ids['record'].disabled = False
     logger.debug(f"Finished preprocessing")
     logger.debug(f"{stmgr.state}")
+    stmgr.last_generated_note = None
     stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_finished_preprocessing', 'res': args})
 
 

@@ -112,6 +112,7 @@ class ProdApp(App):
 
                     if self.sm.sampler_gui_action == 'play_audition_sample':
                         self.csound.play_sample(self.sm.root_note-1)
+                        self.sm.sampler_gui_action = None
 
                     if self.sm.sampler_gui_action == "midi_loaded":
                         self.sm.sampler_gui_action = None

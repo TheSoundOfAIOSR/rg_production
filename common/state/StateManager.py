@@ -32,7 +32,7 @@ class StateManager(EventDispatcher):
         """Application Variables"""
         self.text = None
         self.last_transcribed_text = None
-        self.sound_descriptor = None
+        self.sound_descriptor = {}
         self.last_sound_parameters = None
         self.state = StateEnum.Playing_Idle
         self.recording_status = False
