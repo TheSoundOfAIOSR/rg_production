@@ -80,7 +80,8 @@ async def infer_pipeline(stmgr, *args):
     elif stmgr.audition_audio and type(stmgr.audition_audio_sample) == type(None):
         stmgr.sound_descriptor['pitch'] = 52
         stmgr.dispatch('on_pipeline_action',  {'action':'pipeline_action_start_sg', 'res':args})
-    elif stmgr.last_generated_note == stmgr.root_note + 2:
+    elif stmgr.last_generated_note == stmgr.root_note + 48:
+
         stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_finish_sg'})
     elif stmgr.text == stmgr.last_transcribed_text and stmgr.text is not stmgr.sound_descriptor: #both could be none
         stmgr.dispatch('on_pipeline_action',  {'action':'pipeline_action_start_sg', 'res':args})
@@ -148,6 +149,7 @@ async def setup_preprocessing(*args, stmgr=None):
     if stmgr.audition_audio:
         logger.debug(f"Audition audio preprocess")
         preprocess(csound=stmgr.csound,folder=folder, audio=stmgr.audition_audio_sample, audition=True, stmgr=stmgr)
+        stmgr.audition_audio = False
     else:
         for note in stmgr.samples.keys():
             logger.debug(f"{stmgr.samples[note]}")
