@@ -1,3 +1,4 @@
+import os
 import sys
 
 import librosa
@@ -48,7 +49,7 @@ def wavfunc(audio, stmgr):  # as soon as Generate is pressed, trigger this funct
     plt.plot(audio, color='white')
 
     # TODO Pass path
-    path = pl.Path('assets\\plot.png').absolute()
+    path = pl.Path(os.path.join('assets','plot.png')).absolute()
     plt.savefig(path, transparent=True, dpi=96,
                 bbox_inches='tight', pad_inches=0)
     stmgr.app.ids.plot.reload()
