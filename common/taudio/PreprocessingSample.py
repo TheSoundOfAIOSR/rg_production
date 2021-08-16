@@ -48,7 +48,6 @@ def wavfunc(audio, stmgr):  # as soon as Generate is pressed, trigger this funct
 
     plt.plot(audio, color='white')
 
-    # TODO Pass path
     path = pl.Path(os.path.join('assets','plot.png')).absolute()
     plt.savefig(path, transparent=True, dpi=96,
                 bbox_inches='tight', pad_inches=0)
@@ -73,16 +72,5 @@ def preprocess(csound, folder, audio=None, note=60, audition=False, stmgr=None):
         wavfunc(audio, stmgr)
 
     utility_pitchshift_and_normalize(audio, target_sr, note, folder, audition)
-
-    # pool = mp.pool.ThreadPool(mp.cpu_count())
-    #
-    # for n_steps in range(- (shifts//2), 1 + (shifts//2)):
-    #     pool.apply_async(
-    #         utility_pitchshift_and_normalize,
-    #         (audio, target_sr, n_steps, root, folder)
-    #     )
-    #
-    # pool.close()
-    # pool.join()
 
     logger.debug(f"Audio files saved in folder: {folder}")
