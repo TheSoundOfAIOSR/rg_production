@@ -71,6 +71,12 @@ class CsoundSampler:
   gkStart init 0.5
   gkStart chnexport "startpos", 1, 2, 0, 0, 1
 
+  opcode declick, a, a
+  ain xin
+  aenv = linseg:a(0, 0.01, 1, p3 - 0.02, 1, 0.01, 0)
+  xout ain * aenv
+  endop
+
     instr 1 ; Sampler
     Sname = "{self.sample_path.as_posix()}" 
     iNum notnum
@@ -102,6 +108,8 @@ class CsoundSampler:
     aR *= kPanRight
     aEnv madsr 0.05, p3-0.05, 1, 0.05
     xtratim 0.05
+    aL = declick(aL)
+    aR = declick(aR)
     outs aL,aR
     endin
     
