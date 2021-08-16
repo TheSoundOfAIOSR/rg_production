@@ -44,7 +44,7 @@ class SliderLayout(BoxLayout):
 
         for i in range(self.sliders):
             b = BoxLayout(orientation="vertical")
-            s = Slider(orientation="vertical", min=-7, max=7, size_hint=(1, 0.8))
+            s = Slider(orientation="vertical", min=-1, max=1, size_hint=(1, 0.8))
             s.bind(value=self.on_slider_change)
             b.add_widget(s)
             l = Label(text=str(s.value), font_size="12sp", size_hint=(1, 0.2))
