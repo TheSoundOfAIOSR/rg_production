@@ -28,8 +28,8 @@ class STTClient(WebsocketClient):
 
         if self.module == "stt":
             while True:
-                models_ready = self.status().get("resp", None)
-                if models_ready == "models_ready":
+                models_ready = await self.status()
+                if models_ready.get("resp", None) == "models_ready":
                     break
                 print("Waiting for STT to download models")
                 await asyncio.sleep(5)
