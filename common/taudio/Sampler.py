@@ -88,17 +88,17 @@ class CsoundSampler:
     kPanRight = sqrt(1 - gkPan)
     kPanLeft = sqrt(gkPan)
     
-    iStart = i(gkStart) 
+    ; iStart = i(gkStart) 
     
     printf_i "Audiofile '%s' ", 1, Sname 
     
     if inchs == 1 then
-    aLeft diskin2 Sname, ipb, iStart, 1
+    aLeft diskin2 Sname, ipb, 0, 1
     
     aL = aLeft*p4
     aR = aLeft*p4
     else
-    aLeft, aRight diskin2 Sname, ipb, iStart, 1
+    aLeft, aRight diskin2 Sname, ipb, 0, 1
     aL =  aLeft*p4
     aR = aRight*p4
     endif
