@@ -29,7 +29,7 @@ async def stop_recording_cb(*args, stmgr=None):
     logger.debug(f"{resp}")
     if resp['resp']:
         stmgr.text = resp['resp']
-        stmgr.app.ids['lab'].text = stmgr.text
+        stmgr.app.ids['lab'].text = 'voice command received'
         stmgr.app.ids['generate'].disabled = False
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_received_text'})
     elif not resp['resp']:
