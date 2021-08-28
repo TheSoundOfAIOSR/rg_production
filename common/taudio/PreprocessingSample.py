@@ -16,7 +16,7 @@ config = Config.load_config()
 target_sr = config.sampling_rate
 app = App.get_running_app
 
-def utility_pitchshift_and_normalize(audio, target_sr, note, folder, audition):
+async def utility_pitchshift_and_normalize(audio, target_sr, note, folder, audition):
     """
     Given an audio file as numpy array,
     a target sample rate,
@@ -36,8 +36,9 @@ def utility_pitchshift_and_normalize(audio, target_sr, note, folder, audition):
     write(new_filepath, target_sr, audio_norm)
     logger.debug(f"Creating: {new_filename}")
     logger.debug("==============================")
+    return
 
-def wavfunc(audio, stmgr):  # as soon as Generate is pressed, trigger this function. note is generated wav
+async def wavfunc(audio, stmgr):  # as soon as Generate is pressed, trigger this function. note is generated wav
     # data, samplerate = sf.read(note.wav, dtype='float32')  # dtype change to avoid error
     # times = np.arange(len(audio)) / float(samplerate)   # avoid soundfile and work with available libs?
     plt.figure(figsize=(15,3), dpi=96)
@@ -52,8 +53,9 @@ def wavfunc(audio, stmgr):  # as soon as Generate is pressed, trigger this funct
     plt.savefig(path, transparent=True, dpi=96,
                 bbox_inches='tight', pad_inches=0)
     stmgr.app.ids.plot.reload()
+    return
 
-def preprocess(csound, folder, audio=None, note=60, audition=False, stmgr=None):
+async def preprocess(csound, folder, audio=None, note=60, audition=False, stmgr=None):
     """
     Pitch shift of the audio file given as input and save in in the folder given as input
 
@@ -69,8 +71,9 @@ def preprocess(csound, folder, audio=None, note=60, audition=False, stmgr=None):
 
     folder = pl.Path(folder).absolute()
     if note == stmgr.root_note:
-        wavfunc(audio, stmgr)
+        await wavfunc(audio, stmgr)
 
-    utility_pitchshift_and_normalize(audio, target_sr, note, folder, audition)
+    await utility_pitchshift_and_normalize(audio, target_sr, note, folder, audition)
 
     logger.debug(f"Audio files saved in folder: {folder}")
+    return
