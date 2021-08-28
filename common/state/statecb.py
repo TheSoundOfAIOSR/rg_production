@@ -49,8 +49,11 @@ async def infer_pipeline(stmgr, *args):
     latent_sample = [slider.value for slider in latent_sliders]
 
     heuristic_sliders = [box.children[1] for box in stmgr.app.ids['some_slider1'].children]
-    heuristic_measures = [slider.value for slider in heuristic_sliders]
+    heuristic_measures = [slider.value for slider in heuristic_sliders[1:]]
+    velocity = heuristic_sliders[0].value
 
+    stmgr.sound_descriptor['load_preset'] = stmgr.load_preset
+    stmgr.sound_descriptor['velocity'] = velocity
     stmgr.sound_descriptor['latent_sample'] = latent_sample
     stmgr.sound_descriptor['heuristic_measures'] = heuristic_measures
 
@@ -107,6 +110,7 @@ async def tts_transcribe_cb(*args, stmgr=None):
                 value = [v.lower() for v in value]
             sound_descriptor[key] = value
 
+        stmgr.load_preset = True
         stmgr.sound_descriptor = sound_descriptor
         stmgr.last_transcribed_text = stmgr.text
         # for num, child in enumerate(stmgr.app.ids['some_slider'].children):
@@ -159,6 +163,7 @@ async def setup_preprocessing(*args, stmgr=None):
     logger.debug(f"Finished preprocessing")
     logger.debug(f"{stmgr.state}")
     stmgr.last_generated_note = None
+    stmgr.load_preset = False
     stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_finished_preprocessing', 'res': args})
 
 
