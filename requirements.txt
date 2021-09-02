@@ -4,5 +4,5 @@ python-rtmidi==1.4.7
 librosa
 numpy
 rgws
-ctcsound
+ctcsound==6.14
 matplotlib
