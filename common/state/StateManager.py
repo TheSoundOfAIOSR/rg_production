@@ -52,6 +52,7 @@ class StateManager(EventDispatcher):
         self.play_note = None
         self.csound = None
         self.level = self.root_note # false by default
+        self.load_preset = False
 
         self.stt = stt
         self.tts = tts

@@ -27,8 +27,9 @@ class SliderLayout(BoxLayout):
     def build_sliders(self, _):
 
         app = App.get_running_app().root.get_screen("graphics")
-        labels = {5: ["l1", "l2", "l3", "l4", "l5"],
-                  11: ['inharmonicity',
+        labels = {2: ["z0", "z1"],
+                  12: ['velocity',
+                       'inharmonicity',
                          'even_odd',
                          'sparse_rich',
                          'attack_rms',
@@ -43,8 +44,14 @@ class SliderLayout(BoxLayout):
         label_map = {}
 
         for i in range(self.sliders):
+
             b = BoxLayout(orientation="vertical")
-            s = Slider(orientation="vertical", min=-1, max=1, size_hint=(1, 0.8))
+
+            if self.sliders > 2 and labels[self.sliders][i] == 'velocity':
+                s = Slider(orientation="vertical", min=25, max=127, step=1, value=100, size_hint=(1, 0.8))
+            else:
+                s = Slider(orientation="vertical", min=0, max=1, value=0.5, size_hint=(1, 0.8))
+
             s.bind(value=self.on_slider_change)
             b.add_widget(s)
             l = Label(text=str(s.value), font_size="12sp", size_hint=(1, 0.2))
@@ -56,7 +63,7 @@ class SliderLayout(BoxLayout):
 
             self.add_widget(b)
 
-        if self.sliders > 5:
+        if self.sliders > 2:
             app.heuristic_slider_ids = slider_ids
             app.heuristic_label_map = label_map
         else:

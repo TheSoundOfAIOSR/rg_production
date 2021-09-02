@@ -45,14 +45,18 @@ async def infer_pipeline(stmgr, *args):
     stmgr.app.ids['generate'].disabled = True
 
     # if stmgr.sound_descriptor:
-    latent_sliders = [box.children[1] for box in stmgr.app.ids['some_slider'].children]
+    latent_sliders = [box.children[1] for box in reversed(stmgr.app.ids['some_slider'].children)]
     latent_sample = [slider.value for slider in latent_sliders]
 
-    heuristic_sliders = [box.children[1] for box in stmgr.app.ids['some_slider1'].children]
+    heuristic_sliders = [box.children[1] for box in reversed(stmgr.app.ids['some_slider1'].children)]
     heuristic_measures = [slider.value for slider in heuristic_sliders]
 
+    velocity = heuristic_measures[0]
+
+    stmgr.sound_descriptor['load_preset'] = stmgr.load_preset
+    stmgr.sound_descriptor['velocity'] = velocity
     stmgr.sound_descriptor['latent_sample'] = latent_sample
-    stmgr.sound_descriptor['heuristic_measures'] = heuristic_measures
+    stmgr.sound_descriptor['heuristic_measures'] = heuristic_measures[1:]
 
     if stmgr.last_generated_note:
         stmgr.sound_descriptor['pitch'] = stmgr.last_generated_note+1
@@ -107,12 +111,9 @@ async def tts_transcribe_cb(*args, stmgr=None):
                 value = [v.lower() for v in value]
             sound_descriptor[key] = value
 
+        stmgr.load_preset = True
         stmgr.sound_descriptor = sound_descriptor
         stmgr.last_transcribed_text = stmgr.text
-        # for num, child in enumerate(stmgr.app.ids['some_slider'].children):
-        #     val = resp['resp']['latent_sample'][num]
-        #     child.children[1].value = val
-        #     child.children[0].text = str(val)
 
         stmgr.app.ids['lab'].text = str(stmgr.sound_descriptor)
 
@@ -127,6 +128,7 @@ async def sound_gen_cb(*args, stmgr=None):
     resp = args[0]
 
     if resp['resp'] and resp['success']:
+
         logger.debug(f"Received Sound successfully for pitch {stmgr.sound_descriptor['pitch']}")
         if stmgr.audition_audio:
             logger.debug(f"Received audition audio")
@@ -134,9 +136,12 @@ async def sound_gen_cb(*args, stmgr=None):
         else:
             stmgr.last_generated_note = stmgr.sound_descriptor['pitch']
             stmgr.samples[stmgr.last_generated_note] = np.array(resp['resp'])
-        # update sliders
 
-        stmgr.last_sound_parameters = stmgr.sound_descriptor
+        # update sliders
+        stmgr.last_sound_parameters = stmgr.sound_descriptor.copy()
+        stmgr.last_sound_parameters['latent_sample'] = resp['z']
+        stmgr.last_sound_parameters['heuristic_measures'] = resp['measures_sliders']
+
         stmgr.app.ids['lab'].text = "Received Sound "
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_received_audio', 'res':args})
     else:
@@ -148,17 +153,29 @@ async def setup_preprocessing(*args, stmgr=None):
 
     if stmgr.audition_audio:
         logger.debug(f"Audition audio preprocess")
-        preprocess(csound=stmgr.csound,folder=folder, audio=stmgr.audition_audio_sample, audition=True, stmgr=stmgr)
+        await preprocess(csound=stmgr.csound,folder=folder, audio=stmgr.audition_audio_sample, audition=True, stmgr=stmgr)
         stmgr.audition_audio = False
     else:
         for note in stmgr.samples.keys():
             logger.debug(f"{stmgr.samples[note]}")
-            preprocess(csound=stmgr.csound,folder=folder, audio=stmgr.samples[note], note=note, stmgr=stmgr)
-    # Call update function here
+            await preprocess(csound=stmgr.csound,folder=folder, audio=stmgr.samples[note], note=note, stmgr=stmgr)
+
+    for num, child in enumerate(reversed(stmgr.app.ids['some_slider'].children)): # latent space
+        val = round(stmgr.last_sound_parameters['latent_sample'][num], 3)
+        child.children[1].value = val
+        child.children[0].text = str(val)
+
+    for num, child in enumerate(reversed(stmgr.app.ids['some_slider1'].children[:-1])): # latent space
+        val = round(stmgr.last_sound_parameters['heuristic_measures'][num], 3)
+        child.children[1].value = val
+        child.children[0].text = str(val)
+
+
     stmgr.app.ids['record'].disabled = False
     logger.debug(f"Finished preprocessing")
     logger.debug(f"{stmgr.state}")
     stmgr.last_generated_note = None
+    stmgr.load_preset = False
     stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_finished_preprocessing', 'res': args})
 
 

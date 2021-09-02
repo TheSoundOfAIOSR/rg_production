@@ -35,6 +35,16 @@ class Graphics(Screen):
                 collide = True
                 mapping = self.app.get_running_app().root.get_screen("graphics").heuristic_slider_ids[slider.uid]
                 self.app.get_running_app().root.get_screen("graphics").ids['latent_space_label'].text = f"Heuristic Parameter: {mapping}"
+                return
+
+        for slider in self.app.get_running_app().root.get_screen("graphics").ids['some_slider'].children:
+            if slider.collide_point(*pos):
+                collide = True
+                mapping = self.app.get_running_app().root.get_screen("graphics").latent_slider_ids[slider.uid]
+                self.app.get_running_app().root.get_screen("graphics").ids['latent_space_label'].text = f"Latent Parameter: {mapping}"
+                return
+
+
 
         if not collide:
             self.app.get_running_app().root.get_screen("graphics").ids['latent_space_label'].text = f"Latent space variables"
