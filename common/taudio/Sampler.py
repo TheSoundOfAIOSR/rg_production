@@ -241,6 +241,8 @@ class CsoundSampler:
         s = f"""
       if iNum == {self.root} then
       Sname = "{(self.audio_dir / pl.Path(str(self.root))).as_posix()}.wav"
+      elseif iNum == {self.root - 1} then 
+      Sname = "{(self.audio_dir /"audition_sample").as_posix()}.wav"
       """
 
         for i in range(self.root, self.root + 48):
