@@ -52,6 +52,7 @@ class ProdApp(App):
         """
         Returns 2 screens that hold all the GUI widgets
         """
+        self.title = 'The Sound of AI - Open Source Research'
         sc = ScreenManager()
         sc.add_widget(Graphics(name='graphics'))
         sc.add_widget(Settings(name='settings'))
