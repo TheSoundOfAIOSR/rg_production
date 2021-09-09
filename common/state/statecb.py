@@ -16,7 +16,7 @@ async def start_recording_cb(*args, stmgr=None):
     if resp['resp']:
         stmgr.app.ids['generate'].disabled = True
     elif not resp['resp']:
-        stmgr.app.ids['lab'].text = str(resp)
+        stmgr.app.ids['lab'].text = "Recording..."
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_started_recording_failed'})
         logger.info(f"{resp}")
     else:
@@ -29,11 +29,11 @@ async def stop_recording_cb(*args, stmgr=None):
     logger.debug(f"{resp}")
     if resp['resp']:
         stmgr.text = resp['resp']
-        stmgr.app.ids['lab'].text = 'voice command received'
+        stmgr.app.ids['lab'].text = 'Voice command received'
         stmgr.app.ids['generate'].disabled = False
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_received_text'})
     elif not resp['resp']:
-        stmgr.app.ids['lab'].text = str(resp)
+        stmgr.app.ids['lab'].text = f"There was an error when STT module returned {resp}"
         logger.debug(f"There was an error when STT module returned {resp}")
     else:
         logger.info("Something unexpected went wrong in STT Stop")
@@ -78,16 +78,20 @@ async def infer_pipeline(stmgr, *args):
     # if stmgr.text == stmgr.last_transcribed_text and not stmgr.sound_descriptor:
     #     stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_nothing_to_infer'})
     if stmgr.text is not stmgr.last_transcribed_text and stmgr.text:
+        stmgr.app.ids['lab'].text = "Extracting sound embeddings from text..."
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_start_tts', 'res':args})
     elif stmgr.audition_audio and not type(stmgr.audition_audio_sample) == type(None):
+        stmgr.app.ids['lab'].text = "Finished Neural Synthesis..."
         stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_finish_sg'})
     elif stmgr.audition_audio and type(stmgr.audition_audio_sample) == type(None):
+        stmgr.app.ids['lab'].text = "Generating 1 sample..."
         stmgr.sound_descriptor['pitch'] = 52
         stmgr.dispatch('on_pipeline_action',  {'action':'pipeline_action_start_sg', 'res':args})
     elif stmgr.last_generated_note == stmgr.root_note + 48:
-
+        stmgr.app.ids['lab'].text = "Finished Neural Synthesis..."
         stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_finish_sg'})
-    elif stmgr.text == stmgr.last_transcribed_text and stmgr.text is not stmgr.sound_descriptor: #both could be none
+    elif stmgr.text == stmgr.last_transcribed_text and stmgr.text is not stmgr.sound_descriptor:
+        stmgr.app.ids['lab'].text = f"Generating samples {stmgr.sound_descriptor['pitch']-40}/48..."
         stmgr.dispatch('on_pipeline_action',  {'action':'pipeline_action_start_sg', 'res':args})
     else:
         stmgr.app.ids['lab'].text = "Nothing new to infer"
@@ -102,9 +106,6 @@ async def tts_transcribe_cb(*args, stmgr=None):
 
         sound_descriptor = {}
         for key, value in resp['resp'].items():
-            # if key == 'pitch':
-            #     stmgr.root_note = value
-            #     stmgr.csound.root = value
             if key == 'source':
                 value = value.lower()
             if key == 'qualities':
@@ -115,7 +116,7 @@ async def tts_transcribe_cb(*args, stmgr=None):
         stmgr.sound_descriptor = sound_descriptor
         stmgr.last_transcribed_text = stmgr.text
 
-        stmgr.app.ids['lab'].text = str(stmgr.sound_descriptor)
+        stmgr.app.ids['lab'].text = "Received sound embeddings. Ready to generate new sound"
 
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_received_descriptor', 'res':args})
     else:
@@ -142,14 +143,15 @@ async def sound_gen_cb(*args, stmgr=None):
         stmgr.last_sound_parameters['latent_sample'] = resp['z']
         stmgr.last_sound_parameters['heuristic_measures'] = resp['measures_sliders']
 
-        stmgr.app.ids['lab'].text = "Received Sound "
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_received_audio', 'res':args})
     else:
         stmgr.dispatch('on_pipeline_action', {'action':'handle_errors', 'res':args})
 
 async def setup_preprocessing(*args, stmgr=None):
     folder = stmgr.csound.audio_dir.as_posix()
-    logger.debug(f"Setup preprocessing w/ state {stmgr.state}")
+    stmgr.app.ids['lab'].text = "Preprocessing samples..."
+
+    # logger.debug(f"Setup preprocessing w/ state {stmgr.state}")
 
     if stmgr.audition_audio:
         logger.debug(f"Audition audio preprocess")
@@ -170,10 +172,8 @@ async def setup_preprocessing(*args, stmgr=None):
         child.children[1].value = val
         child.children[0].text = str(val)
 
-
+    stmgr.app.ids['lab'].text = "Sample generation complete..."
     stmgr.app.ids['record'].disabled = False
-    logger.debug(f"Finished preprocessing")
-    logger.debug(f"{stmgr.state}")
     stmgr.last_generated_note = None
     stmgr.load_preset = False
     stmgr.dispatch('on_pipeline_action', {'action': 'pipeline_action_finished_preprocessing', 'res': args})
