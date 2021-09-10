@@ -10,9 +10,11 @@ Generate button: generate four octaves of notes, mapped to MIDI notes 40 to 88
 
 #### Latent space variables
 z0, z1 : These sliders control the values for the two latent dimensions used in generation
-Heuristic Parameters: these sliders control twelve parameters that modify the generated sound based on meaningful musical descriptors. Hover with your mouse over a slider to see what parameter it represents. The twelve parameters are:
+Heuristic Parameters: these sliders control twelve parameters that modify the generated sound based on meaningful musical descriptors. Hover with your mouse over a slider to see what parameter it represents. 
+
+The twelve parameters are :
 - velocity : MIDI velocity, 25 to 127
-- inharmonicity 
+- inharmonicity : amount of the overtone departures from integer multiples of the fundamental
 - even - odd 
 - sparse - rich
 - attacks (rms) : RMS value for the attack phase of the sound's envelope
