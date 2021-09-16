@@ -54,12 +54,18 @@ The slider below it controls the length of sample playback
 ### Settings Window
 
 The Settings window allows to control the audio settings of the app.
-1 Audio Input: the microphone input for receiving voice commands
-2 Audio Output: the audio output device
-3 MIDI Input: allows to select an external MIDI controller to use for performing with the sampler
-4 Hardware Buffer size: sets the audio hardware buffer size
-5 Software Buffer size: sets the audio software buffer size
-6 Sample Rate: selects the sample rate for the generated samples
+
+Audio Input: the microphone input for receiving voice commands
+
+Audio Output: the audio output device
+
+MIDI Input: allows to select an external MIDI controller to use for performing with the sampler
+
+Hardware Buffer size: sets the audio hardware buffer size
+
+Software Buffer size: sets the audio software buffer size
+
+Sample Rate: selects the sample rate for the generated samples
 
 ## Using the app
 
