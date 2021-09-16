@@ -363,12 +363,6 @@
             on_release:
                 root.manager.current = 'graphics'
                 root.manager.transition.direction = 'right'
-        Button:
-            id: export
-            text: 'Export'
-            size_hint: 0.2, 1
-            pos_hint: {'center_x': .5}
-            on_release: root.show_save()
 
 <SaveDialog>:
     text_input: text_input
