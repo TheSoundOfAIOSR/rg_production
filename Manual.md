@@ -4,13 +4,15 @@
 
 ### Main Window
 
+![Main WIndow](/Images/UI_manual.png "Main Window")
+
 #### Record and Generate
-Record button: allows to start/ stop the recording of a voice command
-Generate button: generate four octaves of notes, mapped to MIDI notes 40 to 88
+1 Record button: allows to start/ stop the recording of a voice command
+2 Generate button: generate four octaves of notes, mapped to MIDI notes 40 to 88
 
 #### Latent space variables
-z0, z1 : These sliders control the values for the two latent dimensions used in generation
-Heuristic Parameters: these sliders control twelve parameters that modify the generated sound based on meaningful musical descriptors. Hover with your mouse over a slider to see what parameter it represents. 
+3 z0, z1 : These sliders control the values for the two latent dimensions used in generation
+4 Heuristic Parameters: these sliders control twelve parameters that modify the generated sound based on meaningful musical descriptors. Hover with your mouse over a slider to see what parameter it represents. 
 
 The twelve parameters are :
 - velocity : MIDI velocity, 25 to 127
@@ -27,38 +29,37 @@ The twelve parameters are :
 - high : amount of high frequency components
 
 #### Text Area
-This area displays text that reports back the status of the application after a command is executed.
+5 This area displays text that reports back the status of the application after a command is executed.
 
 #### Audition, Play and Play MIDI
-Audition button: allows to generate only one note, to be able to audition the sound before generating the whole note range
+6 Audition button: allows to generate only one note, to be able to audition the sound before generating the whole note range
 
-Play button: playback button for the audition sample
+7 Play button: playback button for the audition sample
 
-Play MIDI button: allows to load and playback a MIDI file (.mid). Requires a fully generated note range to operate
+8 Play MIDI button: allows to load and playback a MIDI file (.mid). Requires a fully generated note range to operate
 
 #### Sample Display
-The plot displays the latest generated sample, only after generating a whole note range (does not display audition samples).
+9 The plot displays the latest generated sample, only after generating a whole note range (does not display audition samples).
 The slider below it controls the length of sample playback
 
 #### Volume and Pan
-Volume slider: controls the global volume of the sampler
-Pan slider: controls the panning of the instrument (0-1) Left to Right
+10 Volume slider: controls the global volume of the sampler
+   Pan slider: controls the panning of the instrument (0-1) Left to Right
 
 #### On screen Keyboard and Octave, Settings
-The keyboard offers an interface to perform the generated note range of samples, tow octaves at a time.
-Octave Up button: allows to switch the octave range of the on screen keyboard by two octaves up and down.
-Goto Settings button: opens the settings window
+11 The keyboard offers an interface to perform the generated note range of samples, tow octaves at a time.
+12 Octave Up button: allows to switch the octave range of the on screen keyboard by two octaves up and down.
+13 Goto Settings button: opens the settings window
 
 ### Settings Window
 
 The Settings window allows to control the audio settings of the app.
-Audio Input: the microphone input for receiving voice commands
-Audio Output: the audio output device
-MIDI Input: allows to select an external MIDI controller to use for performing with the sampler
-Hardware Buffer size: sets the audio hardware buffer size
-Software Buffer size: sets the audio software buffer size
-Sample Rate: selects the sample rate for the generated samples
-Export button: allows to save the generated sampe as a .wav file
+1 Audio Input: the microphone input for receiving voice commands
+2 Audio Output: the audio output device
+3 MIDI Input: allows to select an external MIDI controller to use for performing with the sampler
+4 Hardware Buffer size: sets the audio hardware buffer size
+5 Software Buffer size: sets the audio software buffer size
+6 Sample Rate: selects the sample rate for the generated samples
 
 ## Using the app
 
