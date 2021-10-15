@@ -23,20 +23,23 @@ async def start_recording_cb(*args, stmgr=None):
         logger.info(f"Something unexpected went wrong in STT Start")
         stmgr.dispatch('on_pipeline_action', {'action':'handle_errors', 'res':args})
 
+
 async def stop_recording_cb(*args, stmgr=None):
 
     resp = args[0]
     logger.debug(f"{resp}")
     if resp['resp']:
         stmgr.text = resp['resp']
+        stmgr.app.ids['commandinput'].text = stmgr.text
         stmgr.app.ids['lab'].text = 'Voice command received'
         stmgr.app.ids['generate'].disabled = False
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_received_text'})
     elif not resp['resp']:
         stmgr.app.ids['lab'].text = f"There was an error when STT module returned {resp}"
         logger.debug(f"There was an error when STT module returned {resp}")
+        stmgr.dispatch('on_pipeline_action', {'action':'handle_errors', 'res':args})
     else:
-        logger.info("Something unexpected went wrong in STT Stop")
+        logger.debug(f"There was an error when STT module returned {resp}")
         stmgr.dispatch('on_pipeline_action', {'action':'handle_errors', 'res':args})
 
 

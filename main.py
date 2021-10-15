@@ -82,6 +82,9 @@ class ProdApp(App):
 
         return asyncio.gather(run_wrapper(), self.sampler_loop)
 
+    def process_text(self):
+        self.sm.text = self.root.get_screen("graphics").ids['commandinput'].text
+
     async def main_loop(self):
         await self.sm.get_state_action_callbacks()
 

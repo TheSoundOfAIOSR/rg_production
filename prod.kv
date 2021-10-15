@@ -95,10 +95,20 @@
             Line:
                 width: 1
                 rectangle: self.x, self.y, self.width, self.height
-        Label:
-            id: lab
-            text: ""
-            font_size: sp(18)
+
+        BoxLayout:
+            size_hint: 0.30, 1
+            Label:
+                id: lab
+                text: ""
+                font_size: sp(18)
+
+        BoxLayout:
+            size_hint: 0.30, 1
+            TextInput:
+                id: commandinput
+                text: ""
+                on_text: app.process_text()
 
 
     BoxLayout:
