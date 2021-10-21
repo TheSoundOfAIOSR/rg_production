@@ -6,3 +6,4 @@ numpy
 git+https://github.com/Redict/rg_websocket.git#egg=rgws
 ctcsound==6.16.2
 matplotlib
+pandas
