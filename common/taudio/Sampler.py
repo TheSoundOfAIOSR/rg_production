@@ -71,15 +71,8 @@ class CsoundSampler:
   gkStart init 0.5
   gkStart chnexport "startpos", 1, 2, 0, 0, 1
 
-  opcode declick, a, a
-  ain xin
-  aenv = linseg:a(0, 0.01, 1, p3 - 0.02, 1, 0.01, 0)
-  xout ain * aenv
-  endop
-
     instr 1 ; Sampler
     Sname = "{self.sample_path.as_posix()}" 
-    iNum notnum
     iNum = p5
     {self.string_pitch_to_file()}
     ivol = p4
@@ -87,10 +80,6 @@ class CsoundSampler:
     inchs = filenchnls(Sname)
     kPanRight = sqrt(1 - gkPan)
     kPanLeft = sqrt(gkPan)
-    
-    ; iStart = i(gkStart) 
-    
-    printf_i "Audiofile '%s' ", 1, Sname 
     
     if inchs == 1 then
     aLeft diskin2 Sname, ipb, 0, 1
@@ -108,8 +97,6 @@ class CsoundSampler:
     aR *= kPanRight
     aEnv madsr 0.05, p3-0.05, 1, 0.05
     xtratim 0.05
-    aL = declick(aL)
-    aR = declick(aR)
     outs aL,aR
     endin
     
