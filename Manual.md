@@ -79,6 +79,8 @@ Launch the application using the script provided, according to your Os.
 
 Press Record to start the Speech to text module and make a request for a specific sound, for example "Give me a bright acoustic guitar", press it again to stop the recording.
 
+Modify from the textbox the result of speech to text or, alternatively, type in your desired command in the textbox directly.
+
 Press the Audition button to generate an audition sample. Press Play to hear it.
 
 If you like the audition sample, press Generate to generate four octaves of notes, from MIDI note 40 to 88. If you don't, play around with the sliders and generate a new audition sample. When you are happy with your audition sample, go ahead and generate the full note range.
