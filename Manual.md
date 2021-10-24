@@ -8,6 +8,7 @@
 
 #### Record and Generate
 1 Record button: allows to start/ stop the recording of a voice command
+
 2 Generate button: generate four octaves of notes, mapped to MIDI notes 40 to 88
 
 #### Latent space variables
@@ -31,25 +32,29 @@ The twelve parameters are :
 #### Text Area
 5 This area displays text that reports back the status of the application after a command is executed.
 
+6 Textbox area where you can type your command or modify the command received from the Speech to Text engine
+
 #### Audition, Play and Play MIDI
-6 Audition button: allows to generate only one note, to be able to audition the sound before generating the whole note range
+7 Audition button: allows to generate only one note, to be able to audition the sound before generating the whole note range
 
-7 Play button: playback button for the audition sample
+8 Play button: playback button for the audition sample
 
-8 Play MIDI button: allows to load and playback a MIDI file (.mid). Requires a fully generated note range to operate
+9 Play MIDI button: allows to load and playback a MIDI file (.mid). Requires a fully generated note range to operate
 
 #### Sample Display
-9 The plot displays the latest generated sample, only after generating a whole note range (does not display audition samples).
-The slider below it controls the length of sample playback
+10 The plot displays the latest generated sample, only after generating a whole note range (does not display audition samples).
+
+11 The slider below it controls the length of sample playback
 
 #### Volume and Pan
-10 Volume slider: controls the global volume of the sampler
-   Pan slider: controls the panning of the instrument (0-1) Left to Right
+12 These two sliders control some global parameters of the sampler
+- Volume slider: controls the global volume of the sampler
+- Pan slider: controls the panning of the instrument (0-1) Left to Right
 
 #### On screen Keyboard and Octave, Settings
-11 The keyboard offers an interface to perform the generated note range of samples, tow octaves at a time.
-12 Octave Up button: allows to switch the octave range of the on screen keyboard by two octaves up and down.
-13 Goto Settings button: opens the settings window
+13 The keyboard offers an interface to perform the generated note range of samples, tow octaves at a time.
+14 Octave Up button: allows to switch the octave range of the on screen keyboard by two octaves up and down.
+15 Goto Settings button: opens the settings window
 
 ### Settings Window
 
