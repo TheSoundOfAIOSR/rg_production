@@ -87,7 +87,7 @@ class CsoundSampler:
     aL = aLeft*p4
     aR = aLeft*p4
     else
-    aLeft, aRight diskin2 Sname, ipb, 0, 1
+    aLeft, aRight diskin2 Sname, ipb, 0
     aL =  aLeft*p4
     aR = aRight*p4
     endif
