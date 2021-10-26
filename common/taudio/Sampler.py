@@ -68,8 +68,6 @@ class CsoundSampler:
   gkVol chnexport "vol", 1, 2, 1, 0, 1
   gkPan init 0.5
   gkPan chnexport "pan", 1, 2, 0.5, 0, 1
-  gkStart init 0.5
-  gkStart chnexport "startpos", 1, 2, 0, 0, 1
 
     instr 1 ; Sampler
     Sname = "{self.sample_path.as_posix()}" 
@@ -211,7 +209,6 @@ class CsoundSampler:
     # start is actually end tbh
     def set_playstart(self, value=0):
         startsec = (1-value) * self.duration
-        self.cs.setControlChannel("endpos", startsec)
         if value != self.start_position:
             self.start_position = startsec
 
