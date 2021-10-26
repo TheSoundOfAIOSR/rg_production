@@ -95,7 +95,7 @@ class CsoundSampler:
     aR *= gkVol
     aL *= kPanLeft
     aR *= kPanRight
-    aEnv madsr 0.05, p3-0.05, 1, 0.05
+    aEnv madsr 0.05, p3-0.1, 1, 0.05
     xtratim 0.05
     outs aL,aR
     endin
