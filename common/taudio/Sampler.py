@@ -80,7 +80,7 @@ class CsoundSampler:
     kPanLeft = sqrt(gkPan)
     
     if inchs == 1 then
-    aLeft diskin2 Sname, ipb, 0, 1
+    aLeft diskin2 Sname, ipb, 0
     
     aL = aLeft*p4
     aR = aLeft*p4
