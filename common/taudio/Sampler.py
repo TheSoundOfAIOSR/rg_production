@@ -21,7 +21,7 @@ class CsoundSampler:
         self.samp_rate = target_sr
         self.sw_buf = 1024
         self.hw_buf = 2048
-        self.start_position = 0
+        self.end_position = 0
         self.duration = 3
         self.root = root_note
         self.midi_api = "NULL"
@@ -93,8 +93,7 @@ class CsoundSampler:
     aR *= gkVol
     aL *= kPanLeft
     aR *= kPanRight
-    aEnv madsr 0.05, p3-0.1, 1, 0.05
-    xtratim 0.05
+    aEnv madsr 0.05, p3-0.05, 1, 0.05, 0, 0.5
     outs aL,aR
     endin
     
@@ -184,7 +183,7 @@ class CsoundSampler:
         1 = volume
         40 = midi note to play (sample)
         """
-        dur = self.duration - self.start_position
+        dur = self.duration - self.end_position
         sco = f"i 1 0 {dur} 1 {pitch}"
         self.cs.readScore(sco)
 
@@ -209,8 +208,8 @@ class CsoundSampler:
     # start is actually end tbh
     def set_playstart(self, value=0):
         startsec = (1-value) * self.duration
-        if value != self.start_position:
-            self.start_position = startsec
+        if value != self.end_position:
+            self.end_position = startsec
 
     def set_root(self, r=60):
         self.root = r
