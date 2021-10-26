@@ -18,7 +18,7 @@ async def start_recording_cb(*args, stmgr=None):
     elif not resp['resp']:
         stmgr.app.ids['lab'].text = "Recording..."
         stmgr.dispatch('on_pipeline_action', {'action':'pipeline_action_started_recording_failed'})
-        logger.info(f"{resp}")
+        logger.debug(f"{resp}")
     else:
         logger.info(f"Something unexpected went wrong in STT Start")
         stmgr.dispatch('on_pipeline_action', {'action':'handle_errors', 'res':args})

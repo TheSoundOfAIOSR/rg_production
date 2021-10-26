@@ -30,8 +30,6 @@ parser.add_argument('--debug', dest='debug', action='store_true', required=False
 
 logger = log.setup_logger()
 
-
-
 class ProdApp(App):
     def __init__(self, **kwargs):
         super(ProdApp, self).__init__(**kwargs)
@@ -63,7 +61,6 @@ class ProdApp(App):
 
     def set_event(self, event):
         self.appStatus = event
-        logger.debug(f"Set appStatus to {self.appStatus}")
 
     def startup(self, sm, csound, config):
         """
@@ -77,7 +74,6 @@ class ProdApp(App):
         async def run_wrapper():
             await self.async_run(async_lib="asyncio")
             self.csound.cleanup()  # before terminating the app, cleanup Csound
-            logger.info("App done")
             self.sampler_loop.cancel()
 
         return asyncio.gather(run_wrapper(), self.sampler_loop)
@@ -97,7 +93,6 @@ class ProdApp(App):
                 if self.sm.sampler_gui_action and self.sm.state == StateEnum.Playing_Idle:
 
                     if self.sm.sampler_gui_action == "play_note":
-                        print(f"Trying to play note {self.sm.play_note}")
                         self.csound.play_sample(self.sm.play_note)
                         self.sm.sampler_gui_action = None
 
@@ -134,14 +129,13 @@ class ProdApp(App):
                                     self.set_msg_txt(f"Playing - {self.midi_file}")
                                 self.root.get_screen("graphics").playing_midi = True
                                 self.midi_file = None
-                                logger.debug(self.output_idx)
 
                 await asyncio.sleep(0.01)
         except asyncio.CancelledError:
-            logger.error(f"Wasting time was canceled", exc_info=True)
+            logger.error(f"Cancelled main loop", exc_info=True)
         finally:
             # when canceled, print that it finished
-            logger.debug("Done wasting time")
+            logger.debug("Exiting main loop")
 
 async def setup(debug):
 
@@ -169,6 +163,6 @@ if __name__ == "__main__":
     try:
         loop.run_until_complete(setup(args.debug))
     except KeyboardInterrupt:
-        print("closing loop")
+        logger.debug("closing loop")
 
     loop.close()

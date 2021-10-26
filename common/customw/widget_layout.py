@@ -86,7 +86,6 @@ class LabelLayout(BoxLayout):
 
     def __init__(self, **kwargs):
         super(LabelLayout, self).__init__(**kwargs)
-        # Clock.schedule_once(self.build_labels)
 
     def build_labels(self, _):
         for i in range(self.labels):
@@ -141,10 +140,7 @@ class KeyboardWidget(BoxLayout):
     def on_key_pressed(self, ind, instance):
         # When button is pressed changes it state to True in dict
         self.app.sm.dispatch('on_keyboard_press', ind)
-        # self.keys_dict[ind] = True
 
     def on_key_released(self, ind, instance):
         # When button is released changes it state to False in dict
         pass
-        # self.keys_dict[ind] = False
-        # print(self.keys_dict)

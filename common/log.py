@@ -14,5 +14,5 @@ if not inited:
 
 def setup_logger() -> logging.Logger:
     logger = logging.getLogger(f"app.{__name__}")
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
     return logger
