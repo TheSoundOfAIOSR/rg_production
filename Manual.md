@@ -91,8 +91,12 @@ Perform using the on screen keyboard or through a MIDI controller, if it has bee
 
 We provide a couple of video demonstrating how to install and operate the app, available at these links
 
+Spoken demos:
+
 [Setup and installation](https://www.youtube.com/watch?v=pWdZxB4NgJw)
 
 [Workflow demo on Windows](https://www.youtube.com/watch?v=wGsGGvbZByE)
+
+Workflow demonstration:
 
 [Workflow demo on MacOS](https://www.youtube.com/watch?v=pppuC27xRGo&feature=youtu.be)
