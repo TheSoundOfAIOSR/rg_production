@@ -86,3 +86,13 @@ Press the Audition button to generate an audition sample. Press Play to hear it.
 If you like the audition sample, press Generate to generate four octaves of notes, from MIDI note 40 to 88. If you don't, play around with the sliders and generate a new audition sample. When you are happy with your audition sample, go ahead and generate the full note range.
 
 Perform using the on screen keyboard or through a MIDI controller, if it has been setup from the Settings window.
+
+## Additional Resources
+
+We provide a couple of video demonstrating how to install and operate the app, available at these links
+
+[Setup and installation](https://www.youtube.com/watch?v=pWdZxB4NgJw)
+
+[Workflow demo on Windows](https://www.youtube.com/watch?v=wGsGGvbZByE)
+
+[Workflow demo on MacOS](https://www.youtube.com/watch?v=pppuC27xRGo&feature=youtu.be)
