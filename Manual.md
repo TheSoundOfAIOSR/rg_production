@@ -102,3 +102,7 @@ Spoken demos:
 Workflow demonstration:
 
 [Workflow demo on MacOS](https://www.youtube.com/watch?v=pppuC27xRGo&feature=youtu.be)
+
+## Known Issues
+
+* On Mac, the app is likely to freeze on first run. Please wait for models to finish downloading and if the app freezes, restart it.
