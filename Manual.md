@@ -1,5 +1,7 @@
 # The GUI Application
 
+Please make sure you have all the necessary dependencies installed (Portaudio and Csound), then proceed to installation following the scripts provided in [Project_common](https://github.com/TheSoundOfAIOSR/project_common#readme)
+
 ## Interface Description
 
 ### Main Window
